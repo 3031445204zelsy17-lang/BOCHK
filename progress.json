@@ -19,8 +19,10 @@
       "name": "环境确认",
       "description": "Node.js 18+ / Python 3.10+ 本机可运行",
       "dependencies": [],
-      "passes": false,
-      "assignee": "SYF"
+      "passes": true,
+      "assignee": "SYF",
+      "completed_at": "2026-06-08",
+      "note": "Node v22.22.2 / Python 3.13.5 / npm 10.9.7"
     },
     {
       "id": "P0-3",
@@ -28,8 +30,10 @@
       "name": "Mock 数据准备",
       "description": "mock_enterprises.json（3 企业模板）+ bochk_products.json（8 产品）",
       "dependencies": [],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-08",
+      "note": "3企业: 深圳电子/东莞纺织/佛山家居; 8产品: 小企钱/融资担保/电商易/贸易融资/绿色融资/数字化转型贷/供应链融资/外汇管理"
     },
     {
       "id": "P0-4",
@@ -37,8 +41,10 @@
       "name": "Few-shot 示例手写",
       "description": "Step 5 的约束式 Prompt 中完整的手写输入→输出示例",
       "dependencies": [],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-08",
+      "note": "4组示例: E部分满足/S部分满足/G不满足/BOCHK准入, 覆盖所有输出字段"
     },
     {
       "id": "P1-1",

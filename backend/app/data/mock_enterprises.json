@@ -1,0 +1,65 @@
+[
+  {
+    "id": "enterprise_001",
+    "name": "深圳XX电子科技有限公司",
+    "template_name": "深圳电子厂（中型/有出海经验）",
+    "industry": "电子制造",
+    "size": "中型",
+    "size_detail": "50-200人",
+    "export_experience": "3年以上",
+    "description": "专注于消费电子元器件制造，产品包括蓝牙耳机、充电器、智能手环配件。主要客户为国内品牌商，近三年开始向东南亚市场供货，年出口额约800万港币。",
+    "main_products": "蓝牙耳机、充电器、智能手环配件",
+    "target_markets": ["东南亚", "欧洲"],
+    "annual_revenue": "HK$2000万-5000万",
+    "preset_profile": {
+      "industry_tags": ["电子制造", "消费电子", "电子元器件"],
+      "size_level": "中型",
+      "trade_capability": "高",
+      "export_markets": ["东南亚", "欧洲"],
+      "readiness_score": 78,
+      "tags": ["制造业", "有出海经验", "电子", "中型企业"]
+    }
+  },
+  {
+    "id": "enterprise_002",
+    "name": "东莞XX纺织制品有限公司",
+    "template_name": "东莞纺织（小型/无经验）",
+    "industry": "纺织制造",
+    "size": "小型",
+    "size_detail": "10-50人",
+    "export_experience": "无",
+    "description": "主营针织面料和成衣加工，客户以国内服装品牌为主。工厂具备完整的裁剪、缝制、印花生产线，产品质量稳定，但从未做过出口业务。",
+    "main_products": "针织面料、成衣加工",
+    "target_markets": ["东南亚"],
+    "annual_revenue": "HK$500万-1000万",
+    "preset_profile": {
+      "industry_tags": ["纺织制造", "针织面料", "成衣加工"],
+      "size_level": "小型",
+      "trade_capability": "低",
+      "export_markets": [],
+      "readiness_score": 35,
+      "tags": ["制造业", "无出海经验", "纺织", "小型企业"]
+    }
+  },
+  {
+    "id": "enterprise_003",
+    "name": "佛山XX家居用品有限公司",
+    "template_name": "佛山家居（中小型/计划中）",
+    "industry": "家居制造",
+    "size": "中小型",
+    "size_detail": "50-100人",
+    "export_experience": "计划中",
+    "description": "生产现代简约风格家具和家居装饰品，产品涵盖沙发、茶几、灯具。已通过电商平台接到海外客户询盘，正在评估泰国和新加坡市场的可行性。",
+    "main_products": "沙发、茶几、灯具、家居装饰品",
+    "target_markets": ["东南亚"],
+    "annual_revenue": "HK$1000万-3000万",
+    "preset_profile": {
+      "industry_tags": ["家居制造", "家具", "家居装饰"],
+      "size_level": "中小型",
+      "trade_capability": "中",
+      "export_markets": ["东南亚"],
+      "readiness_score": 52,
+      "tags": ["制造业", "计划出海", "家居", "中小型企业"]
+    }
+  }
+]

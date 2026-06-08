@@ -1,0 +1,19 @@
+# 环境变量（含 API key，绝不提交）
+.env
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Node
+node_modules/
+dist/
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
