@@ -1,0 +1,346 @@
+{
+  "project": "智企通 GoGlobal Navigator MVP",
+  "deadline": "2026-06-15",
+  "repo": "https://github.com/3031445204zelsy17-lang/BOCHK",
+  "last_updated": "2026-06-08",
+  "tasks": [
+    {
+      "id": "P0-1",
+      "phase": "Phase 0: 准备",
+      "name": "API key 配置",
+      "description": "GLM-5.1 和 Kimi K2.6 的 API key 写入 .env 文件",
+      "dependencies": [],
+      "passes": false,
+      "assignee": "SYF"
+    },
+    {
+      "id": "P0-2",
+      "phase": "Phase 0: 准备",
+      "name": "环境确认",
+      "description": "Node.js 18+ / Python 3.10+ 本机可运行",
+      "dependencies": [],
+      "passes": false,
+      "assignee": "SYF"
+    },
+    {
+      "id": "P0-3",
+      "phase": "Phase 0: 准备",
+      "name": "Mock 数据准备",
+      "description": "mock_enterprises.json（3 企业模板）+ bochk_products.json（8 产品）",
+      "dependencies": [],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P0-4",
+      "phase": "Phase 0: 准备",
+      "name": "Few-shot 示例手写",
+      "description": "Step 5 的约束式 Prompt 中完整的手写输入→输出示例",
+      "dependencies": [],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P1-1",
+      "phase": "Phase 1: 骨架",
+      "name": "FastAPI 后端骨架",
+      "description": "FastAPI 入口 + CORS + config.py + llm_client.py + 三步 Mock API",
+      "dependencies": ["P0-1", "P0-2"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P1-2",
+      "phase": "Phase 1: 骨架",
+      "name": "React 前端骨架",
+      "description": "Vite + React + Tailwind + shadcn/ui 初始化 + 向导布局 + 路由 + 进度条",
+      "dependencies": ["P0-2"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P1-3",
+      "phase": "Phase 1: 骨架",
+      "name": "前后端联调验证",
+      "description": "Mock API 跑通，前端能拿到假数据并渲染",
+      "dependencies": ["P1-1", "P1-2"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P2-1",
+      "phase": "Phase 2: Step 1 企业画像",
+      "name": "profile_service 后端",
+      "description": "POST /api/profile/generate 接口 + LLM prompt 调通（GLM-5.1）",
+      "dependencies": ["P1-1"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P2-2",
+      "phase": "Phase 2: Step 1 企业画像",
+      "name": "Step 1 前端",
+      "description": "企业信息表单 + 预设企业模板选择 + 画像结果卡片（标签+指标+雷达图）",
+      "dependencies": ["P1-2", "P2-1"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P2-3",
+      "phase": "Phase 2: Step 1 企业画像",
+      "name": "Step 1 验收",
+      "description": "表单填写 → LLM 生成画像 → 卡片展示，结果合理",
+      "dependencies": ["P2-2"],
+      "passes": false,
+      "assignee": "SYF"
+    },
+    {
+      "id": "P3-1",
+      "phase": "Phase 3: Step 4 服务匹配",
+      "name": "匹配规则引擎 + 后端",
+      "description": "bochk_products.json + 匹配逻辑 + LLM 推荐理由 API（GLM-5.1）",
+      "dependencies": ["P0-3", "P2-1"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P3-2",
+      "phase": "Phase 3: Step 4 服务匹配",
+      "name": "Step 4 前端",
+      "description": "产品推荐卡片列表 + 匹配度百分比 + 展开详情",
+      "dependencies": ["P1-2", "P3-1"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P3-3",
+      "phase": "Phase 3: Step 4 服务匹配",
+      "name": "Step 4 验收",
+      "description": "企业画像自动匹配 BOCHK 产品 + AI 推荐理由合理",
+      "dependencies": ["P3-2"],
+      "passes": false,
+      "assignee": "SYF"
+    },
+    {
+      "id": "P4-1",
+      "phase": "Phase 4: ESG 数据准备",
+      "name": "法规资料到位",
+      "description": "唐一杰收集的法规链接到位（或 SYF 从官网搬运）",
+      "dependencies": [],
+      "passes": false,
+      "assignee": "唐一杰/SYF"
+    },
+    {
+      "id": "P4-2",
+      "phase": "Phase 4: ESG 数据准备",
+      "name": "Claude 预处理 → MD 文件",
+      "description": "用 Claude 将法规原文预处理为结构化 MD（检查项+评估标准+常见差距+原文摘要+引用）",
+      "dependencies": ["P4-1"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P4-3",
+      "phase": "Phase 4: ESG 数据准备",
+      "name": "JSON 索引生成",
+      "description": "从 MD frontmatter 自动生成 5 个 JSON 索引文件（hk/sg/th/eu_cbam/bochk）",
+      "dependencies": ["P4-2"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P4-4",
+      "phase": "Phase 4: ESG 数据准备",
+      "name": "问卷反向设计 + 映射表",
+      "description": "从 MD 评估标准反推问卷问题，产出问卷-评估标准映射表 + 问卷 JSON",
+      "dependencies": ["P4-2"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P4-5",
+      "phase": "Phase 4: ESG 数据准备",
+      "name": "问卷审阅",
+      "description": "确认问卷措辞中小企业能看懂，问题覆盖合理",
+      "dependencies": ["P4-4"],
+      "passes": false,
+      "assignee": "SYF"
+    },
+    {
+      "id": "P5-1",
+      "phase": "Phase 5: Step 5 ESG 分析",
+      "name": "MD 解析器",
+      "description": "md_parser.py — frontmatter 解析 + 引用提取 + 引用追踪（一层，截断500字）",
+      "dependencies": ["P4-3"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P5-2",
+      "phase": "Phase 5: Step 5 ESG 分析",
+      "name": "ESG 问卷前端",
+      "description": "从映射表生成的 15-20 题问卷组件（E/S/G 三类）",
+      "dependencies": ["P4-4", "P1-2"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P5-3",
+      "phase": "Phase 5: Step 5 ESG 分析",
+      "name": "ESG 分析 API",
+      "description": "POST /api/esg/analyze — 加载MD→筛选→约束式prompt(含few-shot)→LLM分析(Kimi K2.6) + 缓存 + 版本标记",
+      "dependencies": ["P5-1", "P0-4"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P5-4",
+      "phase": "Phase 5: Step 5 ESG 分析",
+      "name": "双标准 tab 切换",
+      "description": "目的地法规 + BOCHK 准入两套独立分析，tab 切换",
+      "dependencies": ["P5-3"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P5-5",
+      "phase": "Phase 5: Step 5 ESG 分析",
+      "name": "可信度分层展示 + 评分聚合",
+      "description": "三层展示（原文/判断/建议）+ 置信度标签 + E30%/S35%/G35%加权总分 + 等级(A/B/C)",
+      "dependencies": ["P5-3"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P5-6",
+      "phase": "Phase 5: Step 5 ESG 分析",
+      "name": "红黄绿报告卡片",
+      "description": "交通灯式缺口报告前端组件",
+      "dependencies": ["P5-5"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P5-7",
+      "phase": "Phase 5: Step 5 ESG 分析",
+      "name": "Step 5 验收",
+      "description": "不同企业 + 不同国家测试，ESG 分析结果合理准确",
+      "dependencies": ["P5-6"],
+      "passes": false,
+      "assignee": "SYF"
+    },
+    {
+      "id": "P6-1",
+      "phase": "Phase 6: 联调增强",
+      "name": "全流程联调 + bug fix",
+      "description": "3 步向导端到端跑通，修复所有 bug",
+      "dependencies": ["P2-2", "P3-2", "P5-6"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P6-2",
+      "phase": "Phase 6: 联调增强",
+      "name": "进度看板",
+      "description": "出海准备度总览：画像完整度 + 融资匹配度 + ESG 合规度",
+      "dependencies": ["P6-1"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P6-3",
+      "phase": "Phase 6: 联调增强",
+      "name": "引用来源可展开",
+      "description": "每个分析卡片底部可展开的参考法规原文列表",
+      "dependencies": ["P5-6"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P6-4",
+      "phase": "Phase 6: 联调增强",
+      "name": "改善路线图",
+      "description": "按难度×重要性排序的改善建议时间线",
+      "dependencies": ["P5-6"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P6-5",
+      "phase": "Phase 6: 联调增强",
+      "name": "落地页",
+      "description": "产品名 + 简介 + 开始体验按钮",
+      "dependencies": ["P6-1"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P6-6",
+      "phase": "Phase 6: 联调增强",
+      "name": "最终验收",
+      "description": "完整 3 步流程跑通，UI 正常，数据合理",
+      "dependencies": ["P6-1", "P6-2", "P6-3", "P6-4", "P6-5"],
+      "passes": false,
+      "assignee": "SYF"
+    },
+    {
+      "id": "P7-1",
+      "phase": "Phase 7: 打磨交付",
+      "name": "UI 打磨",
+      "description": "loading 状态、过渡动画、骨架屏",
+      "dependencies": ["P6-6"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P7-2",
+      "phase": "Phase 7: 打磨交付",
+      "name": "截图 + 录屏",
+      "description": "关键界面截图 + 30-60秒操作流程 GIF/视频",
+      "dependencies": ["P6-6"],
+      "passes": false,
+      "assignee": "SYF"
+    },
+    {
+      "id": "P8-1",
+      "phase": "Phase 8: SME 测试",
+      "name": "找测试企业 + 执行测试",
+      "description": "2-3 家小微企业，每家 30 分钟（使用前后问卷 + 操作 + 访谈）",
+      "dependencies": ["P7-2"],
+      "passes": false,
+      "assignee": "SYF + 唐一杰"
+    },
+    {
+      "id": "P8-2",
+      "phase": "Phase 8: SME 测试",
+      "name": "测试数据整理",
+      "description": "使用前后对照表 + NPS + 企业主反馈",
+      "dependencies": ["P8-1"],
+      "passes": false,
+      "assignee": "Claude"
+    },
+    {
+      "id": "P9-1",
+      "phase": "Phase 9: 计划书终稿",
+      "name": "素材嵌入计划书",
+      "description": "截图/视频/SME数据嵌入计划书对应章节",
+      "dependencies": ["P7-2", "P8-2"],
+      "passes": false,
+      "assignee": "SYF + 唐一杰"
+    },
+    {
+      "id": "P9-2",
+      "phase": "Phase 9: 计划书终稿",
+      "name": "全员终稿 + 提交",
+      "description": "审阅 + 提交（截止 6/15）",
+      "dependencies": ["P9-1"],
+      "passes": false,
+      "assignee": "全员"
+    }
+  ],
+  "degradation": {
+    "judge_day3": "Step 4 后端能出推荐？不能→砍双标准",
+    "judge_day4": "4个地区数据都好了？不→欧盟后补",
+    "judge_day5": "Step 5 能跑通？不能→砍可信度UI"
+  }
+}
