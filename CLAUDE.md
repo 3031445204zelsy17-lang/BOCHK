@@ -59,6 +59,22 @@ BOCHK/
 └── progress.json
 ```
 
+## UI 设计规范
+- 风格：模仿 BOCHK 官网（https://www.bochk.com）
+- 主色：品牌红 `#C8102E`，hover `#B01020`
+- 辅色：浅蓝 `#0071C5`、金色 `#D4AF37`
+- 文字：深灰 `#333333`，无衬线系统字体
+- 组件：4px 圆角，极少阴影，扁平风格
+- ESG 交通灯：绿 `#22C55E` / 黄 `#EAB308` / 红 `#EF4444`
+- 完整 token 见 `docs/ui-design-tokens.md`
+
+## 当前状态
+- Phase 0 全部完成（P0-1 ~ P0-4）
+- 下一步：P1-1（FastAPI 骨架）+ P1-2（React 前端骨架）并行
+- API Key 策略：GLM key 延后到 P2-1 填入，代码预留 Mock/真实切换
+- 文档权威：本文件为准，docs/ 下旧文件中 LLM 模型名等已统一修正
+- ESG 法规数据：唐一杰已有进展，到 Phase 4 时读取
+
 ## 开发规范
 - 提交信息：feat/fix/docs，中文描述
 - 代码注释：中文为主
