@@ -1,48 +1,20 @@
-/** Step 4: 服务匹配 — BOCHK 产品推荐卡片 */
+/** Step 4: 服务匹配 — BOCHK 产品推荐卡片列表 */
 
 import { useState, useEffect } from "react"
 import type { CompanyProfile, ProductRecommendation } from "@/lib/types"
 import { getRecommendations } from "@/lib/api"
-
-// ── Mock fallback ──────────────────────────────────
-const MOCK_RECOMMENDATIONS: ProductRecommendation[] = [
-  {
-    product_id: "xqi",
-    product_name: "小企钱",
-    match_score: 92,
-    amount_range: "HK$50万 - 500万",
-    reason: "基于贵司在电子制造领域的稳定出口业绩和中等规模，小企钱能提供灵活的营运资金支持。",
-    advice: "建议准备近三个月银行流水和商业登记证，可快速获得批核。",
-  },
-  {
-    product_id: "trade_finance",
-    product_name: "贸易融资",
-    match_score: 87,
-    amount_range: "根据交易金额而定",
-    reason: "贵司已有东南亚出口经验，贸易融资可为跨境交易提供信用证和发票融资支持。",
-    advice: "建议整理现有贸易合同和出口发票，配合信用证申请流程。",
-  },
-  {
-    product_id: "supply_chain",
-    product_name: "供应链融资",
-    match_score: 78,
-    amount_range: "根据供应链规模而定",
-    reason: "作为电子元器件制造商，贵司在供应链中处于关键位置，可帮助优化上下游资金周转。",
-    advice: "建议梳理核心供应商和客户关系，准备供应链合同材料。",
-  },
-  {
-    product_id: "forex_management",
-    product_name: "外汇管理",
-    match_score: 75,
-    amount_range: "不限",
-    reason: "贵司出口东南亚和欧洲市场，涉及多币种结算，外汇管理可有效对冲汇率波动风险。",
-    advice: "建议开通多币种账户，了解远期外汇合约锁定汇率策略。",
-  },
-]
+import { cn } from "@/lib/utils"
 
 interface Step4Props {
   profile: CompanyProfile
   onComplete: () => void
+}
+
+// ── 匹配度等级 ──────────────────────────────────────
+function matchLevel(score: number) {
+  if (score >= 85) return { label: "高度匹配", color: "text-esg-green", bar: "bg-esg-green" }
+  if (score >= 70) return { label: "中度匹配", color: "text-esg-yellow", bar: "bg-esg-yellow" }
+  return { label: "一般匹配", color: "text-esg-red", bar: "bg-esg-red" }
 }
 
 export default function Step4Matching({ profile, onComplete }: Step4Props) {
@@ -59,74 +31,161 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
     try {
       const result = await getRecommendations(profile)
       setRecommendations(result.recommendations)
+      // 默认展开第一个
+      if (result.recommendations.length > 0) {
+        setExpanded(result.recommendations[0].product_id)
+      }
     } catch {
-      console.warn("后端未连接，使用 mock 数据")
-      setRecommendations(MOCK_RECOMMENDATIONS)
+      console.warn("后端未连接")
+      setRecommendations([])
     } finally {
       setLoading(false)
     }
   }
 
-  // 匹配度颜色
-  const scoreColor = (score: number) => {
-    if (score >= 85) return "text-esg-green"
-    if (score >= 70) return "text-esg-yellow"
-    return "text-esg-red"
-  }
-
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="text-bochk-gray">正在匹配 BOCHK 产品...</div>
+      <div className="max-w-2xl mx-auto">
+        <div className="flex items-center justify-center h-64">
+          <div className="text-center">
+            <div className="inline-block w-6 h-6 border-2 border-bochk-red/30 border-t-bochk-red rounded-full animate-spin mb-3" />
+            <div className="text-bochk-gray text-sm">正在匹配 BOCHK 产品...</div>
+          </div>
+        </div>
       </div>
     )
   }
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h2 className="text-xl font-semibold mb-2">服务匹配</h2>
+      <h2 className="text-xl font-semibold mb-1">Step 4：服务匹配</h2>
       <p className="text-sm text-bochk-gray mb-6">
-        基于「{profile.industry_tags[0]}」行业 · {profile.size_level}企业 ·
-        为您推荐以下 BOCHK 产品
+        基于「{profile.industry_tags[0]}」行业 · {profile.size_level}企业
+        {profile.export_markets.length > 0 && ` · 目标${profile.export_markets.join("、")}`}
+        ，为您推荐以下 BOCHK 产品
       </p>
 
+      {/* ═══ 推荐产品列表 ══════════════════════════════ */}
       <div className="space-y-3">
-        {recommendations.map((rec) => (
-          <div key={rec.product_id} className="card">
-            <div
-              className="flex items-center justify-between cursor-pointer"
-              onClick={() =>
-                setExpanded(expanded === rec.product_id ? null : rec.product_id)
-              }
-            >
-              <div className="flex items-center gap-3">
-                <div className="text-lg font-semibold">{rec.product_name}</div>
-                <span className="text-xs px-2 py-0.5 bg-bochk-light rounded text-bochk-gray">
-                  {rec.amount_range}
-                </span>
-              </div>
-              <div className={`text-2xl font-bold ${scoreColor(rec.match_score)}`}>
-                {rec.match_score}%
-              </div>
-            </div>
+        {recommendations.map((rec, index) => {
+          const level = matchLevel(rec.match_score)
+          const isOpen = expanded === rec.product_id
 
-            {/* 展开详情 */}
-            {expanded === rec.product_id && (
-              <div className="mt-3 pt-3 border-t border-bochk-border space-y-2 text-sm">
-                <div>
-                  <span className="font-medium text-bochk-gray">推荐理由：</span>
-                  <span>{rec.reason}</span>
+          return (
+            <div key={rec.product_id} className="card">
+              {/* ── 头部：排名 + 名称 + 匹配度 ── */}
+              <div
+                className="flex items-center justify-between cursor-pointer"
+                onClick={() => setExpanded(isOpen ? null : rec.product_id)}
+              >
+                <div className="flex items-center gap-3">
+                  {/* 排名序号 */}
+                  <div className="w-7 h-7 rounded-full bg-bochk-red text-white text-xs font-bold flex items-center justify-center shrink-0">
+                    {index + 1}
+                  </div>
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <span className="text-base font-semibold text-bochk-dark">
+                        {rec.product_name}
+                      </span>
+                      <span className="text-xs px-2 py-0.5 bg-bochk-light rounded text-bochk-gray">
+                        {rec.category}
+                      </span>
+                    </div>
+                    <div className="text-xs text-bochk-gray mt-0.5">
+                      {rec.amount_range}
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <span className="font-medium text-bochk-gray">建议：</span>
-                  <span>{rec.advice}</span>
+
+                {/* 匹配度 */}
+                <div className="flex items-center gap-3 shrink-0">
+                  <div className="w-20">
+                    <div className="w-full bg-gray-100 rounded-full h-2">
+                      <div
+                        className={cn("rounded-full h-2 transition-all duration-500", level.bar)}
+                        style={{ width: `${rec.match_score}%` }}
+                      />
+                    </div>
+                  </div>
+                  <div className="text-right min-w-[60px]">
+                    <div className={cn("text-xl font-bold", level.color)}>
+                      {rec.match_score}%
+                    </div>
+                    <div className={cn("text-[10px]", level.color)}>{level.label}</div>
+                  </div>
                 </div>
               </div>
-            )}
-          </div>
-        ))}
+
+              {/* ── 展开详情 ── */}
+              {isOpen && (
+                <div className="mt-4 pt-4 border-t border-bochk-border space-y-3 text-sm">
+                  {/* 产品简介 */}
+                  {rec.description && (
+                    <div className="text-bochk-gray">{rec.description}</div>
+                  )}
+
+                  {/* 推荐理由 */}
+                  <div className="bg-bochk-blue/5 rounded p-3">
+                    <div className="font-medium text-bochk-blue text-xs mb-1">
+                      💡 AI 推荐理由
+                    </div>
+                    <div className="text-bochk-dark">{rec.reason}</div>
+                  </div>
+
+                  {/* 使用建议 */}
+                  <div className="bg-esg-green/5 rounded p-3">
+                    <div className="font-medium text-esg-green text-xs mb-1">
+                      📋 使用建议
+                    </div>
+                    <div className="text-bochk-dark">{rec.advice}</div>
+                  </div>
+
+                  {/* 产品特色 */}
+                  {rec.key_features && rec.key_features.length > 0 && (
+                    <div>
+                      <div className="text-xs font-medium text-bochk-gray mb-1.5">
+                        产品特色
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {rec.key_features.map((f, i) => (
+                          <span
+                            key={i}
+                            className="text-xs px-2 py-1 bg-bochk-red/5 text-bochk-red rounded"
+                          >
+                            {f}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* 所需文件 */}
+                  {rec.required_docs && rec.required_docs.length > 0 && (
+                    <div>
+                      <div className="text-xs font-medium text-bochk-gray mb-1.5">
+                        申请材料
+                      </div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {rec.required_docs.map((d, i) => (
+                          <span
+                            key={i}
+                            className="text-xs px-2 py-1 bg-bochk-light text-bochk-gray rounded"
+                          >
+                            {d}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+          )
+        })}
       </div>
 
+      {/* ═══ 下一步按钮 ══════════════════════════════ */}
       <button onClick={onComplete} className="btn-primary w-full py-2.5 mt-6">
         下一步：ESG 合规分析 →
       </button>

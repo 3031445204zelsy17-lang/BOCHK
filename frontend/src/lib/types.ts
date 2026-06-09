@@ -49,6 +49,10 @@ export interface ProductRecommendation {
   amount_range: string
   reason: string
   advice: string
+  category: string
+  description: string
+  key_features: string[]
+  required_docs: string[]
 }
 
 // ── Step 5: ESG 分析 ────────────────────────────────

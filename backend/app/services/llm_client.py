@@ -85,6 +85,43 @@ class LLMClient:
                 "tags": ["制造业", "有出海经验", "电子"]
             }, ensure_ascii=False)
 
+        # 产品匹配：返回推荐列表
+        if "推荐" in prompt_text or "产品" in prompt_text or "match_score" in prompt_text:
+            return json.dumps([
+                {
+                    "product_id": "trade_finance",
+                    "product_name": "贸易融资",
+                    "match_score": 99,
+                    "amount_range": "根据交易金额而定",
+                    "reason": "作为电子制造领域的中型出口企业，贸易融资可为您的东南亚和欧洲业务提供信用证和发票融资支持。",
+                    "advice": "建议整理现有出口贸易合同和商业发票，优先申请信用证服务。"
+                },
+                {
+                    "product_id": "forex_management",
+                    "product_name": "外汇管理",
+                    "match_score": 99,
+                    "amount_range": "不限",
+                    "reason": "贵司出口东南亚和欧洲，涉及多币种结算，外汇管理服务可有效对冲汇率波动风险。",
+                    "advice": "建议开通多币种账户，了解远期外汇合约锁定汇率策略。"
+                },
+                {
+                    "product_id": "supply_chain",
+                    "product_name": "供应链融资",
+                    "match_score": 93,
+                    "amount_range": "根据供应链规模而定",
+                    "reason": "贵司在电子元器件供应链中处于关键位置，供应链融资可优化上下游资金周转。",
+                    "advice": "建议梳理核心供应商和客户关系，准备供应链合同材料。"
+                },
+                {
+                    "product_id": "green_finance",
+                    "product_name": "绿色融资",
+                    "match_score": 89,
+                    "amount_range": "HK$100万 - 2000万",
+                    "reason": "贵司作为有出海经验的电子制造商，绿色融资可支持环保项目并享受利率优惠。",
+                    "advice": "建议准备ESG报告和环境影响评估材料，申请利率优惠审批。"
+                }
+            ], ensure_ascii=False)
+
         # 默认返回推荐理由
         return json.dumps({
             "reason": "基于贵司在电子制造领域的丰富经验和稳定的出口业绩，该产品能有效支持您的海外扩张计划。",
@@ -92,7 +129,47 @@ class LLMClient:
         }, ensure_ascii=False)
 
     def _mock_kimi_response(self, messages: list[dict]) -> str:
-        """Mock 模式：返回预设 ESG 分析结果"""
+        """Mock 模式：根据 prompt 内容返回对应的预设 JSON"""
+        prompt_text = str(messages[-1].get("content", ""))
+
+        # 检测是产品匹配还是 ESG 分析
+        if "推荐" in prompt_text or "产品" in prompt_text or "match_score" in prompt_text:
+            return json.dumps([
+                {
+                    "product_id": "trade_finance",
+                    "product_name": "贸易融资",
+                    "match_score": 99,
+                    "amount_range": "根据交易金额而定",
+                    "reason": "作为电子制造领域的中型出口企业，贸易融资可为您的东南亚和欧洲业务提供信用证和发票融资支持。",
+                    "advice": "建议整理现有出口贸易合同和商业发票，优先申请信用证服务。"
+                },
+                {
+                    "product_id": "forex_management",
+                    "product_name": "外汇管理",
+                    "match_score": 99,
+                    "amount_range": "不限",
+                    "reason": "贵司出口东南亚和欧洲，涉及多币种结算，外汇管理服务可有效对冲汇率波动风险。",
+                    "advice": "建议开通多币种账户，了解远期外汇合约锁定汇率策略。"
+                },
+                {
+                    "product_id": "supply_chain",
+                    "product_name": "供应链融资",
+                    "match_score": 93,
+                    "amount_range": "根据供应链规模而定",
+                    "reason": "贵司在电子元器件供应链中处于关键位置，供应链融资可优化上下游资金周转。",
+                    "advice": "建议梳理核心供应商和客户关系，准备供应链合同材料。"
+                },
+                {
+                    "product_id": "green_finance",
+                    "product_name": "绿色融资",
+                    "match_score": 89,
+                    "amount_range": "HK$100万 - 2000万",
+                    "reason": "贵司作为有出海经验的电子制造商，绿色融资可支持环保项目并享受利率优惠。",
+                    "advice": "建议准备ESG报告和环境影响评估材料，申请利率优惠审批。"
+                }
+            ], ensure_ascii=False)
+
+        # 默认返回 ESG 分析结果
         return json.dumps({
             "overall_score": 45,
             "gaps": [
