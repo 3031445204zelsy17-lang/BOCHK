@@ -142,8 +142,10 @@
       "name": "Step 4 验收",
       "description": "企业画像自动匹配 BOCHK 产品 + AI 推荐理由合理",
       "dependencies": ["P3-2"],
-      "passes": false,
-      "assignee": "SYF"
+      "passes": true,
+      "assignee": "SYF",
+      "completed_at": "2026-06-09",
+      "note": "Playwright自动验收: 深圳电子厂→贸易融资99%/外汇管理99%/供应链93%/绿色融资89%, 推荐理由+建议+特色+材料均正常, 修复CORS 5174端口"
     },
     {
       "id": "P4-1",
