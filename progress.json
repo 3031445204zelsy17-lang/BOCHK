@@ -54,8 +54,10 @@
       "name": "FastAPI 后端骨架",
       "description": "FastAPI 入口 + CORS + config.py + llm_client.py + 三步 Mock API",
       "dependencies": ["P0-1", "P0-2"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-09",
+      "note": "main.py + config.py + llm_client.py + 3个Mock路由(profile/matching/esg), 端口8001"
     },
     {
       "id": "P1-2",
@@ -63,8 +65,10 @@
       "name": "React 前端骨架",
       "description": "Vite + React + Tailwind + shadcn/ui 初始化 + 向导布局 + 路由 + 进度条",
       "dependencies": ["P0-2"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-09",
+      "note": "Vite+React+Tailwind v4+Router, Header/Sidebar布局, 3个Step组件, Home+Wizard页面"
     },
     {
       "id": "P1-3",
@@ -72,8 +76,10 @@
       "name": "前后端联调验证",
       "description": "Mock API 跑通，前端能拿到假数据并渲染",
       "dependencies": ["P1-1", "P1-2"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-09",
+      "note": "3个Mock API curl测试通过, 前端build通过, API端口8001"
     },
     {
       "id": "P2-1",
