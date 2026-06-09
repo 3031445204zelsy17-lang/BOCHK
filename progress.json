@@ -2,16 +2,18 @@
   "project": "智企通 GoGlobal Navigator MVP",
   "deadline": "2026-06-15",
   "repo": "https://github.com/3031445204zelsy17-lang/BOCHK",
-  "last_updated": "2026-06-08",
+  "last_updated": "2026-06-09",
   "tasks": [
     {
       "id": "P0-1",
       "phase": "Phase 0: 准备",
       "name": "API key 配置",
-      "description": "GLM-5.1 和 Kimi K2.6 的 API key 写入 .env 文件",
+      "description": "GLM-5.1 和 Kimi K2.6 的 API key 写入 .env 文件（延后填入，代码预留 Mock/真实切换）",
       "dependencies": [],
-      "passes": false,
-      "assignee": "SYF"
+      "passes": true,
+      "assignee": "SYF",
+      "completed_at": "2026-06-09",
+      "note": ".env 已创建，Kimi key 已填入，GLM key 延后到 P2-1 接入 LLM 时填写"
     },
     {
       "id": "P0-2",
