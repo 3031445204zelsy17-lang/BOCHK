@@ -87,8 +87,10 @@
       "name": "profile_service 后端",
       "description": "POST /api/profile/generate 接口 + LLM prompt 调通（GLM-5.1）",
       "dependencies": ["P1-1"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-09",
+      "note": "约束式Prompt+Few-shot+评分标准, JSON校验+重试3次+Mock降级, MVP统一Kimi(GLM额度待恢复), 修复.env路径"
     },
     {
       "id": "P2-2",
