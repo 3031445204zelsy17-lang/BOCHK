@@ -1,4 +1,4 @@
-"""LLM 客户端 — 支持 mock/real 切换"""
+"""LLM 客户端 — 支持 mock/real 切换，MVP 统一使用 GLM-5.1"""
 
 import json
 import httpx
@@ -21,9 +21,30 @@ class LLMClient:
                 f"{settings.GLM_BASE_URL}/chat/completions",
                 headers={"Authorization": f"Bearer {settings.GLM_API_KEY}"},
                 json={
-                    "model": "glm-4-flash",
+                    "model": "glm-5.1",
                     "messages": messages,
                     "temperature": temperature,
+                },
+            )
+            resp.raise_for_status()
+            return resp.json()["choices"][0]["message"]["content"]
+
+    async def call_glm_json(
+        self, messages: list[dict], temperature: float = 0.3
+    ) -> str:
+        """调用 GLM-5.1 并强制返回 JSON 格式"""
+        if self.mode == "mock":
+            return self._mock_glm_response(messages)
+
+        async with httpx.AsyncClient(timeout=60) as client:
+            resp = await client.post(
+                f"{settings.GLM_BASE_URL}/chat/completions",
+                headers={"Authorization": f"Bearer {settings.GLM_API_KEY}"},
+                json={
+                    "model": "glm-5.1",
+                    "messages": messages,
+                    "temperature": temperature,
+                    "response_format": {"type": "json_object"},
                 },
             )
             resp.raise_for_status()

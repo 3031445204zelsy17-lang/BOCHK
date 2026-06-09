@@ -1,6 +1,11 @@
 """智企通 API 配置 — 使用 pydantic-settings 从 .env 加载"""
 
+from pathlib import Path
 from pydantic_settings import BaseSettings
+
+# .env 文件位于项目根目录（backend 的上级）
+_PROJECT_ROOT = Path(__file__).resolve().parent.parent.parent
+_ENV_FILE = _PROJECT_ROOT / ".env"
 
 
 class Settings(BaseSettings):
@@ -20,7 +25,7 @@ class Settings(BaseSettings):
     # CORS 允许的前端地址
     CORS_ORIGINS: list[str] = ["http://localhost:5173", "http://localhost:3000"]
 
-    model_config = {"env_file": ".env", "env_file_encoding": "utf-8"}
+    model_config = {"env_file": str(_ENV_FILE), "env_file_encoding": "utf-8"}
 
 
 # 全局单例
