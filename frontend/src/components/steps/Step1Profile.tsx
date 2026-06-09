@@ -26,7 +26,7 @@ const TEMPLATES: EnterpriseTemplate[] = [
       "专注于消费电子元器件制造，产品包括蓝牙耳机、充电器、智能手环配件。主要客户为国内品牌商，近三年开始向东南亚市场供货，年出口额约800万港币。",
     main_products: "蓝牙耳机、充电器、智能手环配件",
     target_markets: ["东南亚", "欧洲"],
-    annual_revenue: "HK$2000万-5000万",
+    annual_revenue: "HK$1000万-3000万",
     preset_profile: {
       industry_tags: ["电子制造", "消费电子", "电子元器件"],
       size_level: "中型",
