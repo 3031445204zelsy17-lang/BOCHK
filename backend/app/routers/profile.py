@@ -15,6 +15,8 @@ class ProfileRequest(BaseModel):
     size: str
     description: str
     export_experience: str
+    target_markets: list[str] = []
+    annual_revenue: str = ""
 
 
 class ProfileResponse(BaseModel):

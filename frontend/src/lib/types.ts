@@ -9,6 +9,8 @@ export interface CompanyInput {
   size: string
   description: string
   export_experience: string
+  target_markets: string[]
+  annual_revenue: string
 }
 
 /** 企业画像输出 */
@@ -19,6 +21,22 @@ export interface CompanyProfile {
   export_markets: string[]
   readiness_score: number
   tags: string[]
+}
+
+/** 企业预设模板（来自 mock_enterprises.json） */
+export interface EnterpriseTemplate {
+  id: string
+  name: string
+  template_name: string
+  industry: string
+  size: string
+  size_detail: string
+  export_experience: string
+  description: string
+  main_products: string
+  target_markets: string[]
+  annual_revenue: string
+  preset_profile: CompanyProfile
 }
 
 // ── Step 4: 服务匹配 ────────────────────────────────
