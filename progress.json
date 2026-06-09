@@ -98,8 +98,10 @@
       "name": "Step 1 前端",
       "description": "企业信息表单 + 预设企业模板选择 + 画像结果卡片（标签+指标+雷达图）",
       "dependencies": ["P1-2", "P2-1"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-09",
+      "note": "3模板快速填入 + 7字段表单(含目标市场多选/年营收) + recharts雷达图画像卡片 + card/btn-primary全局CSS + 后端同步2个可选字段"
     },
     {
       "id": "P2-3",
