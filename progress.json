@@ -197,8 +197,10 @@
       "name": "问卷审阅",
       "description": "确认问卷措辞中小企业能看懂，问题覆盖合理",
       "dependencies": ["P4-4"],
-      "passes": false,
-      "assignee": "SYF"
+      "passes": true,
+      "assignee": "SYF",
+      "completed_at": "2026-06-10",
+      "note": "SYF 审阅通过, 队友待看"
     },
     {
       "id": "P5-1",
@@ -272,8 +274,10 @@
       "name": "Step 5 验收",
       "description": "不同企业 + 不同国家测试，ESG 分析结果合理准确",
       "dependencies": ["P5-6"],
-      "passes": false,
-      "assignee": "SYF"
+      "passes": true,
+      "assignee": "SYF",
+      "completed_at": "2026-06-10",
+      "note": "SYF 审阅通过, 组件功能完整"
     },
     {
       "id": "P6-1",
@@ -281,8 +285,10 @@
       "name": "全流程联调 + bug fix",
       "description": "3 步向导端到端跑通，修复所有 bug",
       "dependencies": ["P2-2", "P3-2", "P5-6"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "Playwright E2E全流程通过(Step1→Step4→Step5), 修复ESG LLM JSON截断(四层解析+上下文长度控制+宽容校验)"
     },
     {
       "id": "P6-2",
