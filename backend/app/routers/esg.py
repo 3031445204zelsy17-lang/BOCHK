@@ -40,6 +40,8 @@ class ESGGap(BaseModel):
 class ESGResponse(BaseModel):
     """ESG 分析结果"""
     overall_score: int
+    category_scores: dict = {}    # {"E": 45, "S": 72, "G": 60}
+    grade: str = "C"              # "A" / "B" / "C"
     country: str
     standard: str
     gaps: list[ESGGap]
@@ -51,6 +53,8 @@ class ESGResponse(BaseModel):
 
 MOCK_ESG = {
     "overall_score": 45,
+    "category_scores": {"E": 30, "S": 55, "G": 60},
+    "grade": "C",
     "country": "泰国",
     "standard": "destination",
     "gaps": [

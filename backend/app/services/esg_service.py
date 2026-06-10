@@ -181,12 +181,13 @@ def _compute_base_score(
     questionnaire: list[dict],
     region: str,
     standard: str,
-) -> int:
+) -> tuple[int, dict[str, int]]:
     """从问卷选项的 score 值计算 E/S/G 加权总分。
 
     每题 0/1/2 (not_met/partial/met)
     加权：E 30% / S 35% / G 35%
     缺类按比例重分配权重
+    返回 (overall_score, {"E": 45, "S": 72, "G": 60})
     """
     # 构建 question_id → question dict 查找表
     q_map = {q["id"]: q for q in questionnaire}
@@ -219,7 +220,7 @@ def _compute_base_score(
         category_scores[cat][1] += 2  # 每题满分 2
 
     if not category_scores:
-        return 30  # 无有效回答时给个基础分
+        return 30, {}  # 无有效回答时给个基础分
 
     # 计算各类别百分比
     category_pcts = {}
@@ -234,7 +235,7 @@ def _compute_base_score(
     present_weight_sum = sum(CATEGORY_WEIGHTS.get(c, 0) for c in present_cats)
 
     if present_weight_sum == 0:
-        return 30
+        return 30, {}
 
     weighted_score = 0
     for cat in present_cats:
@@ -242,7 +243,19 @@ def _compute_base_score(
         normalized_weight = base_weight / present_weight_sum
         weighted_score += category_pcts[cat] * normalized_weight
 
-    return round(max(0, min(100, weighted_score)))
+    # 百分比取整
+    rounded_pcts = {cat: round(pct) for cat, pct in category_pcts.items()}
+
+    return round(max(0, min(100, weighted_score))), rounded_pcts
+
+
+def _score_to_grade(score: int) -> str:
+    """将数值分数映射为等级 A/B/C"""
+    if score >= 80:
+        return "A"
+    if score >= 60:
+        return "B"
+    return "C"
 
 
 # ── Prompt 构建 ─────────────────────────────────────────────
@@ -362,6 +375,8 @@ def _validate_response(data: dict) -> tuple[bool, str]:
 
 MOCK_FALLBACK = {
     "overall_score": 45,
+    "category_scores": {"E": 30, "S": 55, "G": 60},
+    "grade": "C",
     "gaps": [
         {
             "regulation": "碳排放报告",
@@ -438,6 +453,8 @@ async def analyze_esg(req) -> dict:
         logger.warning(f"未知目标国家: {req.target_country}")
         return {
             "overall_score": 0,
+            "category_scores": {},
+            "grade": "C",
             "country": req.target_country,
             "standard": req.standard,
             "gaps": [],
@@ -468,6 +485,8 @@ async def analyze_esg(req) -> dict:
         standard_display = STANDARD_DISPLAY.get(req.standard, req.standard)
         return {
             "overall_score": 0,
+            "category_scores": {},
+            "grade": "C",
             "country": region_display,
             "standard": req.standard,
             "gaps": [],
@@ -483,6 +502,8 @@ async def analyze_esg(req) -> dict:
         region_display = COUNTRY_DISPLAY.get(region, req.target_country)
         return {
             "overall_score": 0,
+            "category_scores": {},
+            "grade": "C",
             "country": region_display,
             "standard": req.standard,
             "gaps": [],
@@ -495,8 +516,8 @@ async def analyze_esg(req) -> dict:
     # 6. 构建法规上下文
     regulation_context = _build_regulation_context(regulation_ids)
 
-    # 7. 计算基础分
-    base_score = _compute_base_score(answers_dict, questionnaire, region, req.standard)
+    # 7. 计算基础分 + 分类得分
+    base_score, category_scores = _compute_base_score(answers_dict, questionnaire, region, req.standard)
 
     # 8. LLM 重试循环
     retry_error = None
@@ -518,6 +539,8 @@ async def analyze_esg(req) -> dict:
                 # 补充元数据
                 result["country"] = COUNTRY_DISPLAY.get(region, req.target_country)
                 result["standard"] = req.standard
+                result["category_scores"] = category_scores
+                result["grade"] = _score_to_grade(result["overall_score"])
                 # 缓存
                 _cache_put(cache_k, result)
                 logger.info(

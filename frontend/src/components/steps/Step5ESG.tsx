@@ -205,19 +205,8 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
           {REGION_NAMES[current.result.country] ?? current.result.country} · {activeTab === "destination" ? "目的地法规" : "BOCHK 准入"}标准
         </p>
 
-        {/* 总分 */}
-        <div className="card mb-6 flex items-center gap-6">
-          <div className="w-20 h-20 rounded-full border-4 flex items-center justify-center text-2xl font-bold"
-            style={{ borderColor: current.result.overall_score >= 70 ? "#22C55E" : current.result.overall_score >= 40 ? "#EAB308" : "#EF4444" }}>
-            {current.result.overall_score}
-          </div>
-          <div>
-            <div className="text-lg font-semibold">综合合规评分</div>
-            <div className="text-sm text-bochk-gray">
-              {current.result.overall_score >= 70 ? "合规状况良好" : current.result.overall_score >= 40 ? "部分合规，需改善" : "合规缺口较大，需重点关注"}
-            </div>
-          </div>
-        </div>
+        {/* 总分 + 等级 + 分项评分 */}
+        <ScoreBoard result={current.result} />
 
         {/* 缺口卡片 */}
         <div className="space-y-3 mb-6">
@@ -243,7 +232,7 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
         {otherResult && (
           <div className="p-3 bg-bochk-light rounded border border-bochk-border text-sm text-bochk-gray mb-4">
             <span>
-              {otherTab === "destination" ? "目的地法规分析" : "BOCHK 准入评估"}已完成（评分 {otherResult.overall_score}）
+              {otherTab === "destination" ? "目的地法规分析" : "BOCHK 准入评估"}已完成（评分 {otherResult.overall_score}，等级 {otherResult.grade ?? "—"}）
             </span>
             <button
               onClick={() => setActiveTab(otherTab)}
@@ -456,6 +445,84 @@ function QuestionCard({
         })}
       </div>
     </div>
+  )
+}
+
+// ── 子组件：评分看板（总分 + 等级 + E/S/G 分项） ─────────────
+
+/** 分数 → 交通灯颜色 */
+function scoreColor(score: number): string {
+  if (score >= 70) return "#22C55E"
+  if (score >= 40) return "#EAB308"
+  return "#EF4444"
+}
+
+/** 等级 → 样式 */
+const GRADE_STYLE: Record<string, string> = {
+  A: "bg-esg-green text-white",
+  B: "bg-esg-yellow text-white",
+  C: "bg-esg-red text-white",
+}
+
+/** 权重配置 */
+const WEIGHTS: Record<string, number> = { E: 30, S: 35, G: 35 }
+
+function ScoreBoard({ result }: { result: ESGAnalysis }) {
+  const grade = result.grade ?? (result.overall_score >= 80 ? "A" : result.overall_score >= 60 ? "B" : "C")
+  const catScores = result.category_scores ?? {}
+
+  return (
+    <>
+      {/* 总分 + 等级 */}
+      <div className="card mb-4 flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <div className="w-24 h-24 rounded-full border-4 flex flex-col items-center justify-center"
+            style={{ borderColor: scoreColor(result.overall_score) }}>
+            <span className="text-2xl font-bold">{result.overall_score}</span>
+            <span className="text-xs text-bochk-gray">分</span>
+          </div>
+          <div>
+            <div className="text-lg font-semibold">综合合规评分</div>
+            <div className="text-sm text-bochk-gray">
+              {result.overall_score >= 70 ? "合规状况良好" : result.overall_score >= 40 ? "部分合规，需改善" : "合规缺口较大，需重点关注"}
+            </div>
+          </div>
+        </div>
+        {/* 等级徽章 */}
+        <div className={`px-4 py-2 rounded text-center ${GRADE_STYLE[grade] ?? GRADE_STYLE.C}`}>
+          <div className="text-xs opacity-80">等级</div>
+          <div className="text-2xl font-bold">{grade}</div>
+        </div>
+      </div>
+
+      {/* E/S/G 分项评分 */}
+      <div className="card mb-6">
+        <div className="text-sm font-semibold mb-3">分项评分</div>
+        <div className="space-y-3">
+          {(["E", "S", "G"] as const).map((cat) => {
+            const cfg = CATEGORY_CONFIG[cat]
+            const s = catScores[cat] ?? 0
+            const w = WEIGHTS[cat]
+            return (
+              <div key={cat} className="flex items-center gap-3">
+                <span className={`w-6 h-6 rounded text-white text-xs flex items-center justify-center font-medium ${cfg.color}`}>
+                  {cat}
+                </span>
+                <span className="text-sm w-10">{cfg.label}</span>
+                <span className="text-xs text-bochk-gray w-10">({w}%)</span>
+                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                  <div className="rounded-full h-2 transition-all duration-500"
+                    style={{ width: `${Math.max(s, 0)}%`, backgroundColor: scoreColor(s) }} />
+                </div>
+                <span className="text-sm font-medium w-8 text-right" style={{ color: scoreColor(s) }}>
+                  {s}
+                </span>
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    </>
   )
 }
 

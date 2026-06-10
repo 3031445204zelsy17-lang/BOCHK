@@ -76,6 +76,8 @@ export interface ESGGap {
 /** ESG 分析结果 */
 export interface ESGAnalysis {
   overall_score: number
+  category_scores: Record<string, number>  // {"E": 45, "S": 72, "G": 60}
+  grade: string                            // "A" | "B" | "C"
   country: string
   standard: "destination" | "bochk"
   gaps: ESGGap[]
