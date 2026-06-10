@@ -228,8 +228,10 @@
       "name": "ESG 分析 API",
       "description": "POST /api/esg/analyze — 加载MD→筛选→约束式prompt(含few-shot)→LLM分析(Kimi K2.6) + 缓存 + 版本标记",
       "dependencies": ["P5-1", "P0-4"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "问卷regulation_mapping筛选法规+get_regulation_context()加载评估标准+约束式Prompt(13规则+Few-shot示例1)+Kimi K2.6(3次重试)+JSON校验(12字段+枚举值)+E30%/S35%/G35%加权评分(缺类重分配)+OrderedDict缓存(50条FIFO)+Mock降级兜底, TH real模式测试通过(LLM引用泰文法规原文)"
     },
     {
       "id": "P5-4",
