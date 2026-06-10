@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils"
 
 interface Step4Props {
   profile: CompanyProfile
-  onComplete: () => void
+  onComplete: (recommendations: ProductRecommendation[]) => void
 }
 
 // ── 匹配度等级 ──────────────────────────────────────
@@ -186,7 +186,7 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
       </div>
 
       {/* ═══ 下一步按钮 ══════════════════════════════ */}
-      <button onClick={onComplete} className="btn-primary w-full py-2.5 mt-6">
+      <button onClick={() => onComplete(recommendations)} className="btn-primary w-full py-2.5 mt-6">
         下一步：ESG 合规分析 →
       </button>
     </div>

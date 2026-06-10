@@ -2,7 +2,7 @@
   "project": "智企通 GoGlobal Navigator MVP",
   "deadline": "2026-06-15",
   "repo": "https://github.com/3031445204zelsy17-lang/BOCHK",
-  "last_updated": "2026-06-09",
+  "last_updated": "2026-06-10",
   "tasks": [
     {
       "id": "P0-1",
@@ -296,8 +296,10 @@
       "name": "进度看板",
       "description": "出海准备度总览：画像完整度 + 融资匹配度 + ESG 合规度",
       "dependencies": ["P6-1"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "ProgressDashboard组件(三列卡片+总进度条), Wizard状态提升(recommendations/esgResult), Step4/Step5 onComplete传结果数据"
     },
     {
       "id": "P6-3",
@@ -305,8 +307,10 @@
       "name": "引用来源可展开",
       "description": "每个分析卡片底部可展开的参考法规原文列表",
       "dependencies": ["P5-6"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "GapCard增强: 收起状态显示来源摘要行, 展开时三层可信度展示(法规原文白底+置信度标签/AI判断蓝底/AI建议绿底)"
     },
     {
       "id": "P6-4",
@@ -314,8 +318,10 @@
       "name": "改善路线图",
       "description": "按难度×重要性排序的改善建议时间线",
       "dependencies": ["P5-6"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "RoadmapTimeline组件: 竖向时间轴+紧急度/建议标签+红黄绿圆点+法规名+建议+难度/预计时间, 底部保留LLM综合建议"
     },
     {
       "id": "P6-5",
@@ -323,8 +329,10 @@
       "name": "落地页",
       "description": "产品名 + 简介 + 开始体验按钮",
       "dependencies": ["P6-1"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "品牌渐变Hero区+BOCHK标识+三列功能卡片(hover效果)+数据能力统计(5地区/71法规/8产品/3维度)+流程指示+双CTA按钮"
     },
     {
       "id": "P6-6",

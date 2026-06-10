@@ -67,7 +67,7 @@ function getTargetCountry(markets: string[]): string {
 // ── Props ───────────────────────────────────────────────────
 interface Step5Props {
   profile: CompanyProfile
-  onComplete: () => void
+  onComplete: (result: ESGAnalysis | null) => void
 }
 
 // ── 选项配置 ────────────────────────────────────────────────
@@ -215,13 +215,8 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
           ))}
         </div>
 
-        {/* 改善路线图 */}
-        {current.result.roadmap && (
-          <div className="card mb-6">
-            <h3 className="text-sm font-semibold mb-3">📋 改善路线图</h3>
-            <p className="text-sm text-bochk-dark whitespace-pre-line">{current.result.roadmap}</p>
-          </div>
-        )}
+        {/* 改善路线图时间线 */}
+        <RoadmapTimeline gaps={current.result.gaps} roadmap={current.result.roadmap} />
 
         {/* 免责声明 */}
         {current.result.disclaimer && (
@@ -248,7 +243,7 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
           <button onClick={handleReset} className="px-4 py-2 rounded border border-bochk-border text-sm hover:bg-gray-50 cursor-pointer">
             重新分析
           </button>
-          <button onClick={onComplete} className="btn-primary text-sm">
+          <button onClick={() => onComplete(current.result)} className="btn-primary text-sm">
             完成
           </button>
         </div>
@@ -538,6 +533,14 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
   }
   const sc = statusConfig[gap.status as keyof typeof statusConfig] ?? statusConfig.yellow
 
+  // 置信度标签样式
+  const confidenceStyle: Record<string, string> = {
+    high:   "bg-esg-green/10 text-esg-green",
+    medium: "bg-esg-yellow/10 text-esg-yellow",
+    low:    "bg-esg-red/10 text-esg-red",
+  }
+  const confidenceLabel: Record<string, string> = { high: "高", medium: "中", low: "低" }
+
   return (
     <div className={`card border-l-4 ${sc.borderColor} ${sc.bg}`}>
       <div className="flex items-center justify-between">
@@ -549,31 +552,57 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
         <span className="text-xs font-medium">{sc.label}</span>
       </div>
 
-      {/* AI 判断 */}
-      <p className="text-sm text-bochk-dark mt-2">{gap.ai_judgment} — {gap.gap_description}</p>
+      {/* AI 判断（蓝色层） */}
+      <div className="mt-2 p-2 bg-bochk-blue/5 rounded border border-bochk-blue/10">
+        <p className="text-sm text-bochk-dark">{gap.ai_judgment} — {gap.gap_description}</p>
+      </div>
+
+      {/* 收起状态：来源摘要行 */}
+      {!expanded && (
+        <div className="flex items-center justify-between mt-2">
+          <div className="text-xs text-bochk-gray truncate max-w-[80%]">
+            📄 {gap.source_ref}
+          </div>
+          <button onClick={() => setExpanded(true)} className="text-xs text-bochk-blue cursor-pointer hover:underline shrink-0 ml-2">
+            查看详情 ▼
+          </button>
+        </div>
+      )}
 
       {/* 展开详情 */}
-      {!expanded ? (
-        <button onClick={() => setExpanded(true)} className="text-xs text-bochk-blue mt-2 cursor-pointer hover:underline">
-          查看详情 ▼
-        </button>
-      ) : (
+      {expanded && (
         <>
           {/* 法规原文（白色层） */}
-          <div className="mt-3 p-2 bg-white rounded border border-bochk-border">
-            <div className="text-xs text-bochk-gray mb-1">📄 法规原文</div>
-            <p className="text-xs text-bochk-dark">{gap.source_text}</p>
-            <p className="text-xs text-bochk-gray mt-1">来源: {gap.source_ref}</p>
+          <div className="mt-3 p-3 bg-white rounded border border-bochk-border">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-bochk-dark">📄 法规原文</span>
+              {gap.confidence && (
+                <span className={`px-1.5 py-0.5 rounded text-xs ${confidenceStyle[gap.confidence] ?? ""}`}>
+                  置信度: {confidenceLabel[gap.confidence] ?? gap.confidence}
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-bochk-dark leading-relaxed">{gap.source_text}</p>
+            <div className="mt-2 pt-2 border-t border-bochk-border flex items-center gap-1">
+              <span className="text-xs text-bochk-gray">📎 来源:</span>
+              <span className="text-xs text-bochk-blue">{gap.source_ref}</span>
+            </div>
           </div>
 
           {/* AI 建议（绿色层） */}
-          <div className="mt-2 p-2 bg-esg-green/5 rounded border border-esg-green/20">
-            <div className="text-xs text-esg-green mb-1">💡 AI 建议</div>
-            <p className="text-xs text-bochk-dark">{gap.suggestion}</p>
-            <div className="flex gap-4 mt-1 text-xs text-bochk-gray">
-              <span>难度: {gap.difficulty}</span>
-              <span>预计: {gap.estimated_time}</span>
-              <span>置信度: {gap.suggestion_confidence}</span>
+          <div className="mt-2 p-3 bg-esg-green/5 rounded border border-esg-green/20">
+            <div className="flex items-center gap-2 mb-2">
+              <span className="text-xs font-medium text-esg-green">💡 AI 建议</span>
+              {gap.suggestion_confidence && (
+                <span className={`px-1.5 py-0.5 rounded text-xs ${confidenceStyle[gap.suggestion_confidence] ?? ""}`}>
+                  建议置信度: {confidenceLabel[gap.suggestion_confidence] ?? gap.suggestion_confidence}
+                </span>
+              )}
+            </div>
+            <p className="text-sm text-bochk-dark leading-relaxed">{gap.suggestion}</p>
+            <div className="flex gap-4 mt-2 text-xs text-bochk-gray">
+              <span>⚡ 难度: {gap.difficulty}</span>
+              <span>⏱ 预计: {gap.estimated_time}</span>
             </div>
           </div>
 
@@ -581,6 +610,99 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
             收起 ▲
           </button>
         </>
+      )}
+    </div>
+  )
+}
+
+// ── 子组件：改善路线图时间线 ──────────────────────────────────
+
+/** 难度 → 数值（用于排序） */
+const DIFFICULTY_ORDER: Record<string, number> = {
+  "高": 3, "困难": 3, "较高": 3, "high": 3,
+  "中": 2, "中等": 2, "medium": 2,
+  "低": 1, "容易": 1, "较低": 1, "low": 1,
+}
+
+/** 状态 → 紧急度 */
+const STATUS_URGENCY: Record<string, number> = { red: 3, yellow: 2, green: 1 }
+
+/** 紧急度 → 颜色和标签 */
+const URGENCY_CONFIG = [
+  { key: "urgent", label: "🔴 立即行动", color: "bg-esg-red", dotColor: "bg-esg-red", borderColor: "border-esg-red" },
+  { key: "short",   label: "🟡 短期改善", color: "bg-esg-yellow", dotColor: "bg-esg-yellow", borderColor: "border-esg-yellow" },
+  { key: "medium",  label: "🟢 长期规划",  color: "bg-esg-green", dotColor: "bg-esg-green", borderColor: "border-esg-green" },
+] as const
+
+function RoadmapTimeline({ gaps, roadmap }: { gaps: ESGAnalysis["gaps"]; roadmap?: string }) {
+  // 筛选非绿色缺口，按紧急度×难度排序
+  const actionGaps = gaps
+    .filter((g) => g.status !== "green")
+    .map((g) => ({
+      ...g,
+      urgency: STATUS_URGENCY[g.status] ?? 1,
+      difficultyScore: DIFFICULTY_ORDER[g.difficulty] ?? 2,
+    }))
+    .sort((a, b) => {
+      // 先按紧急度降序，再按难度降序
+      if (a.urgency !== b.urgency) return b.urgency - a.urgency
+      return b.difficultyScore - a.difficultyScore
+    })
+
+  if (actionGaps.length === 0 && !roadmap) return null
+
+  return (
+    <div className="card mb-6">
+      <h3 className="text-sm font-semibold mb-4">📋 改善路线图</h3>
+
+      {actionGaps.length > 0 ? (
+        <div className="relative pl-6">
+          {/* 竖向时间轴线 */}
+          <div className="absolute left-2 top-1 bottom-1 w-0.5 bg-gray-200" />
+
+          <div className="space-y-4">
+            {actionGaps.map((gap, i) => {
+              const urgency = gap.status === "red" ? 0 : gap.status === "yellow" ? 1 : 2
+              const cfg = URGENCY_CONFIG[urgency]
+              return (
+                <div key={i} className="relative">
+                  {/* 时间轴圆点 */}
+                  <div className={`absolute -left-6 top-1 w-4 h-4 rounded-full ${cfg.dotColor} border-2 border-white shadow-sm`} />
+
+                  {/* 内容卡片 */}
+                  <div className={`p-3 rounded border ${cfg.borderColor}/30 bg-white`}>
+                    <div className="flex items-center justify-between mb-1">
+                      <div className="flex items-center gap-2">
+                        <span className={`px-1.5 py-0.5 rounded text-xs text-white ${cfg.color}`}>
+                          {gap.status === "red" ? "紧急" : "建议"}
+                        </span>
+                        <span className="text-sm font-medium text-bochk-dark">{gap.regulation}</span>
+                        <span className="text-xs text-bochk-gray">({gap.category})</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-bochk-dark mt-1">{gap.suggestion}</p>
+                    <div className="flex gap-3 mt-2 text-xs text-bochk-gray">
+                      <span>⚡ {gap.difficulty}</span>
+                      <span>⏱ {gap.estimated_time}</span>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      ) : (
+        <div className="text-sm text-esg-green text-center py-3">
+          ✅ 所有合规项已满足，暂无改善建议
+        </div>
+      )}
+
+      {/* LLM 综合说明 */}
+      {roadmap && (
+        <div className="mt-4 pt-3 border-t border-bochk-border">
+          <div className="text-xs font-medium text-bochk-gray mb-2">📋 综合建议</div>
+          <p className="text-sm text-bochk-dark whitespace-pre-line">{roadmap}</p>
+        </div>
       )}
     </div>
   )

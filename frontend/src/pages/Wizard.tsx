@@ -1,12 +1,13 @@
 /** 向导页面 — 三步出海导航主容器 */
 
 import { useState } from "react"
-import type { WizardStep, CompanyProfile } from "@/lib/types"
+import type { WizardStep, CompanyProfile, ProductRecommendation, ESGAnalysis } from "@/lib/types"
 import Header from "@/components/layout/Header"
 import Sidebar from "@/components/layout/Sidebar"
 import Step1Profile from "@/components/steps/Step1Profile"
 import Step4Matching from "@/components/steps/Step4Matching"
 import Step5ESG from "@/components/steps/Step5ESG"
+import ProgressDashboard from "@/components/shared/ProgressDashboard"
 
 export default function Wizard() {
   const [currentStep, setCurrentStep] = useState<WizardStep>(1)
@@ -15,6 +16,10 @@ export default function Wizard() {
   const [matchingCompleted, setMatchingCompleted] = useState(false)
   const [esgCompleted, setEsgCompleted] = useState(false)
 
+  // 各步骤结果数据（用于进度看板）
+  const [recommendations, setRecommendations] = useState<ProductRecommendation[] | null>(null)
+  const [esgResult, setEsgResult] = useState<ESGAnalysis | null>(null)
+
   // Step 1 完成 → 保存画像，跳到 Step 4
   const handleProfileComplete = (p: CompanyProfile) => {
     setProfile(p)
@@ -22,14 +27,16 @@ export default function Wizard() {
     setCurrentStep(4)
   }
 
-  // Step 4 完成 → 跳到 Step 5
-  const handleMatchingComplete = () => {
+  // Step 4 完成 → 保存推荐结果，跳到 Step 5
+  const handleMatchingComplete = (recs: ProductRecommendation[]) => {
+    setRecommendations(recs)
     setMatchingCompleted(true)
     setCurrentStep(5)
   }
 
-  // Step 5 完成
-  const handleESGComplete = () => {
+  // Step 5 完成 → 保存 ESG 结果
+  const handleESGComplete = (result: ESGAnalysis | null) => {
+    setEsgResult(result)
     setEsgCompleted(true)
   }
 
@@ -47,6 +54,16 @@ export default function Wizard() {
 
         {/* 主内容区 */}
         <main className="flex-1 p-8 overflow-y-auto">
+          {/* 进度看板 — 有任一步完成时显示 */}
+          <ProgressDashboard
+            profileCompleted={profileCompleted}
+            profile={profile}
+            matchingCompleted={matchingCompleted}
+            recommendations={recommendations}
+            esgCompleted={esgCompleted}
+            esgResult={esgResult}
+          />
+
           {currentStep === 1 && (
             <Step1Profile onComplete={handleProfileComplete} />
           )}
