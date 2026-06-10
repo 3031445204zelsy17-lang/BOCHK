@@ -161,15 +161,31 @@ def _resolve_regulation_ids(
 
 # ── 法规上下文构建 ──────────────────────────────────────────
 
-def _build_regulation_context(regulation_ids: list[str]) -> str:
-    """对每个法规 ID 调用 get_regulation_context()，拼成 Prompt 文本"""
+def _build_regulation_context(regulation_ids: list[str], max_total: int = 6000) -> str:
+    """对每个法规 ID 调用 get_regulation_context()，拼成 Prompt 文本。
+
+    总长度控制在 max_total 字符以内，避免 prompt 过长导致 LLM 输出截断。
+    法规数量过多时，每条法规按比例压缩。
+    """
+    if not regulation_ids:
+        return ""
+
+    # 每条法规的上限 = 总上限 / 法规数，最少 200 字
+    per_max = max(200, max_total // len(regulation_ids))
+
     parts = []
+    total_len = 0
     for rid in regulation_ids:
-        ctx = get_regulation_context(rid)
+        ctx = get_regulation_context(rid, max_len=per_max)
         if ctx:
             parts.append(f"--- 法规 {rid} ---\n{ctx}")
+            total_len += len(ctx) + 20  # 20 = 分隔行的大致长度
         else:
             logger.warning(f"法规 {rid} 无内容，跳过")
+
+        if total_len >= max_total:
+            logger.info(f"法规上下文已达 {max_total} 字符上限，截断剩余法规")
+            break
 
     return "\n\n".join(parts)
 
@@ -321,6 +337,120 @@ def _build_messages(
     return messages
 
 
+# ── LLM JSON 解析（含修复逻辑） ────────────────────────────────
+
+import re
+
+
+def _parse_llm_json(raw: str) -> dict:
+    """解析 LLM 返回的 JSON，支持多种修复策略。
+
+    1. 直接 json.loads
+    2. 提取 ```json ... ``` 代码块
+    3. 查找第一个 { 到最后一个 } 的子串
+    4. 截断修复：补全未闭合的字符串/数组/对象
+    """
+    raw = raw.strip()
+
+    # 策略 1：直接解析
+    try:
+        return json.loads(raw)
+    except json.JSONDecodeError:
+        pass
+
+    # 策略 2：提取 markdown 代码块
+    code_block = re.search(r"```(?:json)?\s*\n?(.*?)```", raw, re.DOTALL)
+    if code_block:
+        try:
+            return json.loads(code_block.group(1).strip())
+        except json.JSONDecodeError:
+            pass
+
+    # 策略 3：提取第一个 { 到最后一个 }
+    start = raw.find("{")
+    end = raw.rfind("}")
+    if start >= 0 and end > start:
+        substring = raw[start:end + 1]
+        try:
+            return json.loads(substring)
+        except json.JSONDecodeError:
+            # 策略 4：截断修复
+            return _repair_truncated_json(substring)
+
+    raise json.JSONDecodeError("无法从 LLM 输出中提取有效 JSON", raw, 0)
+
+
+def _repair_truncated_json(s: str) -> dict:
+    """修复被截断的 JSON：补全未闭合的字符串、数组、对象。
+
+    常见场景：LLM 输出 token 不够，JSON 在某个字段值中间被截断。
+    策略：从末尾向前找到最后一个完整的 gap 对象，截断并补全。
+    """
+    # 尝试直接修复：逐层闭合
+    repaired = s.rstrip()
+
+    # 去掉末尾的尾部逗号
+    repaired = repaired.rstrip().rstrip(",")
+
+    # 计算未闭合的括号/引号，尝试补全
+    # 找到最后一个完整的 key-value 对
+    # 策略：找到最后一个 "estimated_time" 或 "difficulty" 字段结束的位置
+    # （这些是 gap 对象的尾部字段）
+
+    # 先尝试找到最后一个完整的 }, 然后补全外层结构
+    last_complete_obj = repaired.rfind("}")
+    if last_complete_obj < 0:
+        raise json.JSONDecodeError("JSON 无闭合对象", s, 0)
+
+    # 截取到最后一个完整的 } 之后，尝试补全
+    truncated = repaired[:last_complete_obj + 1]
+
+    # 计算需要闭合的层级
+    open_braces = truncated.count("{") - truncated.count("}")
+    open_brackets = truncated.count("[") - truncated.count("]")
+
+    # 补全闭合
+    truncated += "]" * max(open_brackets, 0)
+    truncated += "}" * max(open_braces, 0)
+
+    try:
+        result = json.loads(truncated)
+        logger.info(f"JSON 截断修复成功: 原始长度={len(s)}, 修复后长度={len(truncated)}")
+        return result
+    except json.JSONDecodeError:
+        pass
+
+    # 最后手段：找所有完整 gap 对象，手动拼装
+    gap_pattern = re.compile(
+        r'\{\s*"regulation"\s*:.*?"estimated_time"\s*:\s*"[^"]*"\s*\}',
+        re.DOTALL,
+    )
+    gaps_found = gap_pattern.findall(truncated)
+    if gaps_found:
+        # 尝试解析每个 gap
+        valid_gaps = []
+        for g in gaps_found:
+            try:
+                valid_gaps.append(json.loads(g))
+            except json.JSONDecodeError:
+                continue
+        if valid_gaps:
+            # 从截断文本中提取 overall_score
+            score_match = re.search(r'"overall_score"\s*:\s*(\d+)', truncated)
+            score = int(score_match.group(1)) if score_match else 50
+            # 提取 roadmap 和 disclaimer
+            roadmap_match = re.search(r'"roadmap"\s*:\s*"([^"]*)"', truncated)
+            disclaimer_match = re.search(r'"disclaimer"\s*:\s*"([^"]*)"', truncated)
+            return {
+                "overall_score": score,
+                "gaps": valid_gaps,
+                "roadmap": roadmap_match.group(1) if roadmap_match else "请基于上述分析制定改善计划。",
+                "disclaimer": disclaimer_match.group(1) if disclaimer_match else "以上分析由AI生成，仅供参考，不构成法律或合规建议。",
+            }
+
+    raise json.JSONDecodeError("JSON 修复失败", s, 0)
+
+
 # ── 响应校验 ────────────────────────────────────────────────
 
 _GAP_REQUIRED_FIELDS = {
@@ -335,38 +465,56 @@ _VALID_CONFIDENCES = {"high", "medium", "low"}
 
 
 def _validate_response(data: dict) -> tuple[bool, str]:
-    """校验 LLM 返回的 ESG 分析 JSON"""
+    """校验 LLM 返回的 ESG 分析 JSON（宽容模式：缺失的文本字段自动补全）"""
     # 顶层字段
     if "overall_score" not in data:
         return False, "缺少 overall_score"
-    if not isinstance(data["overall_score"], int) or not (0 <= data["overall_score"] <= 100):
-        return False, f"overall_score 无效: {data['overall_score']}"
+    if not isinstance(data["overall_score"], (int, float)) or not (0 <= data["overall_score"] <= 100):
+        # 尝试将 float 转为 int
+        try:
+            data["overall_score"] = int(data["overall_score"])
+        except (ValueError, TypeError):
+            return False, f"overall_score 无效: {data['overall_score']}"
 
     if "gaps" not in data or not isinstance(data["gaps"], list):
         return False, "缺少或 gaps 不是数组"
     if len(data["gaps"]) == 0:
         return False, "gaps 不能为空"
 
-    if "roadmap" not in data or not isinstance(data["roadmap"], str):
-        return False, "缺少 roadmap"
+    # 自动补全可能被截断的文本字段
+    if "roadmap" not in data or not isinstance(data.get("roadmap"), str) or not data.get("roadmap"):
+        data["roadmap"] = "请基于上述缺口分析，按由易到难顺序分阶段制定改善计划。"
+    if "disclaimer" not in data or not isinstance(data.get("disclaimer"), str) or not data.get("disclaimer"):
+        data["disclaimer"] = "以上分析由AI生成，仅供参考，不构成法律或合规建议。"
 
-    if "disclaimer" not in data or not isinstance(data["disclaimer"], str):
-        return False, "缺少 disclaimer"
-
-    # 每个 gap 的字段
+    # 每个 gap 的字段（宽容模式：缺失字段用默认值填充）
     for i, gap in enumerate(data["gaps"]):
+        # 填充缺失的可选文本字段
+        for field, default in [
+            ("source_text", "（法规原文未完整引用）"),
+            ("source_ref", "（来源待补充）"),
+            ("ai_judgment", "（判断说明待补充）"),
+            ("gap_description", "（缺口描述待补充）"),
+            ("suggestion", "（建议待补充）"),
+            ("estimated_time", "时间待评估"),
+            ("difficulty", "中等"),
+        ]:
+            if field not in gap or not gap[field]:
+                gap[field] = default
+
+        # 校验必须的枚举字段
         missing = _GAP_REQUIRED_FIELDS - set(gap.keys())
         if missing:
             return False, f"第 {i + 1} 个 gap 缺少字段: {missing}"
 
-        if gap["category"] not in _VALID_CATEGORIES:
+        if gap.get("category") not in _VALID_CATEGORIES:
             return False, f"第 {i + 1} 个 gap category 无效: {gap['category']}"
-        if gap["status"] not in _VALID_STATUSES:
+        if gap.get("status") not in _VALID_STATUSES:
             return False, f"第 {i + 1} 个 gap status 无效: {gap['status']}"
-        if gap["confidence"] not in _VALID_CONFIDENCES:
-            return False, f"第 {i + 1} 个 gap confidence 无效: {gap['confidence']}"
-        if gap["suggestion_confidence"] not in _VALID_CONFIDENCES:
-            return False, f"第 {i + 1} 个 gap suggestion_confidence 无效: {gap['suggestion_confidence']}"
+        if gap.get("confidence") not in _VALID_CONFIDENCES:
+            gap["confidence"] = "medium"
+        if gap.get("suggestion_confidence") not in _VALID_CONFIDENCES:
+            gap["suggestion_confidence"] = "medium"
 
     return True, ""
 
@@ -530,8 +678,8 @@ async def analyze_esg(req) -> dict:
             )
             raw = await llm_client.call_kimi(messages, temperature=0.3)
 
-            # 解析 JSON
-            result = json.loads(raw)
+            # 解析 JSON（含修复逻辑）
+            result = _parse_llm_json(raw)
 
             # 校验格式
             ok, err = _validate_response(result)
