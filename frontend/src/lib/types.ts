@@ -83,6 +83,26 @@ export interface ESGAnalysis {
   disclaimer: string
 }
 
+// ── Step 5: ESG 问卷 ───────────────────────────────
+
+/** 问卷选项 */
+export interface QuestionOption {
+  label: string
+  value: "met" | "partial" | "not_met"
+  score: number
+}
+
+/** 问卷问题 */
+export interface Question {
+  id: string
+  category: "E" | "S" | "G"
+  question: string
+  hint: string
+  options: QuestionOption[]
+  applicable_regions?: string[]
+  regulation_mapping: Record<string, string[]> | string[]
+}
+
 // ── 通用 ────────────────────────────────────────────
 
 /** 向导步骤 */

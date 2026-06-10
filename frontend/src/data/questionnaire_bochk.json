@@ -1,0 +1,62 @@
+[
+  {
+    "id": "B1",
+    "category": "E",
+    "question": "贵公司是否了解香港绿色金融分类标准（HKMA Taxonomy）及其对行业的绿色定义？",
+    "hint": "HKMA Taxonomy 为电力、交通、建筑、水务等行业提供了绿色的技术筛选标准，Phase 2A 新增了制造业和 ICT",
+    "options": [
+      {"label": "了解 HKMA Taxonomy 框架，并参考其评估项目的绿色程度", "value": "met", "score": 2},
+      {"label": "知道分类标准存在但未深入了解", "value": "partial", "score": 1},
+      {"label": "不了解绿色金融分类标准", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_001", "bochk_gf_002", "bochk_gf_003"]
+  },
+  {
+    "id": "B2",
+    "category": "E",
+    "question": "贵公司是否了解 BOCHK 的绿色贷款和可持续发展关联贷款产品及其申请条件？",
+    "hint": "BOCHK 提供绿色贷款（用于指定绿色项目）和可持续发展关联贷款（与ESG绩效挂钩）",
+    "options": [
+      {"label": "了解产品类型、申请条件和所需材料", "value": "met", "score": 2},
+      {"label": "知道有相关产品但未了解细节", "value": "partial", "score": 1},
+      {"label": "不了解 BOCHK 绿色金融产品", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_007", "bochk_gf_008", "bochk_gf_009"]
+  },
+  {
+    "id": "B3",
+    "category": "E",
+    "question": "贵公司是否已评估自身业务活动是否符合绿色/转型金融的技术筛选标准？",
+    "hint": "包括 DNSH（不造成重大损害）原则和最低保障要求",
+    "options": [
+      {"label": "已对照 Taxonomy 标准评估自身业务的绿色资格", "value": "met", "score": 2},
+      {"label": "了解需要评估但尚未执行", "value": "partial", "score": 1},
+      {"label": "不了解技术筛选标准", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_003", "bochk_gf_005", "bochk_gf_006"]
+  },
+  {
+    "id": "B4",
+    "category": "G",
+    "question": "贵公司是否了解香港绿色融资生态体系（HKMA Taxonomy → HKEX 披露 → 银行产品）的联动关系？",
+    "hint": "绿色融资生态分三层：分类标准定义什么是绿色 → 交易所披露要求透明度 → 银行产品提供资本",
+    "options": [
+      {"label": "全面了解三层联动关系", "value": "met", "score": 2},
+      {"label": "了解部分环节", "value": "partial", "score": 1},
+      {"label": "不了解绿色融资生态", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_010"]
+  },
+  {
+    "id": "B5",
+    "category": "G",
+    "question": "贵公司是否已发布或准备按 HKEX ESG 报告守则发布 ESG 报告（含气候相关披露）？",
+    "hint": "HKEX Appendix C2 要求上市发行人在年报同时发布 ESG 报告，Part D 要求气候相关披露",
+    "options": [
+      {"label": "已按 HKEX 要求发布完整的 ESG 报告（含 Part D 气候披露）", "value": "met", "score": 2},
+      {"label": "已发布 ESG 报告但未完全符合 HKEX 要求", "value": "partial", "score": 1},
+      {"label": "未发布 ESG 报告", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_004", "bochk_gf_005"]
+  }
+]

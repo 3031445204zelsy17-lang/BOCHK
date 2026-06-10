@@ -7,6 +7,7 @@ interface SidebarProps {
   onStepChange: (step: WizardStep) => void
   profileCompleted: boolean
   matchingCompleted: boolean
+  esgCompleted: boolean
 }
 
 const STEPS: { step: WizardStep; label: string; desc: string }[] = [
@@ -20,6 +21,7 @@ export default function Sidebar({
   onStepChange,
   profileCompleted,
   matchingCompleted,
+  esgCompleted,
 }: SidebarProps) {
   // 判断步骤是否可点击（前置步骤已完成）
   const canClick = (step: WizardStep): boolean => {
@@ -69,11 +71,13 @@ export default function Sidebar({
             className="bg-bochk-red rounded-full h-1.5 transition-all duration-300"
             style={{
               width: `${
-                profileCompleted && matchingCompleted
+                esgCompleted
                   ? 100
-                  : profileCompleted
-                    ? 50
-                    : 10
+                  : profileCompleted && matchingCompleted
+                    ? 70
+                    : profileCompleted
+                      ? 40
+                      : 10
               }%`,
             }}
           />

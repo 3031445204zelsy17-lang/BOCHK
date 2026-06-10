@@ -114,7 +114,10 @@ async def analyze_esg(req: ESGRequest):
             "thailand": "泰国",
             "singapore": "新加坡",
             "hong_kong": "香港",
-            "eu": "欧盟"
+            "eu": "欧盟",
+            "sg": "新加坡",
+            "th": "泰国",
+            "hk": "香港",
         }
         result["country"] = country_map.get(req.target_country, req.target_country)
         result["standard"] = req.standard

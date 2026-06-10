@@ -13,6 +13,7 @@ export default function Wizard() {
   const [profile, setProfile] = useState<CompanyProfile | null>(null)
   const [profileCompleted, setProfileCompleted] = useState(false)
   const [matchingCompleted, setMatchingCompleted] = useState(false)
+  const [esgCompleted, setEsgCompleted] = useState(false)
 
   // Step 1 完成 → 保存画像，跳到 Step 4
   const handleProfileComplete = (p: CompanyProfile) => {
@@ -27,6 +28,11 @@ export default function Wizard() {
     setCurrentStep(5)
   }
 
+  // Step 5 完成
+  const handleESGComplete = () => {
+    setEsgCompleted(true)
+  }
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -36,6 +42,7 @@ export default function Wizard() {
           onStepChange={setCurrentStep}
           profileCompleted={profileCompleted}
           matchingCompleted={matchingCompleted}
+          esgCompleted={esgCompleted}
         />
 
         {/* 主内容区 */}
@@ -49,7 +56,9 @@ export default function Wizard() {
               onComplete={handleMatchingComplete}
             />
           )}
-          {currentStep === 5 && profile && <Step5ESG profile={profile} />}
+          {currentStep === 5 && profile && (
+            <Step5ESG profile={profile} onComplete={handleESGComplete} />
+          )}
         </main>
       </div>
     </div>
