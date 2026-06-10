@@ -141,9 +141,11 @@
       {"label": "有基本员工统计但维度不完整", "value": "partial", "score": 1},
       {"label": "未进行分类员工数据统计", "value": "not_met", "score": 0}
     ],
-    "applicable_regions": ["HK"],
+    "applicable_regions": ["HK", "SG", "TH"],
     "regulation_mapping": {
-      "HK": ["hk_013"]
+      "HK": ["hk_013"],
+      "SG": ["sg_008"],
+      "TH": ["th_008"]
     }
   },
   {
@@ -156,9 +158,11 @@
       {"label": "有记录但数据不完整或未披露", "value": "partial", "score": 1},
       {"label": "未系统记录安全事故数据", "value": "not_met", "score": 0}
     ],
-    "applicable_regions": ["HK"],
+    "applicable_regions": ["HK", "SG", "TH"],
     "regulation_mapping": {
-      "HK": ["hk_013"]
+      "HK": ["hk_013"],
+      "SG": ["sg_007"],
+      "TH": ["th_009"]
     }
   },
   {
@@ -171,9 +175,11 @@
       {"label": "有培训但未系统记录数据", "value": "partial", "score": 1},
       {"label": "没有正式的员工培训计划", "value": "not_met", "score": 0}
     ],
-    "applicable_regions": ["HK"],
+    "applicable_regions": ["HK", "SG", "TH"],
     "regulation_mapping": {
-      "HK": ["hk_013"]
+      "HK": ["hk_013"],
+      "SG": ["sg_008"],
+      "TH": ["th_008"]
     }
   },
   {
@@ -186,9 +192,11 @@
       {"label": "有基本的供应商管理但未涵盖 ESG 风险", "value": "partial", "score": 1},
       {"label": "没有供应链 ESG 管理制度", "value": "not_met", "score": 0}
     ],
-    "applicable_regions": ["HK"],
+    "applicable_regions": ["HK", "SG", "TH"],
     "regulation_mapping": {
-      "HK": ["hk_014"]
+      "HK": ["hk_014"],
+      "SG": ["sg_007"],
+      "TH": ["th_009", "th_015"]
     }
   },
   {
