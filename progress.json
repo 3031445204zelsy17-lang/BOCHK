@@ -239,8 +239,10 @@
       "name": "双标准 tab 切换",
       "description": "目的地法规 + BOCHK 准入两套独立分析，tab 切换",
       "dependencies": ["P5-3"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "Step5ESG状态从共享拆分为按tab隔离的tabState(destination/bochk各独立answers+result+hints), tab按钮显示(已完成)/(3/18)状态, 结果页交叉提示另一tab评分+快速切换"
     },
     {
       "id": "P5-5",
