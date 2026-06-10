@@ -1,0 +1,8 @@
+[build]
+dockerfile = "Dockerfile"
+
+[deploy]
+# Railway 自动分配端口，通过 PORT 环境变量传递
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"

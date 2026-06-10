@@ -8,7 +8,12 @@ import type {
   QuestionAnswer,
 } from "./types"
 
-const API_BASE = "http://localhost:8001/api"
+// 部署时设 VITE_API_BASE="" (同源) 或具体 URL；本地默认 localhost
+const _BASE = import.meta.env.VITE_API_BASE !== undefined
+  ? import.meta.env.VITE_API_BASE
+  : "http://localhost:8001"
+
+const API_BASE = _BASE + "/api"
 
 // ── Step 1: 企业画像 ────────────────────────────────
 
@@ -59,7 +64,7 @@ export async function analyzeESG(data: {
 
 export async function healthCheck(): Promise<boolean> {
   try {
-    const res = await fetch("http://localhost:8001/")
+    const res = await fetch(`${_BASE}/`)
     return res.ok
   } catch {
     return false
