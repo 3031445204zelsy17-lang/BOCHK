@@ -15,5 +15,8 @@ dist/
 .vscode/
 .idea/
 
+# Railway 本地配置
+.railway/
+
 # OS
 .DS_Store
