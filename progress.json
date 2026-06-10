@@ -340,8 +340,10 @@
       "name": "最终验收",
       "description": "完整 3 步流程跑通，UI 正常，数据合理",
       "dependencies": ["P6-1", "P6-2", "P6-3", "P6-4", "P6-5"],
-      "passes": false,
-      "assignee": "SYF"
+      "passes": true,
+      "assignee": "SYF",
+      "completed_at": "2026-06-10",
+      "note": "Playwright E2E全流程通过(Step1→Step4→Step5), 修复S维度缺失bug(S1-S4仅适用HK→扩展至SG/TH), 评分从52C升至63B, 9张验收截图已保存"
     },
     {
       "id": "P7-1",
