@@ -1,4 +1,4 @@
-/** Step 5: ESG 合规分析 — 问卷 + 结果展示 */
+/** Step 5: ESG 合规分析 — 双标准独立分析（目的地法规 + BOCHK 准入） */
 
 import { useState, useMemo } from "react"
 import type { CompanyProfile, ESGAnalysis, Question } from "@/lib/types"
@@ -9,6 +9,15 @@ import bochkQuestions from "@/data/questionnaire_bochk.json"
 // ── 类型断言 ────────────────────────────────────────────────
 const DEST_QUESTIONS = destinationQuestions as Question[]
 const BOCHK_QUESTIONS = bochkQuestions as Question[]
+
+// ── Tab 键类型 & 按 Tab 隔离的数据结构 ──────────────────────
+type TabKey = "destination" | "bochk"
+
+interface TabData {
+  answers: Record<string, string>   // question_id → "met"|"partial"|"not_met"
+  result: ESGAnalysis | null
+  expandedHints: Set<string>
+}
 
 // ── 市场名 → 地区代码映射 ───────────────────────────────────
 const MARKET_TO_REGIONS: Record<string, string[]> = {
@@ -77,15 +86,18 @@ const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
 // ── 主组件 ──────────────────────────────────────────────────
 export default function Step5ESG({ profile, onComplete }: Step5Props) {
   // Tab: destination（目的地法规） / bochk（BOCHK 准入）
-  const [activeTab, setActiveTab] = useState<"destination" | "bochk">("destination")
-  // 问卷回答: question_id → "met"|"partial"|"not_met"
-  const [answers, setAnswers] = useState<Record<string, string>>({})
-  // hint 展开状态
-  const [expandedHints, setExpandedHints] = useState<Set<string>>(new Set())
-  // 结果状态
-  const [result, setResult] = useState<ESGAnalysis | null>(null)
+  const [activeTab, setActiveTab] = useState<TabKey>("destination")
+  // 按 tab 隔离的状态：每个 tab 有独立的 answers / result / hints
+  const [tabState, setTabState] = useState<Record<TabKey, TabData>>({
+    destination: { answers: {}, result: null, expandedHints: new Set() },
+    bochk:       { answers: {}, result: null, expandedHints: new Set() },
+  })
+  // 瞬态 UI 状态（不属于特定 tab）
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
+
+  // 当前 tab 的数据引用
+  const current = tabState[activeTab]
 
   // 根据目标市场过滤适用问题
   const applicableRegions = useMemo(
@@ -110,22 +122,31 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
     return groups
   }, [filteredQuestions])
 
-  // 进度统计
+  // 进度统计（只统计当前 tab 的问题）
   const totalQuestions = filteredQuestions.length
-  const answeredCount = filteredQuestions.filter((q) => answers[q.id]).length
+  const answeredCount = filteredQuestions.filter((q) => current.answers[q.id]).length
 
-  // 选择答案
+  // 选择答案 — 只更新当前 tab
   const handleAnswer = (questionId: string, value: string) => {
-    setAnswers((prev) => ({ ...prev, [questionId]: value }))
+    setTabState((prev) => ({
+      ...prev,
+      [activeTab]: {
+        ...prev[activeTab],
+        answers: { ...prev[activeTab].answers, [questionId]: value },
+      },
+    }))
   }
 
-  // 切换 hint
+  // 切换 hint — 只更新当前 tab
   const toggleHint = (questionId: string) => {
-    setExpandedHints((prev) => {
-      const next = new Set(prev)
-      if (next.has(questionId)) next.delete(questionId)
-      else next.add(questionId)
-      return next
+    setTabState((prev) => {
+      const hints = new Set(prev[activeTab].expandedHints)
+      if (hints.has(questionId)) hints.delete(questionId)
+      else hints.add(questionId)
+      return {
+        ...prev,
+        [activeTab]: { ...prev[activeTab], expandedHints: hints },
+      }
     })
   }
 
@@ -135,7 +156,7 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
     setError(null)
 
     try {
-      const answerList = Object.entries(answers)
+      const answerList = Object.entries(current.answers)
         .filter(([qid]) => filteredQuestions.some((q) => q.id === qid))
         .map(([question_id, answer]) => ({ question_id, answer }))
 
@@ -145,7 +166,11 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
         standard: activeTab,
         answers: answerList,
       })
-      setResult(res)
+      // 结果存入当前 tab
+      setTabState((prev) => ({
+        ...prev,
+        [activeTab]: { ...prev[activeTab], result: res },
+      }))
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : "未知错误"
       setError(msg)
@@ -154,55 +179,79 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
     }
   }
 
-  // 重新填写
+  // 重新填写 — 只重置当前 tab
   const handleReset = () => {
-    setResult(null)
-    setAnswers({})
-    setExpandedHints(new Set())
+    setTabState((prev) => ({
+      ...prev,
+      [activeTab]: {
+        answers: {},
+        result: null,
+        expandedHints: new Set(),
+      },
+    }))
     setError(null)
   }
 
+  // 另一个 tab 的引用（用于交叉提示）
+  const otherTab: TabKey = activeTab === "destination" ? "bochk" : "destination"
+  const otherResult = tabState[otherTab].result
+
   // ── 渲染：结果展示 ──────────────────────────────────────
-  if (result) {
+  if (current.result) {
     return (
       <div className="max-w-3xl mx-auto">
         <h2 className="text-xl font-semibold mb-2">ESG 合规分析结果</h2>
         <p className="text-sm text-bochk-gray mb-6">
-          {REGION_NAMES[result.country] ?? result.country} · {activeTab === "destination" ? "目的地法规" : "BOCHK 准入"}标准
+          {REGION_NAMES[current.result.country] ?? current.result.country} · {activeTab === "destination" ? "目的地法规" : "BOCHK 准入"}标准
         </p>
 
         {/* 总分 */}
         <div className="card mb-6 flex items-center gap-6">
           <div className="w-20 h-20 rounded-full border-4 flex items-center justify-center text-2xl font-bold"
-            style={{ borderColor: result.overall_score >= 70 ? "#22C55E" : result.overall_score >= 40 ? "#EAB308" : "#EF4444" }}>
-            {result.overall_score}
+            style={{ borderColor: current.result.overall_score >= 70 ? "#22C55E" : current.result.overall_score >= 40 ? "#EAB308" : "#EF4444" }}>
+            {current.result.overall_score}
           </div>
           <div>
             <div className="text-lg font-semibold">综合合规评分</div>
             <div className="text-sm text-bochk-gray">
-              {result.overall_score >= 70 ? "合规状况良好" : result.overall_score >= 40 ? "部分合规，需改善" : "合规缺口较大，需重点关注"}
+              {current.result.overall_score >= 70 ? "合规状况良好" : current.result.overall_score >= 40 ? "部分合规，需改善" : "合规缺口较大，需重点关注"}
             </div>
           </div>
         </div>
 
         {/* 缺口卡片 */}
         <div className="space-y-3 mb-6">
-          {result.gaps.map((gap, i) => (
+          {current.result.gaps.map((gap, i) => (
             <GapCard key={i} gap={gap} />
           ))}
         </div>
 
         {/* 改善路线图 */}
-        {result.roadmap && (
+        {current.result.roadmap && (
           <div className="card mb-6">
             <h3 className="text-sm font-semibold mb-3">📋 改善路线图</h3>
-            <p className="text-sm text-bochk-dark whitespace-pre-line">{result.roadmap}</p>
+            <p className="text-sm text-bochk-dark whitespace-pre-line">{current.result.roadmap}</p>
           </div>
         )}
 
         {/* 免责声明 */}
-        {result.disclaimer && (
-          <p className="text-xs text-bochk-gray mb-6 italic">{result.disclaimer}</p>
+        {current.result.disclaimer && (
+          <p className="text-xs text-bochk-gray mb-6 italic">{current.result.disclaimer}</p>
+        )}
+
+        {/* 另一个 tab 完成提示 */}
+        {otherResult && (
+          <div className="p-3 bg-bochk-light rounded border border-bochk-border text-sm text-bochk-gray mb-4">
+            <span>
+              {otherTab === "destination" ? "目的地法规分析" : "BOCHK 准入评估"}已完成（评分 {otherResult.overall_score}）
+            </span>
+            <button
+              onClick={() => setActiveTab(otherTab)}
+              className="ml-2 text-bochk-blue hover:underline cursor-pointer"
+            >
+              查看结果 →
+            </button>
+          </div>
         )}
 
         {/* 操作按钮 */}
@@ -226,21 +275,45 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
         基于「{profile.industry_tags[0]}」行业 · 目标市场: {profile.export_markets.join("、") || "未选择"}
       </p>
 
-      {/* Tab 切换 */}
+      {/* Tab 切换（含完成状态） */}
       <div className="flex border-b border-bochk-border mb-6">
-        {(["destination", "bochk"] as const).map((tab) => (
-          <button
-            key={tab}
-            onClick={() => setActiveTab(tab)}
-            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
-              activeTab === tab
-                ? "border-bochk-red text-bochk-red"
-                : "border-transparent text-bochk-gray hover:text-bochk-dark"
-            }`}
-          >
-            {tab === "destination" ? "目的地法规分析" : "BOCHK 准入评估"}
-          </button>
-        ))}
+        {(["destination", "bochk"] as const).map((tab) => {
+          const tabData = tabState[tab]
+          // 计算该 tab 的进度
+          const source = tab === "destination" ? DEST_QUESTIONS : BOCHK_QUESTIONS
+          const questions = tab === "bochk"
+            ? source
+            : source.filter((q) => (q.applicable_regions ?? []).some((r) => applicableRegions.includes(r)))
+          const answered = questions.filter((q) => tabData.answers[q.id]).length
+          const total = questions.length
+
+          // 状态文字
+          let statusText = ""
+          if (tabData.result) {
+            statusText = " (已完成)"
+          } else if (answered > 0) {
+            statusText = ` (${answered}/${total})`
+          }
+
+          return (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
+                activeTab === tab
+                  ? "border-bochk-red text-bochk-red"
+                  : "border-transparent text-bochk-gray hover:text-bochk-dark"
+              }`}
+            >
+              {tab === "destination" ? "目的地法规分析" : "BOCHK 准入评估"}
+              {statusText && (
+                <span className={tabData.result ? "text-esg-green" : "text-bochk-gray"}>
+                  {statusText}
+                </span>
+              )}
+            </button>
+          )
+        })}
       </div>
 
       {/* 适用地区提示 */}
@@ -281,8 +354,8 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
                     <QuestionCard
                       key={q.id}
                       question={q}
-                      answer={answers[q.id] ?? null}
-                      hintExpanded={expandedHints.has(q.id)}
+                      answer={current.answers[q.id] ?? null}
+                      hintExpanded={current.expandedHints.has(q.id)}
                       onAnswer={(v) => handleAnswer(q.id, v)}
                       onToggleHint={() => toggleHint(q.id)}
                     />
