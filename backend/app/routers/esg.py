@@ -2,7 +2,6 @@
 
 from fastapi import APIRouter
 from pydantic import BaseModel
-from app.services.llm_client import llm_client
 from app.config import settings
 
 router = APIRouter(prefix="/api/esg", tags=["Step 5: ESG 合规分析"])
@@ -108,7 +107,7 @@ async def analyze_esg(req: ESGRequest):
     """ESG 合规缺口分析"""
 
     if settings.LLM_MODE == "mock":
-        # 根据请求的国家/标准调整 mock 数据
+        # Mock 快速返回：保留已有逻辑
         result = MOCK_ESG.copy()
         country_map = {
             "thailand": "泰国",
@@ -123,17 +122,6 @@ async def analyze_esg(req: ESGRequest):
         result["standard"] = req.standard
         return result
 
-    # 真实 LLM 调用（P5-3 实现）
-    import json
-    messages = [
-        {"role": "system", "content": "你是ESG合规分析专家。根据企业信息和问卷回答，对照目标国家法规进行合规缺口分析。"},
-        {"role": "user", "content": json.dumps({
-            "profile": req.profile,
-            "target_country": req.target_country,
-            "standard": req.standard,
-            "answers": [a.model_dump() for a in req.answers]
-        }, ensure_ascii=False)}
-    ]
-    result = await llm_client.call_kimi(messages)
-
-    return json.loads(result)
+    # 真实分析：委托 esg_service
+    from app.services.esg_service import analyze_esg as esg_analyze
+    return await esg_analyze(req)

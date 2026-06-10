@@ -379,3 +379,65 @@ def filter_index(region: str = None, category: str = None) -> list[dict]:
         entries = [e for e in entries if e.get("category") == category]
 
     return entries
+
+
+# ── LLM 分析用：更丰富的法规上下文 ──────────────────────────
+
+def get_regulation_context(regulation_id: str, max_len: int = 800) -> str:
+    """获取法规完整上下文（用于 LLM 分析 Prompt）。
+
+    比 get_excerpt() 更丰富，额外包含「评估标准」和首条法规原文引用。
+    这两个 section 对 LLM 判定 red/yellow/green 至关重要。
+
+    拼接顺序：title + 检查项 + 评估标准 + SME差距 + 首条quote
+    总长度控制在 max_len 字符以内。
+    """
+    md = load_regulation(regulation_id)
+    if not md:
+        return ""
+
+    parts = []
+
+    # 标题 + 法规全称
+    title = md.frontmatter.get("title", "")
+    regulation = md.frontmatter.get("regulation", "")
+    if title:
+        parts.append(f"【{title}】")
+    if regulation:
+        parts.append(f"法规：{regulation}")
+
+    # 合规检查项
+    if md.checklists:
+        parts.append("检查项:\n" + "\n".join(f"- {c}" for c in md.checklists))
+
+    # 评估标准（关键！LLM 依据此判定 red/yellow/green）
+    eval_criteria = md.sections.get("评估标准", "")
+    if eval_criteria:
+        clean = re.sub(r"\s*<!--.*?-->\s*", "", eval_criteria).strip()
+        clean = re.sub(r"\n{2,}", "\n", clean)
+        if clean:
+            parts.append("评估标准:\n" + clean)
+
+    # SME 常见差距
+    gaps_text = md.sections.get("SME 常见差距", "")
+    if gaps_text:
+        clean = re.sub(r"\s*<!--.*?-->\s*", "", gaps_text).strip()
+        clean = re.sub(r"\n{2,}", "\n", clean)
+        if clean:
+            parts.append("常见差距: " + clean)
+
+    # 首条法规原文引用（事实层）
+    if md.quotes:
+        q = md.quotes[0]
+        quote_text = f"法规原文：{q['text']}"
+        if q.get("source"):
+            quote_text += f"（来源：{q['source']}）"
+        parts.append(quote_text)
+
+    result = "\n\n".join(parts)
+
+    # 截断
+    if len(result) > max_len:
+        result = result[:max_len - 3] + "..."
+
+    return result
