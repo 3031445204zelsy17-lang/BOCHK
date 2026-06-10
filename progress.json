@@ -250,8 +250,10 @@
       "name": "可信度分层展示 + 评分聚合",
       "description": "三层展示（原文/判断/建议）+ 置信度标签 + E30%/S35%/G35%加权总分 + 等级(A/B/C)",
       "dependencies": ["P5-3"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "三层展示+置信度标签已在P5-2实现; 新增ScoreBoard组件(圆圈分数+等级徽章A/B/C+E/S/G分项进度条+权重标注); 后端暴露category_scores+grade; 交叉提示显示等级"
     },
     {
       "id": "P5-6",
@@ -259,8 +261,10 @@
       "name": "红黄绿报告卡片",
       "description": "交通灯式缺口报告前端组件",
       "dependencies": ["P5-5"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "交通灯卡片+颜色编码+展开三层详情已在P5-2完整实现, 本次验证确认功能正常"
     },
     {
       "id": "P5-7",
