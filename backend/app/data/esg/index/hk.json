@@ -1,0 +1,167 @@
+[
+  {
+    "id": "hk_001",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "E",
+    "title": "气候相关 Scope 1 & 2 温室气体排放强制披露",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2025-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_002",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "E",
+    "title": "HSCLI 大型股指数成分股气候披露强制要求",
+    "applicable_industries": ["恒生综合大型股指数(HSCLI)成分股"],
+    "effective_date": "2026-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_003",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "G",
+    "title": "气候相关治理披露 — 董事会与管理层的气候监督职责",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2025-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_004",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "E",
+    "title": "气候战略披露 — 气候相关风险与机会的识别及影响",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2025-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_005",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "G",
+    "title": "气候相关风险管理披露",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2025-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_006",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "E",
+    "title": "Scope 3 温室气体排放披露（\"遵守或解释\"）",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2025-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_007",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "E",
+    "title": "内部碳定价披露",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2025-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_008",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "E",
+    "title": "气候相关目标设定与披露",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2025-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_009",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "E",
+    "title": "气候相关财务影响披露 — 当前与预期财务效应",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2025-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_010",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part D",
+    "category": "E",
+    "title": "气候相关资产与业务脆弱性披露（转型风险与物理风险）",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2025-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_011",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part C",
+    "category": "E",
+    "title": "环境范畴 A1 排放物披露",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2022-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_012",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part C",
+    "category": "E",
+    "title": "环境范畴 A2 资源使用 — 能源及水资源效率",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2022-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_013",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part C",
+    "category": "S",
+    "title": "社会范畴 B1 雇佣披露",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2022-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_014",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part C",
+    "category": "S",
+    "title": "社会范畴 B5 供应链环境与社会风险管理",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2022-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "hk_015",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 ESG Reporting Code, Part C",
+    "category": "G",
+    "title": "社会范畴 B7 反贪污披露",
+    "applicable_industries": ["全行业上市发行人"],
+    "effective_date": "2022-01-01",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "status": "UNVERIFIED"
+  }
+]

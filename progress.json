@@ -153,8 +153,10 @@
       "name": "法规资料到位",
       "description": "唐一杰收集的法规链接到位（或 SYF 从官网搬运）",
       "dependencies": [],
-      "passes": false,
-      "assignee": "唐一杰/SYF"
+      "passes": true,
+      "assignee": "唐一杰/SYF",
+      "completed_at": "2026-06-09",
+      "note": "71条法规数据已到位, 覆盖HK/SG/TH/EU/BOCHK 5个地区/标准, 来源: ~/Desktop/Data/"
     },
     {
       "id": "P4-2",
@@ -162,8 +164,10 @@
       "name": "Claude 预处理 → MD 文件",
       "description": "用 Claude 将法规原文预处理为结构化 MD（检查项+评估标准+常见差距+原文摘要+引用）",
       "dependencies": ["P4-1"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-09",
+      "note": "71个结构化MD文件, 含合规检查项+评估标准+SME差距+原文摘要+引用追踪, 修复sg_013评估标准缺失"
     },
     {
       "id": "P4-3",
@@ -171,8 +175,10 @@
       "name": "JSON 索引生成",
       "description": "从 MD frontmatter 自动生成 5 个 JSON 索引文件（hk/sg/th/eu_cbam/bochk）",
       "dependencies": ["P4-2"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-09",
+      "note": "5个JSON索引(hk:15/sg:15/th:15/eu:16/bochk:10)已复制到backend/app/data/esg/"
     },
     {
       "id": "P4-4",
@@ -180,8 +186,10 @@
       "name": "问卷反向设计 + 映射表",
       "description": "从 MD 评估标准反推问卷问题，产出问卷-评估标准映射表 + 问卷 JSON",
       "dependencies": ["P4-2"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "目的地法规问卷18题(E:8/S:4/G:6) + BOCHK准入问卷5题, 覆盖55/71条法规(77.5%), 未覆盖为实施细节/大企业条款, LLM分析时自动引用"
     },
     {
       "id": "P4-5",

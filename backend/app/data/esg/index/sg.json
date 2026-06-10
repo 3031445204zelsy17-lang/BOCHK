@@ -1,0 +1,212 @@
+[
+  {
+    "id": "sg_001",
+    "region": "SG",
+    "regulation": "SGX Mainboard Rules — Rule 711A & 711B",
+    "category": "G",
+    "title": "可持续报告发布义务 — 711A 年度报告时限",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SGX Mainboard Rules, Rule 711A (01 Jan 2026 onwards)",
+    "source_url": "https://rulebook.sgx.com/rulebook/711a",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_002",
+    "region": "SG",
+    "regulation": "SGX Mainboard Rules — Rule 711B",
+    "category": "G",
+    "title": "可持续报告六大核心要素",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SGX Mainboard Rules, Rule 711B",
+    "source_url": "https://rulebook.sgx.com/rulebook/711b",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_003",
+    "region": "SG",
+    "regulation": "SGX Mainboard Rules — Rule 711B",
+    "category": "G",
+    "title": "可持续报告内审要求 — 711B(2)",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SGX Mainboard Rules, Rule 711B(2)",
+    "source_url": "https://rulebook.sgx.com/rulebook/711b",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_004",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "G",
+    "title": "新上市发行人过渡安排",
+    "applicable_industries": [
+      "新上市 SGX 主板公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, §6.4 (01 Jan 2026 onwards)",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_005",
+    "region": "SG",
+    "regulation": "SGX Mainboard Rules — Rule 711B; Practice Note 7.6, para 5",
+    "category": "G",
+    "title": "外部保证要求与时限",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SGX Mainboard Rules, Rule 711B(2); Practice Note 7.6, para 5.1-5.7",
+    "source_url": "https://rulebook.sgx.com/rulebook/711b",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_006",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "G",
+    "title": "董事会责任与治理要求",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 3.1",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_007",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "E",
+    "title": "实质性 ESG 因子识别流程",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 4.1-4.6, 4.29-4.36",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_008",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "G",
+    "title": "政策、实践、绩效与目标",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 4.1(c)-(d), 4.37-4.45",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_009",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "G",
+    "title": "可持续报告框架选择",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 4.41-4.44",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_010",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "E",
+    "title": "气候相关披露 — IFRS S2 整体框架",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 4.7-4.28",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_011",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "E",
+    "title": "Scope 1 & Scope 2 GHG 排放报告",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 4.12(a)",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_012",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "E",
+    "title": "Scope 3 GHG 排放报告",
+    "applicable_industries": [
+      "STI 成分股"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 4.12(c), 4.21-4.22",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_013",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "E",
+    "title": "气候披露分阶段实施时间表（2025-08-25 修订版）",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 4.12(a)-(c); SGX RegCo & ACRA News Release 25 Aug 2025",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_014",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "G",
+    "title": "IFRS S2 结构性救济与过渡性救济",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 4.18-4.20",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "sg_015",
+    "region": "SG",
+    "regulation": "SGX Practice Note 7.6 — Sustainability Reporting Guide",
+    "category": "E",
+    "title": "情景分析与气候韧性评估",
+    "applicable_industries": [
+      "所有 SGX 主板上市公司"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "Practice Note 7.6, para 4.24-4.26",
+    "source_url": "https://rulebook.sgx.com/rulebook/practice-note-76-sustainability-reporting-guide",
+    "status": "UNVERIFIED"
+  }
+]

@@ -1,0 +1,292 @@
+[
+  {
+    "id": "E1",
+    "category": "E",
+    "question": "贵公司是否已测量并记录直接温室气体排放（Scope 1，如燃料燃烧、公司车辆）和间接能源排放（Scope 2，如外购电力）？",
+    "hint": "Scope 1 指企业自身运营直接产生的排放；Scope 2 指购买电力/蒸汽等产生的间接排放",
+    "options": [
+      {"label": "是，已按 GHG Protocol 标准完整测量并记录", "value": "met", "score": 2},
+      {"label": "仅测量了部分，或尚未使用标准方法", "value": "partial", "score": 1},
+      {"label": "尚未开始测量温室气体排放", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK", "SG", "TH", "EU"],
+    "regulation_mapping": {
+      "HK": ["hk_001"],
+      "SG": ["sg_011"],
+      "TH": ["th_005"],
+      "EU": ["eu_cbam_005"]
+    }
+  },
+  {
+    "id": "E2",
+    "category": "E",
+    "question": "贵公司是否了解并计划测量价值链温室气体排放（Scope 3，如供应链、物流、产品使用阶段）？",
+    "hint": "Scope 3 涵盖上游采购、员工通勤、产品运输、下游使用等间接排放",
+    "options": [
+      {"label": "已按 GHG Protocol 分类测量并披露 Scope 3 排放", "value": "met", "score": 2},
+      {"label": "了解 Scope 3 概念，正在建立数据收集能力", "value": "partial", "score": 1},
+      {"label": "尚未了解或尚未规划 Scope 3 测量", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK", "SG", "TH"],
+    "regulation_mapping": {
+      "HK": ["hk_006"],
+      "SG": ["sg_012"],
+      "TH": ["th_009"]
+    }
+  },
+  {
+    "id": "E3",
+    "category": "E",
+    "question": "贵公司是否已识别对业务可能产生影响的气候相关风险（如极端天气、政策变化、市场需求转变）？",
+    "hint": "气候风险分为物理风险（台风、洪涝等）和转型风险（碳税、技术淘汰、市场偏好改变等）",
+    "options": [
+      {"label": "已系统识别物理风险和转型风险，并评估了短/中/长期影响", "value": "met", "score": 2},
+      {"label": "有初步识别但不够系统，或未区分风险类型和时间跨度", "value": "partial", "score": 1},
+      {"label": "尚未进行气候风险识别", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK", "SG", "TH", "EU"],
+    "regulation_mapping": {
+      "HK": ["hk_004"],
+      "SG": ["sg_010", "sg_015"],
+      "TH": ["th_007", "th_008"],
+      "EU": ["eu_cbam_003"]
+    }
+  },
+  {
+    "id": "E4",
+    "category": "E",
+    "question": "贵公司是否已进行气候情景分析（如模拟不同升温情景下的业务影响）或气候韧性评估？",
+    "hint": "情景分析通常包括 1.5°C / 2°C / 4°C 等不同升温路径下的财务和运营影响评估",
+    "options": [
+      {"label": "已完成定量或定性情景分析，并评估了战略韧性", "value": "met", "score": 2},
+      {"label": "仅做了初步定性分析", "value": "partial", "score": 1},
+      {"label": "未进行任何情景分析", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK", "SG", "TH"],
+    "regulation_mapping": {
+      "HK": ["hk_004", "hk_010"],
+      "SG": ["sg_015"],
+      "TH": ["th_008"]
+    }
+  },
+  {
+    "id": "E5",
+    "category": "E",
+    "question": "贵公司是否已设定了明确的碳减排目标（包括基准年、目标年、减排幅度）？",
+    "hint": "科学碳目标（SBTi）或净零目标是国际上认可的减排目标设定方式",
+    "options": [
+      {"label": "已设定包含指标、时间表、基准期的定量减排目标", "value": "met", "score": 2},
+      {"label": "有定性目标或部分要素缺失", "value": "partial", "score": 1},
+      {"label": "未设定任何气候相关目标", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK", "SG"],
+    "regulation_mapping": {
+      "HK": ["hk_008"],
+      "SG": ["sg_008"]
+    }
+  },
+  {
+    "id": "E6",
+    "category": "E",
+    "question": "贵公司是否定期监测和披露能源消耗、水资源使用和废弃物产生情况？",
+    "hint": "包括用电量、用水量、有害/无害废弃物产生量及其强度指标",
+    "options": [
+      {"label": "已全面披露能源、水资源和废弃物数据", "value": "met", "score": 2},
+      {"label": "仅披露了部分资源使用数据", "value": "partial", "score": 1},
+      {"label": "未监测或披露资源使用情况", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK"],
+    "regulation_mapping": {
+      "HK": ["hk_011", "hk_012"]
+    }
+  },
+  {
+    "id": "E7",
+    "category": "E",
+    "question": "贵公司出口至欧盟的产品是否涉及钢铁、铝、水泥、化肥、电力或氢？如涉及，是否了解欧盟碳边境调节机制（CBAM）的报告义务？",
+    "hint": "CBAM 要求进口商报告碳排放数据并购买碳证书，自 2026 年起正式执行",
+    "options": [
+      {"label": "已了解 CBAM 义务，并建立了碳排放报告流程", "value": "met", "score": 2},
+      {"label": "了解 CBAM 存在，但尚未建立合规流程", "value": "partial", "score": 1},
+      {"label": "不了解 CBAM，或未出口欧盟相关产品", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["EU"],
+    "regulation_mapping": {
+      "EU": ["eu_cbam_001", "eu_cbam_002", "eu_cbam_004", "eu_cbam_006", "eu_cbam_007", "eu_cbam_009", "eu_cbam_011", "eu_cbam_016"]
+    }
+  },
+  {
+    "id": "E8",
+    "category": "E",
+    "question": "贵公司在经营决策中是否考虑了碳成本（如内部碳定价、碳税、碳排放交易体系的影响）？",
+    "hint": "内部碳定价是企业为碳排放设定的内部价格，用于投资决策和风险评估",
+    "options": [
+      {"label": "已在决策中应用内部碳定价或评估外部碳成本", "value": "met", "score": 2},
+      {"label": "了解碳成本概念但尚未在决策中系统考虑", "value": "partial", "score": 1},
+      {"label": "未考虑碳成本因素", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK", "EU"],
+    "regulation_mapping": {
+      "HK": ["hk_007"],
+      "EU": ["eu_cbam_008", "eu_cbam_010"]
+    }
+  },
+  {
+    "id": "S1",
+    "category": "S",
+    "question": "贵公司是否按性别、年龄组和地区分类统计并披露员工总数和流失率？",
+    "hint": "员工数据包括全职/兼职/临时工分类，以及各维度的流失率",
+    "options": [
+      {"label": "已按多个维度完整披露员工数据", "value": "met", "score": 2},
+      {"label": "有基本员工统计但维度不完整", "value": "partial", "score": 1},
+      {"label": "未进行分类员工数据统计", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK"],
+    "regulation_mapping": {
+      "HK": ["hk_013"]
+    }
+  },
+  {
+    "id": "S2",
+    "category": "S",
+    "question": "贵公司是否跟踪并记录工作场所安全事故（工伤、工亡、损失工作日）？",
+    "hint": "包括工伤率、工亡数、因工伤损失的工作日数等指标",
+    "options": [
+      {"label": "已完整记录近三年安全事故数据并披露", "value": "met", "score": 2},
+      {"label": "有记录但数据不完整或未披露", "value": "partial", "score": 1},
+      {"label": "未系统记录安全事故数据", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK"],
+    "regulation_mapping": {
+      "HK": ["hk_013"]
+    }
+  },
+  {
+    "id": "S3",
+    "category": "S",
+    "question": "贵公司是否为员工提供定期培训，并记录培训覆盖率和人均培训时数？",
+    "hint": "培训包括专业技能、安全培训、ESG 相关培训等",
+    "options": [
+      {"label": "有系统培训计划，且按性别和员工类别统计培训数据", "value": "met", "score": 2},
+      {"label": "有培训但未系统记录数据", "value": "partial", "score": 1},
+      {"label": "没有正式的员工培训计划", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK"],
+    "regulation_mapping": {
+      "HK": ["hk_013"]
+    }
+  },
+  {
+    "id": "S4",
+    "category": "S",
+    "question": "贵公司是否有管理供应链环境与社会风险的制度（如供应商行为准则、环保采购标准）？",
+    "hint": "包括供应商筛选、环境合规要求、劳工标准审核等",
+    "options": [
+      {"label": "有完整的供应链 ESG 管理制度，并了解供应商数量和分布", "value": "met", "score": 2},
+      {"label": "有基本的供应商管理但未涵盖 ESG 风险", "value": "partial", "score": 1},
+      {"label": "没有供应链 ESG 管理制度", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK"],
+    "regulation_mapping": {
+      "HK": ["hk_014"]
+    }
+  },
+  {
+    "id": "G1",
+    "category": "G",
+    "question": "贵公司董事会或最高管理层是否明确负责监督气候和 ESG 相关事务？",
+    "hint": "包括董事会对 ESG 的监督声明、管理层在气候议题中的角色分配",
+    "options": [
+      {"label": "董事会已明确 ESG 监督职责，管理层有具体分工", "value": "met", "score": 2},
+      {"label": "有基本监督但职责不明确或未正式化", "value": "partial", "score": 1},
+      {"label": "董事会/管理层未参与 ESG 事务", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK", "SG", "TH"],
+    "regulation_mapping": {
+      "HK": ["hk_003"],
+      "SG": ["sg_006"],
+      "TH": ["th_008"]
+    }
+  },
+  {
+    "id": "G2",
+    "category": "G",
+    "question": "贵公司是否已建立气候相关风险的识别、评估和监测流程？",
+    "hint": "包括风险管理政策、定期风险评估、与整体风险管理体系的整合",
+    "options": [
+      {"label": "已建立完整流程，并纳入企业整体风险管理体系", "value": "met", "score": 2},
+      {"label": "有部分流程但未系统化或未整合", "value": "partial", "score": 1},
+      {"label": "没有气候风险管理流程", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK", "SG", "TH"],
+    "regulation_mapping": {
+      "HK": ["hk_005"],
+      "SG": ["sg_010"],
+      "TH": ["th_009"]
+    }
+  },
+  {
+    "id": "G3",
+    "category": "G",
+    "question": "贵公司是否已发布或准备发布年度 ESG / 可持续发展报告？",
+    "hint": "可持续发展报告通常包含环境绩效、社会责任和公司治理相关信息",
+    "options": [
+      {"label": "已定期发布 ESG 报告并通过官方渠道公开", "value": "met", "score": 2},
+      {"label": "有计划但尚未发布，或报告不完整", "value": "partial", "score": 1},
+      {"label": "未发布也没有发布计划", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK", "SG", "TH"],
+    "regulation_mapping": {
+      "HK": ["bochk_gf_004"],
+      "SG": ["sg_001", "sg_002"],
+      "TH": ["th_010", "th_011"]
+    }
+  },
+  {
+    "id": "G4",
+    "category": "G",
+    "question": "贵公司是否已采纳或计划采纳国际可持续发展报告框架（如 GRI、IFRS S1/S2、TCFD）？",
+    "hint": "主流框架包括 GRI（全球报告倡议）、IFRS S1/S2（国际可持续准则）、TCFD（气候财务披露）",
+    "options": [
+      {"label": "已选择框架并按框架要求编制报告", "value": "met", "score": 2},
+      {"label": "了解框架但尚未正式采纳", "value": "partial", "score": 1},
+      {"label": "不了解或未考虑采纳报告框架", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["SG", "TH"],
+    "regulation_mapping": {
+      "SG": ["sg_009", "sg_010"],
+      "TH": ["th_001", "th_004"]
+    }
+  },
+  {
+    "id": "G5",
+    "category": "G",
+    "question": "贵公司的 ESG 或可持续发展数据是否已获得或计划获得外部独立核查（如审计师出具有限保证）？",
+    "hint": "外部核查可增强报告可信度，部分地区对排放数据有强制核查要求",
+    "options": [
+      {"label": "已安排第三方核查机构按国际标准执行", "value": "met", "score": 2},
+      {"label": "了解要求并计划安排，但尚未执行", "value": "partial", "score": 1},
+      {"label": "不了解外部核查要求", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["SG", "TH"],
+    "regulation_mapping": {
+      "SG": ["sg_003", "sg_005"],
+      "TH": ["th_013"]
+    }
+  },
+  {
+    "id": "G6",
+    "category": "G",
+    "question": "贵公司是否有反贪污制度（包括预防措施、举报渠道和员工培训）？",
+    "hint": "反贪污制度涵盖商业贿赂、利益冲突、举报人保护等",
+    "options": [
+      {"label": "有完整的反贪污制度，含预防措施、举报渠道和培训", "value": "met", "score": 2},
+      {"label": "有基本制度但不够完善", "value": "partial", "score": 1},
+      {"label": "没有正式的反贪污制度", "value": "not_met", "score": 0}
+    ],
+    "applicable_regions": ["HK"],
+    "regulation_mapping": {
+      "HK": ["hk_015"]
+    }
+  }
+]

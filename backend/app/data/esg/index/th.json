@@ -1,0 +1,270 @@
+[
+  {
+    "id": "th_001",
+    "region": "TH",
+    "regulation": "SEC Thailand No. 298/2568 — ISSB 可持续信息披露路线图",
+    "category": "G",
+    "title": "SEC Thailand 推动 ISSB 标准采纳总体框架",
+    "applicable_industries": [
+      "SET 上市公司",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund",
+      "IPO"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_002",
+    "region": "TH",
+    "regulation": "SEC Thailand No. 298/2568 — ISSB 路线图时间表",
+    "category": "G",
+    "title": "分阶段实施时间表 — 终稿（2025-11-28）",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_003",
+    "region": "TH",
+    "regulation": "SEC Thailand No. 298/2568 — ISSB 路线图",
+    "category": "G",
+    "title": "适用主体范围",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_004",
+    "region": "TH",
+    "regulation": "SEC Thailand No. 298/2568 — ISSB 路线图",
+    "category": "E",
+    "title": "Climate-First 报告原则",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_005",
+    "region": "TH",
+    "regulation": "SEC Thailand No. 298/2568 — ISSB 路线图",
+    "category": "E",
+    "title": "Scope 1 & Scope 2 GHG 排放报告与核查义务",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_006",
+    "region": "TH",
+    "regulation": "SEC Thailand No. 298/2568 — ISSB 路线图",
+    "category": "G",
+    "title": "过渡救济措施（Transition Reliefs）",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_007",
+    "region": "TH",
+    "regulation": "SEC Thailand ISSB 路线图 — IFRS S2 要求",
+    "category": "E",
+    "title": "IFRS S2 气候相关披露要求",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025; IFRS S2",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_008",
+    "region": "TH",
+    "regulation": "SEC Thailand ISSB 路线图 — IFRS S2",
+    "category": "E",
+    "title": "治理与战略披露",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025; IFRS S2",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_009",
+    "region": "TH",
+    "regulation": "SEC Thailand ISSB 路线图 — IFRS S2",
+    "category": "E",
+    "title": "风险管理、指标与目标披露",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025; IFRS S2",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_010",
+    "region": "TH",
+    "regulation": "SEC Thailand ISSB 路线图",
+    "category": "G",
+    "title": "Form 56-1 One Report — 可持续披露嵌入框架",
+    "applicable_industries": [
+      "SET",
+      "mai"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand Form 56-1 One Report (Tor Jor. 48/2568)",
+    "source_url": "https://www.sec.or.th/TH/pages/lawandregulations/financialstatementsandreportsundersection56.aspx",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_011",
+    "region": "TH",
+    "regulation": "SEC Thailand ISSB 路线图",
+    "category": "G",
+    "title": "报告提交期限",
+    "applicable_industries": [
+      "SET",
+      "mai"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_012",
+    "region": "TH",
+    "regulation": "SEC Thailand ISSB 路线图",
+    "category": "G",
+    "title": "IPO 公司的可持续披露义务",
+    "applicable_industries": [
+      "IPO 申请人"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_013",
+    "region": "TH",
+    "regulation": "SEC Thailand ISSB 路线图",
+    "category": "E",
+    "title": "第三方核查（Limited Assurance）要求",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, News No. 298/2568, 28 Nov 2025",
+    "source_url": "https://www.sec.or.th/TH/Pages/News_Detail.aspx?Lang=TH&NewsNo=298&NewsYear=2568&SECID=12272",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_014",
+    "region": "TH",
+    "regulation": "SEC Thailand ISSB 路线图",
+    "category": "G",
+    "title": "5 年后扩展至非气候可持续披露（IFRS S1 全文）",
+    "applicable_industries": [
+      "SET",
+      "mai",
+      "REIT",
+      "Infra Trust",
+      "Property Fund",
+      "Infra Fund"
+    ],
+    "effective_date": "2026-01-01",
+    "source": "SEC Thailand, Public Hearing No. 50/2567, §5.5.2",
+    "source_url": "https://www.sec.or.th/Documents/PHS/Main/1029/hearing502567.pdf",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "th_015",
+    "region": "TH",
+    "regulation": "SEC Thailand ISSB 路线图",
+    "category": "E",
+    "title": "泰国可持续金融分类法（Thailand Taxonomy）与 CBAM 联动",
+    "applicable_industries": [
+      "SET",
+      "mai"
+    ],
+    "effective_date": "2024-01-01",
+    "source": "SEC Thailand & Bank of Thailand, Thailand Taxonomy Phase I",
+    "source_url": "https://www.sec.or.th/EN/Pages/News_Detail.aspx?SECID=10385",
+    "status": "UNVERIFIED"
+  }
+]

@@ -1,0 +1,179 @@
+[
+  {
+    "id": "bochk_gf_001",
+    "region": "HK",
+    "regulation": "HKMA Hong Kong Taxonomy for Sustainable Finance — Phase 1",
+    "category": "E",
+    "title": "HKMA 香港可持续金融分类法 Phase 1 — 总体框架",
+    "applicable_industries": [
+      "金融业",
+      "电力",
+      "交通",
+      "建筑",
+      "水务及废物管理"
+    ],
+    "effective_date": "2024-05-03",
+    "source": "HKMA Press Release, 3 May 2024; Hong Kong Taxonomy Phase 1",
+    "source_url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2024/05/20240503-3/",
+    "authority": "constitutional",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "bochk_gf_002",
+    "region": "HK",
+    "regulation": "HKMA Hong Kong Taxonomy for Sustainable Finance — Phase 2A",
+    "category": "E",
+    "title": "HKMA Taxonomy Phase 2A — 新增行业与过渡元素（终稿 2026-01-22）",
+    "applicable_industries": [
+      "金融业",
+      "制造业",
+      "ICT",
+      "电力",
+      "交通",
+      "建筑",
+      "水务及废物管理"
+    ],
+    "effective_date": "2026-01-22",
+    "source": "HKMA Press Release, 22 Jan 2026",
+    "source_url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/01/20260122-3/",
+    "authority": "constitutional",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "bochk_gf_003",
+    "region": "HK",
+    "regulation": "HKMA Hong Kong Taxonomy",
+    "category": "E",
+    "title": "Taxonomy 的技术筛选标准与 DNSH 原则",
+    "applicable_industries": [
+      "金融业",
+      "电力",
+      "交通",
+      "建筑",
+      "水务及废物管理",
+      "制造业",
+      "ICT"
+    ],
+    "effective_date": "2024-05-03",
+    "source": "HKMA Hong Kong Taxonomy Phase 1 (2024); Phase 2A (2026)",
+    "source_url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2024/05/20240503-3/",
+    "authority": "constitutional",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "bochk_gf_004",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 — ESG Reporting Code",
+    "category": "G",
+    "title": "HKEX Appendix C2 ESG 报告守则 — 双层披露义务（Part B 强制 + Part C 遵守或解释）",
+    "applicable_industries": [
+      "所有 HKEX 上市公司"
+    ],
+    "effective_date": "2025-01-01",
+    "source": "HKEX Main Board Listing Rules, Appendix C2",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "authority": "constitutional",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "bochk_gf_005",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 — ESG Reporting Code",
+    "category": "E",
+    "title": "Part D 气候相关披露（对标 IFRS S2）",
+    "applicable_industries": [
+      "所有 HKEX 上市公司"
+    ],
+    "effective_date": "2025-01-01",
+    "source": "HKEX Main Board Listing Rules, Appendix C2 Part D",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "authority": "constitutional",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "bochk_gf_006",
+    "region": "HK",
+    "regulation": "HKEX Appendix C2 — ESG Reporting Code",
+    "category": "E",
+    "title": "环境范畴（Subject Area A）— 排放、资源使用、环境及天然资源",
+    "applicable_industries": [
+      "所有 HKEX 上市公司"
+    ],
+    "effective_date": "2025-01-01",
+    "source": "HKEX Main Board Listing Rules, Appendix C2 Subject Area A",
+    "source_url": "https://en-rules.hkex.com.hk/rulebook/appendix-c2-environmental-social-and-governance-reporting-code-0",
+    "authority": "constitutional",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "bochk_gf_007",
+    "region": "HK",
+    "regulation": "BOCHK Green and Sustainable Finance Taxonomy",
+    "category": "E",
+    "title": "BOCHK 绿色与可持续金融分类法总览",
+    "applicable_industries": [
+      "金融业",
+      "所有 BOCHK 融资行业"
+    ],
+    "effective_date": "2024-01-01",
+    "source": "BOCHK 2024 Sustainability Report",
+    "source_url": "https://www.bochk.com/dam/bochk/desktop/top/aboutus/esg/report/SustainabilityReport2024_en.pdf",
+    "authority": "constitutional",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "bochk_gf_008",
+    "region": "HK",
+    "regulation": "BOCHK Green and Sustainable Finance Taxonomy",
+    "category": "E",
+    "title": "BOCHK Taxonomy — 覆盖的 8 个行业与 20 个次行业",
+    "applicable_industries": [
+      "金融业",
+      "高碳排放行业",
+      "制造业",
+      "交通",
+      "能源",
+      "建筑",
+      "农业",
+      "废物管理",
+      "ICT"
+    ],
+    "effective_date": "2024-01-01",
+    "source": "BOCHK 2024 Sustainability Report, §4.1",
+    "source_url": "https://www.bochk.com/dam/bochk/desktop/top/aboutus/esg/report/SustainabilityReport2024_en.pdf",
+    "authority": "constitutional",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "bochk_gf_009",
+    "region": "HK",
+    "regulation": "BOCHK Green Loan Framework & Sustainability-Linked Loan Framework",
+    "category": "E",
+    "title": "BOCHK 绿色贷款与可持续发展关联贷款框架",
+    "applicable_industries": [
+      "所有行业"
+    ],
+    "effective_date": "2024-01-01",
+    "source": "BOCHK Corporate Banking — Green and Sustainability related Loan page",
+    "source_url": "https://www.bochk.com/en/corporate/ESG/greenloan.html",
+    "authority": "constitutional",
+    "status": "UNVERIFIED"
+  },
+  {
+    "id": "bochk_gf_010",
+    "region": "HK",
+    "regulation": "多源交叉参考",
+    "category": "G",
+    "title": "香港绿色融资生态 — HKMA Taxonomy、HKEX 披露与 BOCHK Taxonomy 的联动关系",
+    "applicable_industries": [
+      "金融业",
+      "所有 HKEX 上市公司",
+      "企业借款人"
+    ],
+    "effective_date": "2025-01-01",
+    "source": "HKMA Press Release; HKEX Appendix C2; BOCHK 2024 Sustainability Report",
+    "source_url": "https://www.hkma.gov.hk/eng/news-and-media/press-releases/2026/01/20260122-3/",
+    "authority": "supplemental",
+    "status": "UNVERIFIED"
+  }
+]
