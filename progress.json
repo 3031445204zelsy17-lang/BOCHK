@@ -206,8 +206,10 @@
       "name": "MD 解析器",
       "description": "md_parser.py — frontmatter 解析 + 引用提取 + 引用追踪（一层，截断500字）",
       "dependencies": ["P4-3"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "手写YAML子集解析(无第三方库), 71个MD文件全部解析成功, get_excerpt/batch_excerpts/filter_index供P5-3使用"
     },
     {
       "id": "P5-2",
@@ -215,8 +217,10 @@
       "name": "ESG 问卷前端",
       "description": "从映射表生成的 15-20 题问卷组件（E/S/G 三类）",
       "dependencies": ["P4-4", "P1-2"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-10",
+      "note": "Tab切换(目的地法规18题+BOCHK 5题) + 按地区过滤 + E/S/G分组 + 三色选项按钮 + 交通灯结果卡片(可展开三层可信度) + 路线图 + 重新分析"
     },
     {
       "id": "P5-3",
