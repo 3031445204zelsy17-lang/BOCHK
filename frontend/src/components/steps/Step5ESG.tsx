@@ -71,6 +71,17 @@ const REGION_TO_COUNTRY: Record<string, string> = {
   EU: "eu",
 }
 
+/** target_country → 地区代码（用于显示地区中文名） */
+const COUNTRY_TO_REGION: Record<string, string> = Object.fromEntries(
+  Object.entries(REGION_TO_COUNTRY).map(([region, country]) => [country, region])
+)
+
+function getTargetCountryRegionName(markets: string[]): string {
+  const country = getTargetCountry(markets)
+  const region = COUNTRY_TO_REGION[country]
+  return REGION_NAMES[region] ?? country
+}
+
 function getTargetCountry(markets: string[]): string {
   for (const m of markets) {
     const regions = MARKET_TO_REGIONS[m] ?? []
@@ -216,8 +227,12 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
     return (
       <div className="max-w-3xl mx-auto animate-fade-in">
         <h2 className="text-xl font-semibold mb-2">ESG 合规分析结果</h2>
-        <p className="text-sm text-bochk-gray mb-6">
+        <p className="text-sm text-bochk-gray mb-2">
           {REGION_NAMES[current.result.country] ?? current.result.country} · {activeTab === "destination" ? "目的地法规" : "BOCHK 准入"}标准
+        </p>
+        <p className="text-xs text-bochk-blue mb-6 inline-flex items-center gap-1">
+          <AlertCircle className="w-3 h-3" />
+          本次分析基于目标地区：{REGION_NAMES[current.result.country] ?? current.result.country} 法规
         </p>
 
         {/* 总分 + 等级 + 分项评分 */}
@@ -278,8 +293,15 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
       {loading && <OverlayLoading text="正在分析 ESG 合规缺口，请稍候..." />}
 
       <h2 className="text-xl font-semibold mb-2">ESG 合规分析</h2>
-      <p className="text-sm text-bochk-gray mb-4">
+      <p className="text-sm text-bochk-gray mb-2">
         基于「{profile.industry_tags[0]}」行业 · 目标市场: {profile.export_markets.join("、") || "未选择"}
+      </p>
+      <p className="text-xs text-bochk-blue mb-4 inline-flex items-center gap-1">
+        <AlertCircle className="w-3 h-3" />
+        本次将按 {getTargetCountryRegionName(profile.export_markets)} 法规进行分析
+        {applicableRegions.length > 1 && (
+          <span className="text-bochk-gray ml-1">（当前仅分析首个适用地区）</span>
+        )}
       </p>
 
       {/* Tab 切换（含完成状态） */}

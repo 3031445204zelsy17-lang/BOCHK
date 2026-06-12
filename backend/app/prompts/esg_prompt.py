@@ -22,7 +22,8 @@ RULES = """【规则】
 10. difficulty 只能是 "容易"/"中等"/"困难" 之一
 11. estimated_time 给出合理的时间范围（如 "1-2周"/"3-6个月"）
 12. roadmap 按难度由低到高排序，分 2-3 阶段给出改善时间线
-13. 不要输出任何 JSON 以外的文字"""
+13. source_text 和 source_ref 必须来自上方【法规原文与评估标准】中提供的法规，且必须属于目标地区 {country_display}；严禁引用示例中的泰国法规，除非目标地区就是泰国
+14. 不要输出任何 JSON 以外的文字"""
 
 # ── 评分标准 ────────────────────────────────────────────────
 SCORING = """【评分标准】overall_score（0-100）
@@ -64,6 +65,72 @@ FEWSHOT_ASSISTANT = """{
   "disclaimer": "以上分析由AI生成，仅供参考，不构成法律或合规建议。"
 }"""
 
+# ── Few-shot 示例（示例 2：S 类 / 部分满足 / 新加坡） ─────────
+FEWSHOT_USER_2 = """{
+  "questionnaire_answers": [
+    {"question_id": "S2", "question": "贵公司是否跟踪并记录工作场所安全事故？", "answer": "有记录但数据不完整，未按性别和员工类别分类"},
+    {"question_id": "S3", "question": "贵公司是否为员工提供定期培训并记录培训覆盖率？", "answer": "有培训但未系统记录数据"}
+  ],
+  "target_country": "singapore",
+  "standard": "destination",
+  "regulation_md_content": "## 合规检查项\\n- [ ] 是否识别并管理工作场所安全风险\\n- [ ] 是否记录工伤、工亡及损失工作日数据\\n- [ ] 是否按性别和员工类别统计培训覆盖率\\n\\n## 评估标准\\n- 满足：已完整记录近三年安全事故数据并披露\\n- 部分满足：有记录但数据不完整或未披露\\n- 不满足：未系统记录安全事故数据\\n\\n## SME 常见差距\\n中小企业常缺乏按性别和员工类别分类的培训统计，也缺少系统化的安全培训档案。\\n\\n## 法规原文摘要\\n根据 SGX Practice Note 7.6 Section 6，发行人应披露与管理供应链环境与社会风险相关的政策，包括劳工标准和环保采购要求；同时要求按性别和员工类别统计培训数据..."
+}"""
+
+FEWSHOT_ASSISTANT_2 = """{
+  "overall_score": 55,
+  "gaps": [
+    {
+      "regulation": "工作场所安全与培训披露",
+      "category": "S",
+      "status": "yellow",
+      "source_text": "SGX Practice Note 7.6 要求发行人披露与管理供应链环境与社会风险相关的政策，并按性别和员工类别统计培训数据",
+      "source_ref": "SGX Practice Note 7.6, Section 6",
+      "ai_judgment": "根据评估标准，企业有培训和安全记录但未系统分类披露，判定为部分满足。",
+      "confidence": "medium",
+      "gap_description": "安全培训记录不完整，未按性别和员工类别统计培训覆盖率",
+      "suggestion": "建议建立员工安全培训档案，按性别、员工类别统计培训时数和覆盖率，并纳入年度可持续报告。",
+      "suggestion_confidence": "high",
+      "difficulty": "容易",
+      "estimated_time": "1-3个月"
+    }
+  ],
+  "roadmap": "第一阶段(1-2月)：建立安全培训档案和分类统计模板；第二阶段(2-3月)：将培训数据纳入年度可持续报告披露。",
+  "disclaimer": "以上分析由AI生成，仅供参考，不构成法律或合规建议。"
+}"""
+
+# ── Few-shot 示例（示例 3：G 类 / 基本满足 / 香港） ──────────
+FEWSHOT_USER_3 = """{
+  "questionnaire_answers": [
+    {"question_id": "G1", "question": "贵公司董事会或最高管理层是否明确负责监督气候和 ESG 相关事务？", "answer": "董事会已明确 ESG 监督职责，但气候议题未单独成文"},
+    {"question_id": "G3", "question": "贵公司是否已发布或准备发布年度 ESG / 可持续发展报告？", "answer": "已定期发布 ESG 报告并通过官方渠道公开"}
+  ],
+  "target_country": "hong_kong",
+  "standard": "destination",
+  "regulation_md_content": "## 合规检查项\\n- [ ] 发行人是否识别并披露负责监督气候相关风险与机会的治理机构或个人\\n- [ ] 是否披露管理层在气候相关治理流程、控制及程序中的角色\\n- [ ] 是否已发布年度 ESG / 可持续发展报告\\n\\n## 评估标准\\n- 满足：披露涵盖董事会治理机构识别及管理层角色\\n- 部分满足：仅披露董事会层面但未说明管理层角色\\n- 不满足：未提供任何气候治理披露\\n\\n## SME 常见差距\\n中小企业常将气候治理混入一般 ESG 治理披露，未单独说明气候相关的具体监督机制。\\n\\n## 法规原文摘要\\n根据 HKEX Appendix C2, Part D, para 18，上市发行人应披露负责监督气候相关风险与机会的治理机构或个人，以及管理层在相关治理流程、控制及程序中的角色..."
+}"""
+
+FEWSHOT_ASSISTANT_3 = """{
+  "overall_score": 68,
+  "gaps": [
+    {
+      "regulation": "气候相关治理披露",
+      "category": "G",
+      "status": "green",
+      "source_text": "HKEX Appendix C2, Part D, para 18 要求上市发行人披露负责监督气候相关风险与机会的治理机构或个人，以及管理层在相关治理流程中的角色",
+      "source_ref": "HKEX Appendix C2, Part D, para 18",
+      "ai_judgment": "根据评估标准，企业已有董事会 ESG 监督且发布 ESG 报告，但气候议题可进一步细化，判定为基本满足。",
+      "confidence": "medium",
+      "gap_description": "董事会 ESG 监督已建立，但气候相关风险的专项监督机制不够明确",
+      "suggestion": "建议在董事会或下设委员会职责中明确气候相关风险监督条款，定期向董事会汇报气候风险与机会。",
+      "suggestion_confidence": "high",
+      "difficulty": "容易",
+      "estimated_time": "1-2个月"
+    }
+  ],
+  "roadmap": "第一阶段(1-2月)：在董事会职责文件中明确气候监督条款；第二阶段(2-3月)：建立管理层向董事会定期汇报气候风险的机制。",
+  "disclaimer": "以上分析由AI生成，仅供参考，不构成法律或合规建议。"
+}"""
+
 # ── 输出格式要求 ────────────────────────────────────────────
 OUTPUT_FORMAT = """【输出格式】只输出一个 JSON 对象，不要输出其他任何文字：
 {
@@ -98,6 +165,7 @@ USER_TEMPLATE = """【企业画像】
 {answers_summary}
 
 【法规原文与评估标准】
+以下法规原文仅包含 {country_display} 地区的法规，请只基于这些法规进行分析，严禁引用其他地区或示例中的法规。
 {regulation_context}
 
 【参考分数】根据问卷选项计算的基础分数约为 {base_score}，请在此基础上 ±5 微调。

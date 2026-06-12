@@ -20,6 +20,10 @@ from app.prompts.esg_prompt import (
     SCORING,
     FEWSHOT_USER,
     FEWSHOT_ASSISTANT,
+    FEWSHOT_USER_2,
+    FEWSHOT_ASSISTANT_2,
+    FEWSHOT_USER_3,
+    FEWSHOT_ASSISTANT_3,
     OUTPUT_FORMAT,
     USER_TEMPLATE,
     RETRY_HINT,
@@ -322,9 +326,13 @@ def _build_messages(
 
     messages = [
         {"role": "system", "content": SYSTEM_PROMPT},
-        # Few-shot 示例
+        # Few-shot 示例：多地区示例降低单一泰国偏向
         {"role": "user", "content": FEWSHOT_USER},
         {"role": "assistant", "content": FEWSHOT_ASSISTANT},
+        {"role": "user", "content": FEWSHOT_USER_2},
+        {"role": "assistant", "content": FEWSHOT_ASSISTANT_2},
+        {"role": "user", "content": FEWSHOT_USER_3},
+        {"role": "assistant", "content": FEWSHOT_ASSISTANT_3},
         # 真实请求
         {"role": "user", "content": user_content},
     ]
@@ -521,67 +529,12 @@ def _validate_response(data: dict) -> tuple[bool, str]:
 
 # ── Mock 降级 ───────────────────────────────────────────────
 
-MOCK_FALLBACK = {
-    "overall_score": 45,
-    "category_scores": {"E": 30, "S": 55, "G": 60},
-    "grade": "C",
-    "gaps": [
-        {
-            "regulation": "碳排放报告",
-            "category": "E",
-            "status": "red",
-            "source_text": "根据泰国 SEC ESG 信息披露指引，上市公司及大型企业需按年度披露范围一和范围二的温室气体排放数据。",
-            "source_ref": "泰国 SEC ESG 指引 第3.2条",
-            "ai_judgment": "不满足",
-            "confidence": "high",
-            "gap_description": "企业未建立碳排放核算体系，无法提供符合要求的排放报告",
-            "suggestion": "建议聘请第三方碳核查机构，建立 ISO 14064 碳排放核算体系",
-            "suggestion_confidence": "medium",
-            "difficulty": "中等",
-            "estimated_time": "3-6个月",
-        },
-        {
-            "regulation": "劳工权益保护",
-            "category": "S",
-            "status": "yellow",
-            "source_text": "泰国劳动保护法要求企业为员工提供社会保险和工作安全培训。",
-            "source_ref": "泰国劳动保护法 B.E.2541 第22条",
-            "ai_judgment": "部分满足",
-            "confidence": "medium",
-            "gap_description": "企业有基本社保但缺乏系统的安全培训记录",
-            "suggestion": "建立员工安全培训档案，定期开展职业健康培训",
-            "suggestion_confidence": "high",
-            "difficulty": "容易",
-            "estimated_time": "1-2个月",
-        },
-        {
-            "regulation": "公司治理结构",
-            "category": "G",
-            "status": "green",
-            "source_text": "泰国 SEC 要求企业建立基本的公司治理框架，包括董事会组成和信息披露机制。",
-            "source_ref": "泰国 SEC 公司治理指引 第2.1条",
-            "ai_judgment": "基本满足",
-            "confidence": "high",
-            "gap_description": "企业已建立基本治理结构，但独立董事比例可优化",
-            "suggestion": "考虑引入1-2名独立董事，完善董事会 diversity",
-            "suggestion_confidence": "medium",
-            "difficulty": "容易",
-            "estimated_time": "1-3个月",
-        },
-    ],
-    "roadmap": "建议分三阶段推进：第一阶段(1-2月)完善劳工权益和治理结构；第二阶段(3-4月)建立碳排放核算体系；第三阶段(5-6月)完成首份 ESG 报告编制。",
-    "disclaimer": "以上分析由AI生成，仅供参考，不构成法律或合规建议。（降级模式：LLM 服务不可用，显示示例数据）",
-}
+from app.data.esg_mock_data import get_mock_esg_response
 
 
 def _get_mock_fallback(req) -> dict:
-    """返回 Mock 降级数据，填充请求中的国家/标准"""
-    import copy
-    result = copy.deepcopy(MOCK_FALLBACK)
-    region = COUNTRY_MAP.get(req.target_country, "")
-    result["country"] = COUNTRY_DISPLAY.get(region, req.target_country)
-    result["standard"] = req.standard
-    return result
+    """返回 Mock 降级数据，按请求中的目标地区返回对应示例数据"""
+    return get_mock_esg_response(req.target_country, req.standard, is_fallback=True)
 
 
 # ── 主入口 ──────────────────────────────────────────────────
