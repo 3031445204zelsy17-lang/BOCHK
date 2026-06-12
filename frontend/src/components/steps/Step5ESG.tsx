@@ -116,6 +116,23 @@ function getTargetCountry(markets: string[]): string {
   return "singapore" // 默认新加坡（东南亚首选）
 }
 
+/** 结果页地区/标准文案（BOCHK tab 不跟随目标市场） */
+function getResultRegionText(result: ESGAnalysis, activeTab: TabKey): string {
+  if (activeTab === "bochk") {
+    return "BOCHK 准入标准"
+  }
+  const regionName = REGION_NAMES[result.country] ?? result.country
+  return `${regionName} · 目的地法规标准`
+}
+
+function getResultSubText(result: ESGAnalysis, activeTab: TabKey): string {
+  if (activeTab === "bochk") {
+    return "本次分析基于 BOCHK 银行内部 ESG 准入标准"
+  }
+  const regionName = REGION_NAMES[result.country] ?? result.country
+  return `本次分析基于目标地区：${regionName} 法规`
+}
+
 // ── Props ───────────────────────────────────────────────────
 interface Step5Props {
   profile: CompanyProfile
@@ -231,12 +248,12 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
     }
   }
 
-  // 重新填写 — 只重置当前 tab
+  // 重新分析 — 只清除结果和提示，保留答案以便用户修改后重新提交
   const handleReset = () => {
     setTabState((prev) => ({
       ...prev,
       [activeTab]: {
-        answers: {},
+        ...prev[activeTab],
         result: null,
         expandedHints: new Set(),
       },
@@ -254,12 +271,20 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
       <div className="max-w-3xl mx-auto animate-fade-in">
         <h2 className="text-xl font-semibold mb-2">ESG 合规分析结果</h2>
         <p className="text-sm text-bochk-gray mb-2">
-          {REGION_NAMES[current.result.country] ?? current.result.country} · {activeTab === "destination" ? "目的地法规" : "BOCHK 准入"}标准
+          {getResultRegionText(current.result, activeTab)}
         </p>
         <p className="text-xs text-bochk-blue mb-6 inline-flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
-          本次分析基于目标地区：{REGION_NAMES[current.result.country] ?? current.result.country} 法规
+          {getResultSubText(current.result, activeTab)}
         </p>
+
+        {/* Tab 切换（结果页也可切换） */}
+        <TabSwitcher
+          activeTab={activeTab}
+          tabState={tabState}
+          applicableRegions={applicableRegions}
+          onSwitch={setActiveTab}
+        />
 
         {/* 总分 + 等级 + 分项评分 */}
         <ScoreBoard result={current.result} />
@@ -303,7 +328,7 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
         {/* 操作按钮 */}
         <div className="flex flex-col sm:flex-row gap-3">
           <button onClick={handleReset} className="px-4 py-2 rounded border border-bochk-border text-sm hover:bg-gray-50 cursor-pointer">
-            重新分析
+            修改答案并重新提交
           </button>
           <button onClick={() => onComplete(current.result)} className="btn-primary text-sm">
             完成
@@ -331,45 +356,12 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
       </p>
 
       {/* Tab 切换（含完成状态） */}
-      <div className="flex border-b border-bochk-border mb-6 overflow-x-auto">
-        {(["destination", "bochk"] as const).map((tab) => {
-          const tabData = tabState[tab]
-          // 计算该 tab 的进度
-          const source = tab === "destination" ? DEST_QUESTIONS : BOCHK_QUESTIONS
-          const questions = tab === "bochk"
-            ? source
-            : source.filter((q) => (q.applicable_regions ?? []).some((r) => applicableRegions.includes(r)))
-          const answered = questions.filter((q) => tabData.answers[q.id]).length
-          const total = questions.length
-
-          // 状态文字
-          let statusText = ""
-          if (tabData.result) {
-            statusText = " (已完成)"
-          } else if (answered > 0) {
-            statusText = ` (${answered}/${total})`
-          }
-
-          return (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer whitespace-nowrap ${
-                activeTab === tab
-                  ? "border-bochk-red text-bochk-red"
-                  : "border-transparent text-bochk-gray hover:text-bochk-dark"
-              }`}
-            >
-              {tab === "destination" ? "目的地法规分析" : "BOCHK 准入评估"}
-              {statusText && (
-                <span className={tabData.result ? "text-esg-green" : "text-bochk-gray"}>
-                  {statusText}
-                </span>
-              )}
-            </button>
-          )
-        })}
-      </div>
+      <TabSwitcher
+        activeTab={activeTab}
+        tabState={tabState}
+        applicableRegions={applicableRegions}
+        onSwitch={setActiveTab}
+      />
 
       {/* 适用地区提示 */}
       <div className="text-xs text-bochk-gray mb-4">
@@ -529,6 +521,59 @@ function QuestionCard({
   )
 }
 
+// ── 子组件：Tab 切换条（问卷页 + 结果页共用） ─────────────────
+
+interface TabSwitcherProps {
+  activeTab: TabKey
+  tabState: Record<TabKey, TabData>
+  applicableRegions: string[]
+  onSwitch: (tab: TabKey) => void
+}
+
+function TabSwitcher({ activeTab, tabState, applicableRegions, onSwitch }: TabSwitcherProps) {
+  return (
+    <div className="flex border-b border-bochk-border mb-6 overflow-x-auto">
+      {(["destination", "bochk"] as const).map((tab) => {
+        const tabData = tabState[tab]
+        // 计算该 tab 的进度
+        const source = tab === "destination" ? DEST_QUESTIONS : BOCHK_QUESTIONS
+        const questions = tab === "bochk"
+          ? source
+          : source.filter((q) => (q.applicable_regions ?? []).some((r) => applicableRegions.includes(r)))
+        const answered = questions.filter((q) => tabData.answers[q.id]).length
+        const total = questions.length
+
+        // 状态文字
+        let statusText = ""
+        if (tabData.result) {
+          statusText = " (已完成)"
+        } else if (answered > 0) {
+          statusText = ` (${answered}/${total})`
+        }
+
+        return (
+          <button
+            key={tab}
+            onClick={() => onSwitch(tab)}
+            className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer whitespace-nowrap ${
+              activeTab === tab
+                ? "border-bochk-red text-bochk-red"
+                : "border-transparent text-bochk-gray hover:text-bochk-dark"
+            }`}
+          >
+            {tab === "destination" ? "目的地法规分析" : "BOCHK 准入评估"}
+            {statusText && (
+              <span className={tabData.result ? "text-esg-green" : "text-bochk-gray"}>
+                {statusText}
+              </span>
+            )}
+          </button>
+        )
+      })}
+    </div>
+  )
+}
+
 // ── 子组件：评分看板（总分 + 等级 + E/S/G 分项） ─────────────
 
 /** 分数 → 交通灯颜色 */
@@ -551,6 +596,8 @@ const WEIGHTS: Record<string, number> = { E: 30, S: 35, G: 35 }
 function ScoreBoard({ result }: { result: ESGAnalysis }) {
   const grade = result.grade ?? (result.overall_score >= 80 ? "A" : result.overall_score >= 60 ? "B" : "C")
   const catScores = result.category_scores ?? {}
+  // 只显示后端实际返回的维度（BOCHK 无 S 题时不显示 S）
+  const categoriesToShow = (["E", "S", "G"] as const).filter((cat) => catScores[cat] !== undefined)
 
   return (
     <>
@@ -580,7 +627,7 @@ function ScoreBoard({ result }: { result: ESGAnalysis }) {
       <div className="card mb-6">
         <div className="text-sm font-semibold mb-3">分项评分</div>
         <div className="space-y-3">
-          {(["E", "S", "G"] as const).map((cat) => {
+          {categoriesToShow.map((cat) => {
             const cfg = CATEGORY_CONFIG[cat]
             const s = catScores[cat] ?? 0
             const w = WEIGHTS[cat]
