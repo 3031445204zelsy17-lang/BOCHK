@@ -3,6 +3,7 @@
 import { useState, useMemo } from "react"
 import type { CompanyProfile, ESGAnalysis, Question } from "@/lib/types"
 import { analyzeESG } from "@/lib/api"
+import { OverlayLoading } from "@/components/shared/Loading"
 import destinationQuestions from "@/data/questionnaire_destination.json"
 import bochkQuestions from "@/data/questionnaire_bochk.json"
 
@@ -199,7 +200,7 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
   // ── 渲染：结果展示 ──────────────────────────────────────
   if (current.result) {
     return (
-      <div className="max-w-3xl mx-auto">
+      <div className="max-w-3xl mx-auto animate-fade-in">
         <h2 className="text-xl font-semibold mb-2">ESG 合规分析结果</h2>
         <p className="text-sm text-bochk-gray mb-6">
           {REGION_NAMES[current.result.country] ?? current.result.country} · {activeTab === "destination" ? "目的地法规" : "BOCHK 准入"}标准
@@ -211,7 +212,13 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
         {/* 缺口卡片 */}
         <div className="space-y-3 mb-6">
           {current.result.gaps.map((gap, i) => (
-            <GapCard key={i} gap={gap} />
+            <div
+              key={i}
+              className="animate-fade-in"
+              style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
+            >
+              <GapCard gap={gap} />
+            </div>
           ))}
         </div>
 
@@ -253,7 +260,9 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
 
   // ── 渲染：问卷填写 ──────────────────────────────────────
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto relative">
+      {loading && <OverlayLoading text="正在分析 ESG 合规缺口，请稍候..." />}
+
       <h2 className="text-xl font-semibold mb-2">ESG 合规分析</h2>
       <p className="text-sm text-bochk-gray mb-4">
         基于「{profile.industry_tags[0]}」行业 · 目标市场: {profile.export_markets.join("、") || "未选择"}
@@ -375,7 +384,14 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
               disabled={answeredCount < totalQuestions || loading}
               className="btn-primary w-full text-sm"
             >
-              {loading ? "⏳ 正在分析合规缺口..." : "提交分析"}
+              {loading ? (
+                <span className="inline-flex items-center justify-center gap-2">
+                  <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  正在分析...
+                </span>
+              ) : (
+                "提交分析"
+              )}
             </button>
           </div>
         </>

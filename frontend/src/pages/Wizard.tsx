@@ -64,18 +64,20 @@ export default function Wizard() {
             esgResult={esgResult}
           />
 
-          {currentStep === 1 && (
-            <Step1Profile onComplete={handleProfileComplete} />
-          )}
-          {currentStep === 4 && profile && (
-            <Step4Matching
-              profile={profile}
-              onComplete={handleMatchingComplete}
-            />
-          )}
-          {currentStep === 5 && profile && (
-            <Step5ESG profile={profile} onComplete={handleESGComplete} />
-          )}
+          <div key={currentStep} className="animate-fade-in">
+            {currentStep === 1 && (
+              <Step1Profile onComplete={handleProfileComplete} />
+            )}
+            {currentStep === 4 && profile && (
+              <Step4Matching
+                profile={profile}
+                onComplete={handleMatchingComplete}
+              />
+            )}
+            {currentStep === 5 && profile && (
+              <Step5ESG profile={profile} onComplete={handleESGComplete} />
+            )}
+          </div>
         </main>
       </div>
     </div>

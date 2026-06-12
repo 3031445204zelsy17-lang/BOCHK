@@ -435,7 +435,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
 
       {/* ═══ 画像结果卡片 ═══════════════════════════ */}
       {profile && (
-        <div className="card">
+        <div className="card animate-fade-in">
           {/* 顶部：标题 + 总分 */}
           <div className="flex items-center justify-between mb-4">
             <div>

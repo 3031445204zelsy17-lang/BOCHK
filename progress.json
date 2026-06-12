@@ -351,8 +351,10 @@
       "name": "UI 打磨",
       "description": "loading 状态、过渡动画、骨架屏",
       "dependencies": ["P6-6"],
-      "passes": false,
-      "assignee": "Claude"
+      "passes": true,
+      "assignee": "Claude",
+      "completed_at": "2026-06-12",
+      "note": "统一Loading组件(spinner+skeleton+overlay), Step4骨架屏, Step5提交覆盖层, 页面/卡片stagger fade-in动画, 参考BOCHK官网(#990000标题色/红色CTA/卡片层次)"
     },
     {
       "id": "P7-2",

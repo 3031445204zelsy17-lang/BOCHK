@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import type { CompanyProfile, ProductRecommendation } from "@/lib/types"
 import { getRecommendations } from "@/lib/api"
 import { cn } from "@/lib/utils"
+import { CardSkeleton } from "@/components/shared/Loading"
 
 interface Step4Props {
   profile: CompanyProfile
@@ -46,11 +47,16 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
   if (loading) {
     return (
       <div className="max-w-2xl mx-auto">
-        <div className="flex items-center justify-center h-64">
-          <div className="text-center">
-            <div className="inline-block w-6 h-6 border-2 border-bochk-red/30 border-t-bochk-red rounded-full animate-spin mb-3" />
-            <div className="text-bochk-gray text-sm">正在匹配 BOCHK 产品...</div>
-          </div>
+        <h2 className="text-xl font-semibold mb-1">Step 4：服务匹配</h2>
+        <p className="text-sm text-bochk-gray mb-6">
+          基于「{profile.industry_tags[0]}」行业 · {profile.size_level}企业
+          {profile.export_markets.length > 0 && ` · 目标${profile.export_markets.join("、")}`}
+          ，为您推荐以下 BOCHK 产品
+        </p>
+        <div className="space-y-3 animate-fade-in">
+          <CardSkeleton rows={4} />
+          <CardSkeleton rows={3} />
+          <CardSkeleton rows={3} />
         </div>
       </div>
     )
@@ -72,7 +78,11 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
           const isOpen = expanded === rec.product_id
 
           return (
-            <div key={rec.product_id} className="card">
+            <div
+              key={rec.product_id}
+              className="card animate-fade-in"
+              style={{ animationDelay: `${index * 80}ms`, animationFillMode: "both" }}
+            >
               {/* ── 头部：排名 + 名称 + 匹配度 ── */}
               <div
                 className="flex items-center justify-between cursor-pointer"

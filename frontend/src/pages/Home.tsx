@@ -86,10 +86,11 @@ export default function Home() {
           </div>
 
           <div className="grid grid-cols-3 gap-6">
-            {FEATURES.map((f) => (
+            {FEATURES.map((f, i) => (
               <div
                 key={f.step}
-                className="bg-white rounded-lg p-6 border border-bochk-border hover:shadow-md hover:border-bochk-red/20 transition-all group"
+                className="bg-white rounded-lg p-6 border border-bochk-border hover:shadow-md hover:border-bochk-red/20 transition-all group animate-fade-in"
+                style={{ animationDelay: `${i * 100}ms`, animationFillMode: "both" }}
               >
                 {/* 图标 + 步骤 */}
                 <div className="flex items-center gap-3 mb-4">
@@ -140,8 +141,12 @@ export default function Home() {
             { value: "71", label: "ESG 法规", sub: "结构化合规检查项" },
             { value: "8", label: "金融产品", sub: "BOCHK 专属推荐" },
             { value: "3", label: "评估维度", sub: "环境 / 社会 / 治理" },
-          ].map((stat) => (
-            <div key={stat.label}>
+          ].map((stat, i) => (
+            <div
+              key={stat.label}
+              className="animate-fade-in"
+              style={{ animationDelay: `${300 + i * 80}ms`, animationFillMode: "both" }}
+            >
               <div className="text-3xl font-bold text-bochk-red">{stat.value}</div>
               <div className="text-sm font-medium text-bochk-dark mt-1">{stat.label}</div>
               <div className="text-xs text-bochk-gray mt-0.5">{stat.sub}</div>
