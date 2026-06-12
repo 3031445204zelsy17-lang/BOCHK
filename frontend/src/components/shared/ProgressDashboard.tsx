@@ -1,5 +1,7 @@
 /** 进度看板 — 出海准备度总览：聚合三步完成状态 */
 
+import type { LucideIcon } from "lucide-react"
+import { Building2, Landmark, Leaf, CheckCircle } from "lucide-react"
 import type { CompanyProfile, ProductRecommendation, ESGAnalysis } from "@/lib/types"
 
 // ── Props ───────────────────────────────────────────────────
@@ -32,21 +34,21 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
     <div className="mb-6">
       {/* 总进度条 */}
       <div className="flex items-center gap-3 mb-4">
-        <span className="text-sm font-semibold text-bochk-dark">出海准备度</span>
+        <span className="text-sm font-semibold text-bochk-dark shrink-0">出海准备度</span>
         <div className="flex-1 bg-gray-200 rounded-full h-2">
           <div
             className="bg-bochk-red rounded-full h-2 transition-all duration-500"
             style={{ width: `${progress}%` }}
           />
         </div>
-        <span className="text-sm font-medium text-bochk-red">{progress}%</span>
+        <span className="text-sm font-medium text-bochk-red shrink-0">{progress}%</span>
       </div>
 
       {/* 三步卡片 */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
         {/* 企业画像 */}
         <StepCard
-          icon="🏢"
+          icon={Building2}
           step="Step 1"
           label="企业画像"
           completed={props.profileCompleted}
@@ -74,7 +76,7 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
 
         {/* 服务匹配 */}
         <StepCard
-          icon="🏦"
+          icon={Landmark}
           step="Step 4"
           label="服务匹配"
           completed={props.matchingCompleted}
@@ -107,7 +109,7 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
 
         {/* ESG 合规 */}
         <StepCard
-          icon="🌿"
+          icon={Leaf}
           step="Step 5"
           label="ESG 合规"
           completed={props.esgCompleted}
@@ -141,13 +143,13 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
 
 // ── 子组件：步骤卡片 ────────────────────────────────────────
 function StepCard({
-  icon,
+  icon: Icon,
   step,
   label,
   completed,
   children,
 }: {
-  icon: string
+  icon: LucideIcon
   step: string
   label: string
   completed: boolean
@@ -156,11 +158,13 @@ function StepCard({
   return (
     <div className={`card ${completed ? "border-l-3 border-l-esg-green" : ""}`}>
       <div className="flex items-center gap-2 mb-2">
-        <span className="text-lg">{icon}</span>
+        <Icon className="w-5 h-5 text-bochk-red" />
         <span className="text-xs text-bochk-gray">{step}</span>
         <span className="text-sm font-medium">{label}</span>
         {completed ? (
-          <span className="ml-auto text-xs text-esg-green font-medium">✅ 已完成</span>
+          <span className="ml-auto inline-flex items-center gap-1 text-xs text-esg-green font-medium">
+            <CheckCircle className="w-4 h-4" /> 已完成
+          </span>
         ) : (
           <span className="ml-auto text-xs text-bochk-gray">待完成</span>
         )}

@@ -8,6 +8,7 @@ import {
   Radar,
   ResponsiveContainer,
 } from "recharts"
+import { ArrowRight } from "lucide-react"
 import type { CompanyInput, CompanyProfile, EnterpriseTemplate } from "@/lib/types"
 import { generateProfile } from "@/lib/api"
 import { cn } from "@/lib/utils"
@@ -224,7 +225,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
         <h3 className="text-sm font-medium text-bochk-gray mb-3">
           快速体验 — 点击选择企业模板
         </h3>
-        <div className="grid grid-cols-3 gap-3">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {TEMPLATES.map((tpl) => (
             <button
               key={tpl.id}
@@ -282,7 +283,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
         </div>
 
         {/* 行业 + 规模 */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-bochk-dark mb-1">
               行业
@@ -338,7 +339,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
         </div>
 
         {/* 出海经验 + 年营收 */}
-        <div className="grid grid-cols-2 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-bochk-dark mb-1">
               出海经验
@@ -437,14 +438,14 @@ export default function Step1Profile({ onComplete }: Step1Props) {
       {profile && (
         <div className="card animate-fade-in">
           {/* 顶部：标题 + 总分 */}
-          <div className="flex items-center justify-between mb-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
             <div>
               <h3 className="text-lg font-semibold text-bochk-dark">企业画像</h3>
               {form.company_name && (
                 <p className="text-sm text-bochk-gray">{form.company_name}</p>
               )}
             </div>
-            <div className="text-right">
+            <div className="text-left sm:text-right">
               <div className="text-3xl font-bold text-bochk-red">
                 {profile.readiness_score}
                 <span className="text-sm font-normal text-bochk-gray">/100</span>
@@ -470,9 +471,9 @@ export default function Step1Profile({ onComplete }: Step1Props) {
           </div>
 
           {/* 中部：基本信息（左）+ 雷达图（右） */}
-          <div className="grid grid-cols-5 gap-6 mb-5">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 mb-5">
             {/* 左：指标 */}
-            <div className="col-span-2 space-y-3">
+            <div className="md:col-span-2 space-y-3">
               <InfoRow label="行业" value={profile.industry_tags.join("、")} />
               <InfoRow label="规模" value={profile.size_level} />
               <InfoRow label="贸易能力" value={profile.trade_capability} />
@@ -504,7 +505,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
             </div>
 
             {/* 右：雷达图 */}
-            <div className="col-span-3">
+            <div className="md:col-span-3 w-full overflow-hidden">
               <ResponsiveContainer width="100%" height={220}>
                 <RadarChart data={computeRadarData(profile)}>
                   <PolarGrid stroke="#E0E0E0" />
@@ -528,9 +529,9 @@ export default function Step1Profile({ onComplete }: Step1Props) {
           <div className="pt-4 border-t border-bochk-border">
             <button
               onClick={() => onComplete(profile)}
-              className="btn-primary w-full py-2.5"
+              className="btn-primary w-full py-2.5 inline-flex items-center justify-center gap-1"
             >
-              确认画像，进入下一步：服务匹配 →
+              确认画像，进入下一步：服务匹配 <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

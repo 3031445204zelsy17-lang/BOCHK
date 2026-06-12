@@ -1,6 +1,7 @@
 /** Step 4: 服务匹配 — BOCHK 产品推荐卡片列表 */
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
+import { Lightbulb, ClipboardList, ArrowRight } from "lucide-react"
 import type { CompanyProfile, ProductRecommendation } from "@/lib/types"
 import { getRecommendations } from "@/lib/api"
 import { cn } from "@/lib/utils"
@@ -23,11 +24,7 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
   const [loading, setLoading] = useState(true)
   const [expanded, setExpanded] = useState<string | null>(null)
 
-  useEffect(() => {
-    loadRecommendations()
-  }, [])
-
-  const loadRecommendations = async () => {
+  const loadRecommendations = useCallback(async () => {
     setLoading(true)
     try {
       const result = await getRecommendations(profile)
@@ -42,7 +39,13 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
     } finally {
       setLoading(false)
     }
-  }
+  }, [profile])
+
+  useEffect(() => {
+    // 初始挂载时自动加载推荐；数据获取在 effect 中完成，此处禁用过于严格的 set-state-in-effect 规则
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    loadRecommendations()
+  }, [loadRecommendations])
 
   if (loading) {
     return (
@@ -85,7 +88,7 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
             >
               {/* ── 头部：排名 + 名称 + 匹配度 ── */}
               <div
-                className="flex items-center justify-between cursor-pointer"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 cursor-pointer"
                 onClick={() => setExpanded(isOpen ? null : rec.product_id)}
               >
                 <div className="flex items-center gap-3">
@@ -93,8 +96,8 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
                   <div className="w-7 h-7 rounded-full bg-bochk-red text-white text-xs font-bold flex items-center justify-center shrink-0">
                     {index + 1}
                   </div>
-                  <div>
-                    <div className="flex items-center gap-2">
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="text-base font-semibold text-bochk-dark">
                         {rec.product_name}
                       </span>
@@ -137,16 +140,16 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
 
                   {/* 推荐理由 */}
                   <div className="bg-bochk-blue/5 rounded p-3">
-                    <div className="font-medium text-bochk-blue text-xs mb-1">
-                      💡 AI 推荐理由
+                    <div className="font-medium text-bochk-blue text-xs mb-1 inline-flex items-center gap-1">
+                      <Lightbulb className="w-4 h-4" /> AI 推荐理由
                     </div>
                     <div className="text-bochk-dark">{rec.reason}</div>
                   </div>
 
                   {/* 使用建议 */}
                   <div className="bg-esg-green/5 rounded p-3">
-                    <div className="font-medium text-esg-green text-xs mb-1">
-                      📋 使用建议
+                    <div className="font-medium text-esg-green text-xs mb-1 inline-flex items-center gap-1">
+                      <ClipboardList className="w-4 h-4" /> 使用建议
                     </div>
                     <div className="text-bochk-dark">{rec.advice}</div>
                   </div>
@@ -196,8 +199,8 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
       </div>
 
       {/* ═══ 下一步按钮 ══════════════════════════════ */}
-      <button onClick={() => onComplete(recommendations)} className="btn-primary w-full py-2.5 mt-6">
-        下一步：ESG 合规分析 →
+      <button onClick={() => onComplete(recommendations)} className="btn-primary w-full py-2.5 mt-6 inline-flex items-center justify-center gap-1">
+        下一步：ESG 合规分析 <ArrowRight className="w-4 h-4" />
       </button>
     </div>
   )

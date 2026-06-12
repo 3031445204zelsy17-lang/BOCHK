@@ -43,7 +43,7 @@ export default function Wizard() {
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
-      <div className="flex flex-1">
+      <div className="flex flex-col md:flex-row flex-1">
         <Sidebar
           currentStep={currentStep}
           onStepChange={setCurrentStep}
@@ -53,7 +53,7 @@ export default function Wizard() {
         />
 
         {/* 主内容区 */}
-        <main className="flex-1 p-8 overflow-y-auto">
+        <main className="flex-1 p-4 md:p-8 overflow-y-auto">
           {/* 进度看板 — 有任一步完成时显示 */}
           <ProgressDashboard
             profileCompleted={profileCompleted}

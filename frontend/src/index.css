@@ -64,7 +64,7 @@ body {
 /* ── 全局组件类（MVP 阶段，替代 shadcn/ui） ──────── */
 @layer components {
   .card {
-    @apply bg-white rounded border border-bochk-border p-6;
+    @apply bg-white rounded border border-bochk-border p-4 md:p-6;
   }
   .btn-primary {
     @apply bg-bochk-red text-white rounded px-4 py-2 font-medium

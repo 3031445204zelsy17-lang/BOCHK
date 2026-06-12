@@ -1,6 +1,20 @@
 /** Step 5: ESG 合规分析 — 双标准独立分析（目的地法规 + BOCHK 准入） */
 
 import { useState, useMemo } from "react"
+import {
+  Inbox,
+  CheckCircle,
+  XCircle,
+  FileText,
+  Paperclip,
+  Lightbulb,
+  Zap,
+  Clock,
+  ClipboardList,
+  AlertCircle,
+  Calendar,
+  ArrowRight,
+} from "lucide-react"
 import type { CompanyProfile, ESGAnalysis, Question } from "@/lib/types"
 import { analyzeESG } from "@/lib/api"
 import { OverlayLoading } from "@/components/shared/Loading"
@@ -238,15 +252,15 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
             </span>
             <button
               onClick={() => setActiveTab(otherTab)}
-              className="ml-2 text-bochk-blue hover:underline cursor-pointer"
+              className="ml-2 text-bochk-blue hover:underline cursor-pointer inline-flex items-center gap-0.5"
             >
-              查看结果 →
+              查看结果 <ArrowRight className="w-3 h-3" />
             </button>
           </div>
         )}
 
         {/* 操作按钮 */}
-        <div className="flex gap-3">
+        <div className="flex flex-col sm:flex-row gap-3">
           <button onClick={handleReset} className="px-4 py-2 rounded border border-bochk-border text-sm hover:bg-gray-50 cursor-pointer">
             重新分析
           </button>
@@ -269,7 +283,7 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
       </p>
 
       {/* Tab 切换（含完成状态） */}
-      <div className="flex border-b border-bochk-border mb-6">
+      <div className="flex border-b border-bochk-border mb-6 overflow-x-auto">
         {(["destination", "bochk"] as const).map((tab) => {
           const tabData = tabState[tab]
           // 计算该 tab 的进度
@@ -292,7 +306,7 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer ${
+              className={`px-4 py-2 text-sm font-medium border-b-2 -mb-px transition-colors cursor-pointer whitespace-nowrap ${
                 activeTab === tab
                   ? "border-bochk-red text-bochk-red"
                   : "border-transparent text-bochk-gray hover:text-bochk-dark"
@@ -320,7 +334,7 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
       {/* 问题列表 */}
       {filteredQuestions.length === 0 ? (
         <div className="card text-center py-12">
-          <div className="text-3xl mb-3">📭</div>
+          <Inbox className="w-10 h-10 text-bochk-gray mx-auto mb-3" />
           <p className="text-sm text-bochk-gray">当前目标市场暂无对应 ESG 法规问卷</p>
           <p className="text-xs text-bochk-gray mt-1">请切换到 BOCHK 准入评估，或返回 Step 1 选择其他目标市场</p>
         </div>
@@ -360,12 +374,18 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
 
           {/* 进度 + 提交 */}
           <div className="card mt-4">
-            <div className="flex items-center justify-between mb-3">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-3">
               <span className="text-sm text-bochk-gray">
                 已完成 {answeredCount}/{totalQuestions} 题
               </span>
-              <span className="text-xs text-bochk-gray">
-                {answeredCount === totalQuestions ? "✅ 可以提交" : `还需 ${totalQuestions - answeredCount} 题`}
+              <span className="text-xs text-bochk-gray inline-flex items-center gap-1">
+                {answeredCount === totalQuestions ? (
+                  <>
+                    <CheckCircle className="w-4 h-4 text-esg-green" /> 可以提交
+                  </>
+                ) : (
+                  `还需 ${totalQuestions - answeredCount} 题`
+                )}
               </span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-1.5 mb-4">
@@ -376,7 +396,9 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
             </div>
 
             {error && (
-              <div className="text-sm text-esg-red mb-3">❌ {error}</div>
+              <div className="text-sm text-esg-red mb-3 inline-flex items-center gap-1">
+                <XCircle className="w-4 h-4" /> {error}
+              </div>
             )}
 
             <button
@@ -438,7 +460,7 @@ function QuestionCard({
       )}
 
       {/* 选项按钮 */}
-      <div className="flex gap-2">
+      <div className="flex flex-col sm:flex-row gap-2">
         {(["met", "partial", "not_met"] as const).map((value) => {
           const cfg = OPTION_CONFIG[value]
           const isActive = answer === value
@@ -485,9 +507,9 @@ function ScoreBoard({ result }: { result: ESGAnalysis }) {
   return (
     <>
       {/* 总分 + 等级 */}
-      <div className="card mb-4 flex items-center justify-between">
-        <div className="flex items-center gap-6">
-          <div className="w-24 h-24 rounded-full border-4 flex flex-col items-center justify-center"
+      <div className="card mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="flex items-center gap-4 md:gap-6">
+          <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 flex flex-col items-center justify-center shrink-0"
             style={{ borderColor: scoreColor(result.overall_score) }}>
             <span className="text-2xl font-bold">{result.overall_score}</span>
             <span className="text-xs text-bochk-gray">分</span>
@@ -500,7 +522,7 @@ function ScoreBoard({ result }: { result: ESGAnalysis }) {
           </div>
         </div>
         {/* 等级徽章 */}
-        <div className={`px-4 py-2 rounded text-center ${GRADE_STYLE[grade] ?? GRADE_STYLE.C}`}>
+        <div className={`px-4 py-2 rounded text-center shrink-0 ${GRADE_STYLE[grade] ?? GRADE_STYLE.C}`}>
           <div className="text-xs opacity-80">等级</div>
           <div className="text-2xl font-bold">{grade}</div>
         </div>
@@ -516,16 +538,16 @@ function ScoreBoard({ result }: { result: ESGAnalysis }) {
             const w = WEIGHTS[cat]
             return (
               <div key={cat} className="flex items-center gap-3">
-                <span className={`w-6 h-6 rounded text-white text-xs flex items-center justify-center font-medium ${cfg.color}`}>
+                <span className={`w-6 h-6 rounded text-white text-xs flex items-center justify-center font-medium shrink-0 ${cfg.color}`}>
                   {cat}
                 </span>
-                <span className="text-sm w-10">{cfg.label}</span>
-                <span className="text-xs text-bochk-gray w-10">({w}%)</span>
-                <div className="flex-1 bg-gray-200 rounded-full h-2">
+                <span className="text-sm w-10 shrink-0">{cfg.label}</span>
+                <span className="text-xs text-bochk-gray w-10 shrink-0">({w}%)</span>
+                <div className="flex-1 bg-gray-200 rounded-full h-2 min-w-0">
                   <div className="rounded-full h-2 transition-all duration-500"
                     style={{ width: `${Math.max(s, 0)}%`, backgroundColor: scoreColor(s) }} />
                 </div>
-                <span className="text-sm font-medium w-8 text-right" style={{ color: scoreColor(s) }}>
+                <span className="text-sm font-medium w-8 text-right shrink-0" style={{ color: scoreColor(s) }}>
                   {s}
                 </span>
               </div>
@@ -543,9 +565,9 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
   const [expanded, setExpanded] = useState(false)
 
   const statusConfig = {
-    green:  { label: "满足",     icon: "🟢", borderColor: "border-l-esg-green",  bg: "bg-esg-green/5" },
-    yellow: { label: "部分满足", icon: "🟡", borderColor: "border-l-esg-yellow", bg: "bg-esg-yellow/5" },
-    red:    { label: "不满足",   icon: "🔴", borderColor: "border-l-esg-red",    bg: "bg-esg-red/5" },
+    green:  { label: "满足",     dotColor: "bg-esg-green",  borderColor: "border-l-esg-green",  bg: "bg-esg-green/5" },
+    yellow: { label: "部分满足", dotColor: "bg-esg-yellow", borderColor: "border-l-esg-yellow", bg: "bg-esg-yellow/5" },
+    red:    { label: "不满足",   dotColor: "bg-esg-red",    borderColor: "border-l-esg-red",    bg: "bg-esg-red/5" },
   }
   const sc = statusConfig[gap.status as keyof typeof statusConfig] ?? statusConfig.yellow
 
@@ -559,13 +581,13 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
 
   return (
     <div className={`card border-l-4 ${sc.borderColor} ${sc.bg}`}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <span>{sc.icon}</span>
-          <span className="text-sm font-medium">{gap.regulation}</span>
-          <span className="text-xs text-bochk-gray">({gap.category})</span>
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div className="flex items-center gap-2 min-w-0">
+          <div className={`w-3 h-3 rounded-full shrink-0 ${sc.dotColor}`} />
+          <span className="text-sm font-medium truncate">{gap.regulation}</span>
+          <span className="text-xs text-bochk-gray shrink-0">({gap.category})</span>
         </div>
-        <span className="text-xs font-medium">{sc.label}</span>
+        <span className="text-xs font-medium shrink-0">{sc.label}</span>
       </div>
 
       {/* AI 判断（蓝色层） */}
@@ -575,11 +597,12 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
 
       {/* 收起状态：来源摘要行 */}
       {!expanded && (
-        <div className="flex items-center justify-between mt-2">
-          <div className="text-xs text-bochk-gray truncate max-w-[80%]">
-            📄 {gap.source_ref}
+        <div className="flex items-center justify-between mt-2 gap-2">
+          <div className="text-xs text-bochk-gray truncate inline-flex items-center gap-1">
+            <FileText className="w-4 h-4 shrink-0" />
+            <span className="truncate">{gap.source_ref}</span>
           </div>
-          <button onClick={() => setExpanded(true)} className="text-xs text-bochk-blue cursor-pointer hover:underline shrink-0 ml-2">
+          <button onClick={() => setExpanded(true)} className="text-xs text-bochk-blue cursor-pointer hover:underline shrink-0">
             查看详情 ▼
           </button>
         </div>
@@ -591,7 +614,9 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
           {/* 法规原文（白色层） */}
           <div className="mt-3 p-3 bg-white rounded border border-bochk-border">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-medium text-bochk-dark">📄 法规原文</span>
+              <span className="text-xs font-medium text-bochk-dark inline-flex items-center gap-1">
+                <FileText className="w-4 h-4" /> 法规原文
+              </span>
               {gap.confidence && (
                 <span className={`px-1.5 py-0.5 rounded text-xs ${confidenceStyle[gap.confidence] ?? ""}`}>
                   置信度: {confidenceLabel[gap.confidence] ?? gap.confidence}
@@ -600,7 +625,9 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
             </div>
             <p className="text-sm text-bochk-dark leading-relaxed">{gap.source_text}</p>
             <div className="mt-2 pt-2 border-t border-bochk-border flex items-center gap-1">
-              <span className="text-xs text-bochk-gray">📎 来源:</span>
+              <span className="text-xs text-bochk-gray inline-flex items-center gap-1">
+                <Paperclip className="w-4 h-4" /> 来源:
+              </span>
               <span className="text-xs text-bochk-blue">{gap.source_ref}</span>
             </div>
           </div>
@@ -608,7 +635,9 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
           {/* AI 建议（绿色层） */}
           <div className="mt-2 p-3 bg-esg-green/5 rounded border border-esg-green/20">
             <div className="flex items-center gap-2 mb-2">
-              <span className="text-xs font-medium text-esg-green">💡 AI 建议</span>
+              <span className="text-xs font-medium text-esg-green inline-flex items-center gap-1">
+                <Lightbulb className="w-4 h-4" /> AI 建议
+              </span>
               {gap.suggestion_confidence && (
                 <span className={`px-1.5 py-0.5 rounded text-xs ${confidenceStyle[gap.suggestion_confidence] ?? ""}`}>
                   建议置信度: {confidenceLabel[gap.suggestion_confidence] ?? gap.suggestion_confidence}
@@ -616,9 +645,13 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
               )}
             </div>
             <p className="text-sm text-bochk-dark leading-relaxed">{gap.suggestion}</p>
-            <div className="flex gap-4 mt-2 text-xs text-bochk-gray">
-              <span>⚡ 难度: {gap.difficulty}</span>
-              <span>⏱ 预计: {gap.estimated_time}</span>
+            <div className="flex flex-wrap gap-4 mt-2 text-xs text-bochk-gray">
+              <span className="inline-flex items-center gap-1">
+                <Zap className="w-4 h-4" /> 难度: {gap.difficulty}
+              </span>
+              <span className="inline-flex items-center gap-1">
+                <Clock className="w-4 h-4" /> 预计: {gap.estimated_time}
+              </span>
             </div>
           </div>
 
@@ -643,11 +676,11 @@ const DIFFICULTY_ORDER: Record<string, number> = {
 /** 状态 → 紧急度 */
 const STATUS_URGENCY: Record<string, number> = { red: 3, yellow: 2, green: 1 }
 
-/** 紧急度 → 颜色和标签 */
+/** 紧急度 → 配置 */
 const URGENCY_CONFIG = [
-  { key: "urgent", label: "🔴 立即行动", color: "bg-esg-red", dotColor: "bg-esg-red", borderColor: "border-esg-red" },
-  { key: "short",   label: "🟡 短期改善", color: "bg-esg-yellow", dotColor: "bg-esg-yellow", borderColor: "border-esg-yellow" },
-  { key: "medium",  label: "🟢 长期规划",  color: "bg-esg-green", dotColor: "bg-esg-green", borderColor: "border-esg-green" },
+  { key: "urgent", label: "立即行动", icon: AlertCircle, color: "bg-esg-red", dotColor: "bg-esg-red", borderColor: "border-esg-red" },
+  { key: "short",   label: "短期改善", icon: Clock,       color: "bg-esg-yellow", dotColor: "bg-esg-yellow", borderColor: "border-esg-yellow" },
+  { key: "medium",  label: "长期规划", icon: Calendar,    color: "bg-esg-green", dotColor: "bg-esg-green", borderColor: "border-esg-green" },
 ] as const
 
 function RoadmapTimeline({ gaps, roadmap }: { gaps: ESGAnalysis["gaps"]; roadmap?: string }) {
@@ -669,37 +702,47 @@ function RoadmapTimeline({ gaps, roadmap }: { gaps: ESGAnalysis["gaps"]; roadmap
 
   return (
     <div className="card mb-6">
-      <h3 className="text-sm font-semibold mb-4">📋 改善路线图</h3>
+      <h3 className="text-sm font-semibold mb-4 inline-flex items-center gap-1">
+        <ClipboardList className="w-4 h-4" /> 改善路线图
+      </h3>
 
       {actionGaps.length > 0 ? (
-        <div className="relative pl-6">
+        <div className="relative pl-4 md:pl-6">
           {/* 竖向时间轴线 */}
-          <div className="absolute left-2 top-1 bottom-1 w-0.5 bg-gray-200" />
+          <div className="absolute left-2 md:left-4 top-1 bottom-1 w-0.5 bg-gray-200" />
 
           <div className="space-y-4">
             {actionGaps.map((gap, i) => {
               const urgency = gap.status === "red" ? 0 : gap.status === "yellow" ? 1 : 2
               const cfg = URGENCY_CONFIG[urgency]
+              const Icon = cfg.icon
               return (
                 <div key={i} className="relative">
                   {/* 时间轴圆点 */}
-                  <div className={`absolute -left-6 top-1 w-4 h-4 rounded-full ${cfg.dotColor} border-2 border-white shadow-sm`} />
+                  <div className={`absolute -left-6 md:-left-10 top-1 w-4 h-4 rounded-full ${cfg.dotColor} border-2 border-white shadow-sm`} />
 
                   {/* 内容卡片 */}
                   <div className={`p-3 rounded border ${cfg.borderColor}/30 bg-white`}>
-                    <div className="flex items-center justify-between mb-1">
-                      <div className="flex items-center gap-2">
-                        <span className={`px-1.5 py-0.5 rounded text-xs text-white ${cfg.color}`}>
+                    <div className="flex items-center justify-between mb-1 gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className={`px-1.5 py-0.5 rounded text-xs text-white shrink-0 ${cfg.color}`}>
                           {gap.status === "red" ? "紧急" : "建议"}
                         </span>
-                        <span className="text-sm font-medium text-bochk-dark">{gap.regulation}</span>
-                        <span className="text-xs text-bochk-gray">({gap.category})</span>
+                        <span className="text-sm font-medium text-bochk-dark truncate">{gap.regulation}</span>
+                        <span className="text-xs text-bochk-gray shrink-0">({gap.category})</span>
                       </div>
+                      <Icon className={`w-4 h-4 shrink-0 ${
+                        cfg.key === "urgent" ? "text-esg-red" : cfg.key === "short" ? "text-esg-yellow" : "text-esg-green"
+                      }`} />
                     </div>
                     <p className="text-xs text-bochk-dark mt-1">{gap.suggestion}</p>
-                    <div className="flex gap-3 mt-2 text-xs text-bochk-gray">
-                      <span>⚡ {gap.difficulty}</span>
-                      <span>⏱ {gap.estimated_time}</span>
+                    <div className="flex flex-wrap gap-3 mt-2 text-xs text-bochk-gray">
+                      <span className="inline-flex items-center gap-1">
+                        <Zap className="w-4 h-4" /> {gap.difficulty}
+                      </span>
+                      <span className="inline-flex items-center gap-1">
+                        <Clock className="w-4 h-4" /> {gap.estimated_time}
+                      </span>
                     </div>
                   </div>
                 </div>
@@ -708,15 +751,17 @@ function RoadmapTimeline({ gaps, roadmap }: { gaps: ESGAnalysis["gaps"]; roadmap
           </div>
         </div>
       ) : (
-        <div className="text-sm text-esg-green text-center py-3">
-          ✅ 所有合规项已满足，暂无改善建议
+        <div className="text-sm text-esg-green text-center py-3 inline-flex items-center justify-center gap-1 w-full">
+          <CheckCircle className="w-5 h-5" /> 所有合规项已满足，暂无改善建议
         </div>
       )}
 
       {/* LLM 综合说明 */}
       {roadmap && (
         <div className="mt-4 pt-3 border-t border-bochk-border">
-          <div className="text-xs font-medium text-bochk-gray mb-2">📋 综合建议</div>
+          <div className="text-xs font-medium text-bochk-gray mb-2 inline-flex items-center gap-1">
+            <ClipboardList className="w-4 h-4" /> 综合建议
+          </div>
           <p className="text-sm text-bochk-dark whitespace-pre-line">{roadmap}</p>
         </div>
       )}
