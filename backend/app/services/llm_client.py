@@ -14,6 +14,9 @@ class LLMClient:
 
     def __init__(self):
         self.mode = settings.LLM_MODE
+        self._semaphore = asyncio.Semaphore(2)  # 最多 2 个并发 LLM 请求
+        self._last_call_time = 0  # 上次调用时间戳，用于节流
+        self._min_interval = 1.0  # 两次请求之间最少间隔 1 秒
 
     async def call_glm(self, messages: list[dict], temperature: float = 0.7) -> str:
         """调用 GLM-5.1（Step 1 企业画像 + Step 4 服务匹配），含 429 退避重试"""
@@ -72,32 +75,42 @@ class LLMClient:
         timeout: int,
         response_format: dict | None = None,
     ) -> str:
-        """统一 API 调用，遇到 429 自动退避重试（最多 3 次，间隔 2/4/8 秒）"""
-        max_retries = 3
-        for attempt in range(max_retries):
-            async with httpx.AsyncClient(timeout=timeout) as client:
-                payload = {
-                    "model": model,
-                    "messages": messages,
-                    "temperature": temperature,
-                }
-                if response_format:
-                    payload["response_format"] = response_format
+        """统一 API 调用，含并发控制 + 节流 + 429 退避重试"""
+        import time
 
-                resp = await client.post(
-                    f"{base_url}/chat/completions",
-                    headers={"Authorization": f"Bearer {api_key}"},
-                    json=payload,
-                )
+        async with self._semaphore:
+            # 节流：确保两次请求之间至少间隔 _min_interval 秒
+            now = time.monotonic()
+            elapsed = now - self._last_call_time
+            if elapsed < self._min_interval:
+                await asyncio.sleep(self._min_interval - elapsed)
 
-                if resp.status_code == 429:
-                    wait = 2 ** (attempt + 1)  # 2, 4, 8 秒
-                    logger.warning(f"429 限流，第 {attempt + 1} 次重试，等待 {wait} 秒...")
-                    await asyncio.sleep(wait)
-                    continue
+            max_retries = 3
+            for attempt in range(max_retries):
+                async with httpx.AsyncClient(timeout=timeout) as client:
+                    payload = {
+                        "model": model,
+                        "messages": messages,
+                        "temperature": temperature,
+                    }
+                    if response_format:
+                        payload["response_format"] = response_format
 
-                resp.raise_for_status()
-                return resp.json()["choices"][0]["message"]["content"]
+                    self._last_call_time = time.monotonic()
+                    resp = await client.post(
+                        f"{base_url}/chat/completions",
+                        headers={"Authorization": f"Bearer {api_key}"},
+                        json=payload,
+                    )
+
+                    if resp.status_code == 429:
+                        wait = 2 ** (attempt + 1)  # 2, 4, 8 秒
+                        logger.warning(f"429 限流，第 {attempt + 1} 次重试，等待 {wait} 秒...")
+                        await asyncio.sleep(wait)
+                        continue
+
+                    resp.raise_for_status()
+                    return resp.json()["choices"][0]["message"]["content"]
 
         # 3 次都 429，最后再试一次不等待
         raise httpx.HTTPStatusError(

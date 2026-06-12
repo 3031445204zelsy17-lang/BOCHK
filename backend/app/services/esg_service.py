@@ -515,10 +515,28 @@ def _validate_response(data: dict) -> tuple[bool, str]:
         if missing:
             return False, f"第 {i + 1} 个 gap 缺少字段: {missing}"
 
-        if gap.get("category") not in _VALID_CATEGORIES:
-            return False, f"第 {i + 1} 个 gap category 无效: {gap['category']}"
-        if gap.get("status") not in _VALID_STATUSES:
-            return False, f"第 {i + 1} 个 gap status 无效: {gap['status']}"
+        # category 自动修正：LLM 偶尔返回 B/S/G 等非标准值
+        cat = gap.get("category", "")
+        if cat not in _VALID_CATEGORIES:
+            # 常见映射：B→E（Business→Environment），或其他按上下文猜测
+            _CATEGORY_FIX = {"B": "E", "N": "E", "L": "S", "M": "G"}
+            fixed = _CATEGORY_FIX.get(cat.upper())
+            if fixed:
+                gap["category"] = fixed
+                logger.info(f"自动修正 category: {cat} → {fixed}")
+            else:
+                return False, f"第 {i + 1} 个 gap category 无效: {cat}"
+
+        # status 自动修正
+        status = gap.get("status", "")
+        if status not in _VALID_STATUSES:
+            _STATUS_FIX = {"r": "red", "y": "yellow", "g": "green", "R": "red", "Y": "yellow", "G": "green"}
+            fixed = _STATUS_FIX.get(status)
+            if fixed:
+                gap["status"] = fixed
+                logger.info(f"自动修正 status: {status} → {fixed}")
+            else:
+                return False, f"第 {i + 1} 个 gap status 无效: {status}"
         if gap.get("confidence") not in _VALID_CONFIDENCES:
             gap["confidence"] = "medium"
         if gap.get("suggestion_confidence") not in _VALID_CONFIDENCES:
