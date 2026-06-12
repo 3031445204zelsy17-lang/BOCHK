@@ -43,10 +43,34 @@ const MARKET_TO_REGIONS: Record<string, string[]> = {
   "日韩": [],
 }
 
-/** 从企业画像的 export_markets 提取所有适用地区代码 */
-function getApplicableRegions(markets: string[]): string[] {
-  const regions = new Set<string>()
+/** LLM 可能返回的非标准 export_markets → 标准化映射 */
+const MARKET_ALIASES: Record<string, string> = {
+  "新加坡": "东南亚", "泰国": "东南亚", "马来西亚": "东南亚", "越南": "东南亚",
+  "印尼": "东南亚", "菲律宾": "东南亚", "缅甸": "东南亚", "柬埔寨": "东南亚",
+  "港澳": "东南亚", "香港": "东南亚",
+  "欧盟": "欧洲", "英国": "欧洲", "德国": "欧洲", "法国": "欧洲",
+  "美国": "北美", "加拿大": "北美",
+  "日本": "日韩", "韩国": "日韩",
+}
+
+/** 将 LLM 返回的 export_markets 标准化为前端期望的值 */
+function normalizeMarkets(markets: string[]): string[] {
+  const result = new Set<string>()
   for (const m of markets) {
+    if (MARKET_TO_REGIONS[m]) {
+      result.add(m)
+    } else if (MARKET_ALIASES[m]) {
+      result.add(MARKET_ALIASES[m])
+    }
+  }
+  return Array.from(result)
+}
+
+/** 从企业画像的 export_markets 提取所有适用地区代码（先标准化） */
+function getApplicableRegions(markets: string[]): string[] {
+  const normalized = normalizeMarkets(markets)
+  const regions = new Set<string>()
+  for (const m of normalized) {
     for (const r of MARKET_TO_REGIONS[m] ?? []) {
       regions.add(r)
     }
@@ -77,17 +101,19 @@ const COUNTRY_TO_REGION: Record<string, string> = Object.fromEntries(
 )
 
 function getTargetCountryRegionName(markets: string[]): string {
-  const country = getTargetCountry(markets)
+  const normalized = normalizeMarkets(markets)
+  const country = getTargetCountry(normalized)
   const region = COUNTRY_TO_REGION[country]
   return REGION_NAMES[region] ?? country
 }
 
 function getTargetCountry(markets: string[]): string {
-  for (const m of markets) {
+  const normalized = normalizeMarkets(markets)
+  for (const m of normalized) {
     const regions = MARKET_TO_REGIONS[m] ?? []
     if (regions.length > 0) return REGION_TO_COUNTRY[regions[0]] ?? regions[0].toLowerCase()
   }
-  return "thailand" // 默认泰国
+  return "singapore" // 默认新加坡（东南亚首选）
 }
 
 // ── Props ───────────────────────────────────────────────────

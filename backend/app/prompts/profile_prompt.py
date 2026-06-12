@@ -12,7 +12,7 @@ RULES = """【规则】
 3. size_level：必须是 "小型" / "中小型" / "中型" 之一
 4. trade_capability：根据出海经验判断
    - 无 → 低，计划中 → 中，1-3年 → 高，3年以上 → 高
-5. export_markets：从描述中提取提及的市场，没有则为空数组 []
+5. export_markets：必须从用户提供的 target_markets 中直接复制，不要自行改写。如果 target_markets 为空则从描述中提取，但必须使用"东南亚"、"欧洲"、"北美"、"中东"、"日韩"这些标准地区名，不要使用"新加坡""泰国""欧盟"等子项
 6. readiness_score：按【评分标准】计算，整数 0-100
 7. tags：综合标签 3-6 个，包含行业、经验、规模等维度
 8. 不要输出任何 JSON 以外的文字"""
@@ -38,7 +38,8 @@ USER_TEMPLATE = """企业名称：{company_name}
 行业：{industry}
 规模：{size}
 描述：{description}
-出海经验：{export_experience}"""
+出海经验：{export_experience}
+目标市场：{target_markets}"""
 
 # ── 输出格式要求 ────────────────────────────────────────────
 OUTPUT_FORMAT = """【输出格式】只输出 JSON，不要输出其他任何文字：

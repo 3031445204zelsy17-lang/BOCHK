@@ -62,6 +62,7 @@ def _build_messages(req, retry_error: str | None = None) -> list[dict]:
                         size=req.size,
                         description=req.description,
                         export_experience=req.export_experience,
+                        target_markets="、".join(req.target_markets) if req.target_markets else "未指定",
                     ),
                 ]
             ),
