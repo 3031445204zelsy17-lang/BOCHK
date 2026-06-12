@@ -125,11 +125,13 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
                 </span>
               </div>
               <div className="flex gap-2 text-xs">
-                {(["E", "S", "G"] as const).map((cat) => (
-                  <span key={cat}>
-                    {cat}: <span className="font-medium">{props.esgResult!.category_scores[cat] ?? 0}</span>
-                  </span>
-                ))}
+                {(["E", "S", "G"] as const)
+                  .filter((cat) => props.esgResult!.category_scores[cat] !== undefined)
+                  .map((cat) => (
+                    <span key={cat}>
+                      {cat}: <span className="font-medium">{props.esgResult!.category_scores[cat]}</span>
+                    </span>
+                  ))}
               </div>
             </div>
           ) : (
