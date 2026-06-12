@@ -2,7 +2,7 @@
   "project": "智企通 GoGlobal Navigator MVP",
   "deadline": "2026-06-15",
   "repo": "https://github.com/3031445204zelsy17-lang/BOCHK",
-  "last_updated": "2026-06-10",
+  "last_updated": "2026-06-12",
   "tasks": [
     {
       "id": "P0-1",
@@ -233,7 +233,7 @@
       "passes": true,
       "assignee": "Claude",
       "completed_at": "2026-06-10",
-      "note": "问卷regulation_mapping筛选法规+get_regulation_context()加载评估标准+约束式Prompt(13规则+Few-shot示例1)+Kimi K2.6(3次重试)+JSON校验(12字段+枚举值)+E30%/S35%/G35%加权评分(缺类重分配)+OrderedDict缓存(50条FIFO)+Mock降级兜底, TH real模式测试通过(LLM引用泰文法规原文)"
+      "note": "问卷regulation_mapping筛选法规+get_regulation_context()加载评估标准+约束式Prompt(13规则+多地区Few-shot示例:泰/新/港)+Kimi K2.6(3次重试)+JSON校验(12字段+枚举值)+E30%/S35%/G35%加权评分(缺类重分配)+OrderedDict缓存(50条FIFO)+按地区Mock/Fallback降级兜底, SG/HK/TH/EU real/mock/fallback测试均通过, 修复泰国来源偏向"
     },
     {
       "id": "P5-4",
