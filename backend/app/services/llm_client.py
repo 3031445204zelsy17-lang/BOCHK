@@ -1,8 +1,12 @@
 """LLM 客户端 — 支持 mock/real 切换，MVP 统一使用 GLM-5.1"""
 
+import asyncio
 import json
+import logging
 import httpx
 from app.config import settings
+
+logger = logging.getLogger(__name__)
 
 
 class LLMClient:
@@ -12,61 +16,95 @@ class LLMClient:
         self.mode = settings.LLM_MODE
 
     async def call_glm(self, messages: list[dict], temperature: float = 0.7) -> str:
-        """调用 GLM-5.1（Step 1 企业画像 + Step 4 服务匹配）"""
+        """调用 GLM-5.1（Step 1 企业画像 + Step 4 服务匹配），含 429 退避重试"""
         if self.mode == "mock":
             return self._mock_glm_response(messages)
 
-        async with httpx.AsyncClient(timeout=60) as client:
-            resp = await client.post(
-                f"{settings.GLM_BASE_URL}/chat/completions",
-                headers={"Authorization": f"Bearer {settings.GLM_API_KEY}"},
-                json={
-                    "model": "glm-5.1",
-                    "messages": messages,
-                    "temperature": temperature,
-                },
-            )
-            resp.raise_for_status()
-            return resp.json()["choices"][0]["message"]["content"]
+        return await self._call_with_retry(
+            base_url=settings.GLM_BASE_URL,
+            api_key=settings.GLM_API_KEY,
+            model="glm-5.1",
+            messages=messages,
+            temperature=temperature,
+            timeout=60,
+        )
 
     async def call_glm_json(
         self, messages: list[dict], temperature: float = 0.3
     ) -> str:
-        """调用 GLM-5.1 并强制返回 JSON 格式"""
+        """调用 GLM-5.1 并强制返回 JSON 格式，含 429 退避重试"""
         if self.mode == "mock":
             return self._mock_glm_response(messages)
 
-        async with httpx.AsyncClient(timeout=60) as client:
-            resp = await client.post(
-                f"{settings.GLM_BASE_URL}/chat/completions",
-                headers={"Authorization": f"Bearer {settings.GLM_API_KEY}"},
-                json={
-                    "model": "glm-5.1",
-                    "messages": messages,
-                    "temperature": temperature,
-                    "response_format": {"type": "json_object"},
-                },
-            )
-            resp.raise_for_status()
-            return resp.json()["choices"][0]["message"]["content"]
+        return await self._call_with_retry(
+            base_url=settings.GLM_BASE_URL,
+            api_key=settings.GLM_API_KEY,
+            model="glm-5.1",
+            messages=messages,
+            temperature=temperature,
+            timeout=60,
+            response_format={"type": "json_object"},
+        )
 
     async def call_kimi(self, messages: list[dict], temperature: float = 0.3) -> str:
-        """调用 Kimi K2.6（Step 5 ESG 分析）"""
+        """调用 Kimi K2.6（Step 5 ESG 分析），含 429 退避重试"""
         if self.mode == "mock":
             return self._mock_kimi_response(messages)
 
-        async with httpx.AsyncClient(timeout=120) as client:
-            resp = await client.post(
-                f"{settings.KIMI_BASE_URL}/chat/completions",
-                headers={"Authorization": f"Bearer {settings.KIMI_API_KEY}"},
-                json={
-                    "model": "moonshot-v1-128k",
+        return await self._call_with_retry(
+            base_url=settings.KIMI_BASE_URL,
+            api_key=settings.KIMI_API_KEY,
+            model="moonshot-v1-128k",
+            messages=messages,
+            temperature=temperature,
+            timeout=120,
+        )
+
+    # ── 统一调用 + 429 退避重试 ───────────────────────────────
+
+    async def _call_with_retry(
+        self,
+        base_url: str,
+        api_key: str,
+        model: str,
+        messages: list[dict],
+        temperature: float,
+        timeout: int,
+        response_format: dict | None = None,
+    ) -> str:
+        """统一 API 调用，遇到 429 自动退避重试（最多 3 次，间隔 2/4/8 秒）"""
+        max_retries = 3
+        for attempt in range(max_retries):
+            async with httpx.AsyncClient(timeout=timeout) as client:
+                payload = {
+                    "model": model,
                     "messages": messages,
                     "temperature": temperature,
-                },
-            )
-            resp.raise_for_status()
-            return resp.json()["choices"][0]["message"]["content"]
+                }
+                if response_format:
+                    payload["response_format"] = response_format
+
+                resp = await client.post(
+                    f"{base_url}/chat/completions",
+                    headers={"Authorization": f"Bearer {api_key}"},
+                    json=payload,
+                )
+
+                if resp.status_code == 429:
+                    wait = 2 ** (attempt + 1)  # 2, 4, 8 秒
+                    logger.warning(f"429 限流，第 {attempt + 1} 次重试，等待 {wait} 秒...")
+                    await asyncio.sleep(wait)
+                    continue
+
+                resp.raise_for_status()
+                return resp.json()["choices"][0]["message"]["content"]
+
+        # 3 次都 429，最后再试一次不等待
+        raise httpx.HTTPStatusError(
+            f"429 Too Many Requests: 重试 {max_retries} 次后仍被限流",
+            request=resp.request,
+            response=resp,
+        )
 
     # ── mock 数据 ──────────────────────────────────────────
 
