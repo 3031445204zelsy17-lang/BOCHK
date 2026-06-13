@@ -1,5 +1,6 @@
 /** 进度看板 — 出海准备度总览：聚合三步完成状态 */
 
+import { useTranslation } from "react-i18next"
 import type { LucideIcon } from "lucide-react"
 import { Building2, Landmark, Leaf, CheckCircle } from "lucide-react"
 import type { CompanyProfile, ProductRecommendation, ESGAnalysis } from "@/lib/types"
@@ -25,6 +26,7 @@ function calcProgress(props: ProgressDashboardProps): number {
 
 // ── 主组件 ──────────────────────────────────────────────────
 export default function ProgressDashboard(props: ProgressDashboardProps) {
+  const { t } = useTranslation()
   const progress = calcProgress(props)
 
   // 无任何进度时不显示
@@ -34,7 +36,7 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
     <div className="mb-6">
       {/* 总进度条 */}
       <div className="flex items-center gap-3 mb-4">
-        <span className="text-sm font-semibold text-bochk-dark shrink-0">出海准备度</span>
+        <span className="text-sm font-semibold text-bochk-dark shrink-0">{t("dashboard.readiness")}</span>
         <div className="flex-1 bg-gray-200 rounded-full h-2">
           <div
             className="bg-bochk-red rounded-full h-2 transition-all duration-500"
@@ -50,7 +52,7 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
         <StepCard
           icon={Building2}
           step="Step 1"
-          label="企业画像"
+          label={t("dashboard.steps.s1")}
           completed={props.profileCompleted}
         >
           {props.profileCompleted && props.profile ? (
@@ -66,11 +68,11 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
                 ))}
               </div>
               <div className="text-xs text-bochk-gray">
-                出海准备度: <span className="font-medium text-bochk-dark">{props.profile.readiness_score}</span>/100
+                {t("dashboard.readinessScore")}<span className="font-medium text-bochk-dark">{props.profile.readiness_score}</span>/100
               </div>
             </div>
           ) : (
-            <div className="text-xs text-bochk-gray">填写企业信息，生成出海画像</div>
+            <div className="text-xs text-bochk-gray">{t("dashboard.fillInfo")}</div>
           )}
         </StepCard>
 
@@ -78,13 +80,13 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
         <StepCard
           icon={Landmark}
           step="Step 2"
-          label="服务匹配"
+          label={t("dashboard.steps.s2")}
           completed={props.matchingCompleted}
         >
           {props.matchingCompleted && props.recommendations && props.recommendations.length > 0 ? (
             <div className="space-y-1">
               <div className="text-xs text-bochk-dark font-medium">
-                匹配 {props.recommendations.length} 个 BOCHK 产品
+                {t("dashboard.matched", { count: props.recommendations.length })}
               </div>
               <div className="flex flex-wrap gap-1">
                 {props.recommendations.slice(0, 2).map((r) => (
@@ -99,11 +101,11 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
                 )}
               </div>
               <div className="text-xs text-bochk-gray">
-                最高匹配: <span className="font-medium text-esg-green">{Math.max(...props.recommendations.map((r) => r.match_score))}%</span>
+                {t("dashboard.maxMatch")}<span className="font-medium text-esg-green">{Math.max(...props.recommendations.map((r) => r.match_score))}%</span>
               </div>
             </div>
           ) : (
-            <div className="text-xs text-bochk-gray">智能匹配 BOCHK 金融产品</div>
+            <div className="text-xs text-bochk-gray">{t("dashboard.matchHint")}</div>
           )}
         </StepCard>
 
@@ -111,7 +113,7 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
         <StepCard
           icon={Leaf}
           step="Step 3"
-          label="ESG 合规"
+          label={t("dashboard.steps.s3")}
           completed={props.esgCompleted}
         >
           {props.esgCompleted && props.esgResult ? (
@@ -121,7 +123,7 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
                   {props.esgResult.overall_score}
                 </span>
                 <span className={`px-2 py-0.5 rounded text-xs font-medium ${gradeStyle(props.esgResult.grade)}`}>
-                  {props.esgResult.grade ?? "—"} 等级
+                  {props.esgResult.grade ?? "—"}{t("dashboard.gradeLabel")}
                 </span>
               </div>
               <div className="flex gap-2 text-xs">
@@ -135,7 +137,7 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
               </div>
             </div>
           ) : (
-            <div className="text-xs text-bochk-gray">评估目标市场 ESG 合规缺口</div>
+            <div className="text-xs text-bochk-gray">{t("dashboard.esgHint")}</div>
           )}
         </StepCard>
       </div>
@@ -157,6 +159,8 @@ function StepCard({
   completed: boolean
   children: React.ReactNode
 }) {
+  const { t } = useTranslation()
+
   return (
     <div className={`card ${completed ? "border-l-3 border-l-esg-green" : ""}`}>
       <div className="flex items-center gap-2 mb-2">
@@ -165,10 +169,10 @@ function StepCard({
         <span className="text-sm font-medium">{label}</span>
         {completed ? (
           <span className="ml-auto inline-flex items-center gap-1 text-xs text-esg-green font-medium">
-            <CheckCircle className="w-4 h-4" /> 已完成
+            <CheckCircle className="w-4 h-4" /> {t("dashboard.completed")}
           </span>
         ) : (
-          <span className="ml-auto text-xs text-bochk-gray">待完成</span>
+          <span className="ml-auto text-xs text-bochk-gray">{t("dashboard.pending")}</span>
         )}
       </div>
       {children}

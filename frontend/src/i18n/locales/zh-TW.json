@@ -1,0 +1,328 @@
+{
+  "header": {
+    "title": "智企通 GoGlobal Navigator",
+    "subtitle": "AI 驅動 SME 出海導航平臺"
+  },
+  "sidebar": {
+    "title": "出海嚮導",
+    "progress": "整體進度",
+    "steps": {
+      "s1": {
+        "label": "Step 1",
+        "desc": "企業畫像"
+      },
+      "s2": {
+        "label": "Step 2",
+        "desc": "服務匹配"
+      },
+      "s3": {
+        "label": "Step 3",
+        "desc": "ESG 合規"
+      }
+    }
+  },
+  "home": {
+    "poweredBy": "Powered by",
+    "bochk": "BOCHK 中銀香港",
+    "heroTitle": "智企通",
+    "heroSubtitle": "GoGlobal Navigator",
+    "heroDesc": "AI 驅動的中小企業出海導航平臺",
+    "heroDescSub": "企業畫像 · 產品匹配 · ESG 合規 — 三步完成出海準備度評估",
+    "cta": "開始體驗",
+    "innovationNote": "Innovation Challenge 2026 · 無需註冊，即刻體驗",
+    "featuresTitle": "三步完成出海評估",
+    "featuresDesc": "從企業畫像到 ESG 合規，一站式 AI 導航助力企業走向全球",
+    "flow": {
+      "profile": "企業畫像",
+      "match": "產品匹配",
+      "esg": "ESG 合規",
+      "ready": "出海準備就緒"
+    },
+    "features": {
+      "s1": {
+        "step": "Step 1",
+        "title": "AI 企業畫像",
+        "desc": "智能分析企業信息，一鍵生成結構化出海畫像。涵蓋行業標籤、貿易能力、市場評估等核心維度。",
+        "highlights": [
+          "行業匹配",
+          "出海準備度評分",
+          "智能標籤"
+        ]
+      },
+      "s2": {
+        "step": "Step 2",
+        "title": "BOCHK 產品匹配",
+        "desc": "基於企業畫像智能匹配中銀香港金融產品，提供個性化推薦和申請建議。",
+        "highlights": [
+          "貿易融資",
+          "外匯管理",
+          "綠色金融"
+        ]
+      },
+      "s3": {
+        "step": "Step 3",
+        "title": "ESG 合規分析",
+        "desc": "識別目標市場 ESG 合規缺口，生成雙標準評估報告（目的地法規 + BOCHK 准入），提供改善路線圖。",
+        "highlights": [
+          "合規缺口識別",
+          "紅黃綠報告",
+          "改善路線圖"
+        ]
+      }
+    },
+    "stats": {
+      "regions": {
+        "value": "5",
+        "label": "覆蓋地區",
+        "sub": "HK / SG / TH / EU / BOCHK"
+      },
+      "regulations": {
+        "value": "71",
+        "label": "ESG 法規",
+        "sub": "結構化合規檢查項"
+      },
+      "products": {
+        "value": "8",
+        "label": "金融產品",
+        "sub": "BOCHK 專屬推薦"
+      },
+      "dimensions": {
+        "value": "3",
+        "label": "評估維度",
+        "sub": "環境 / 社會 / 治理"
+      }
+    },
+    "footer": {
+      "title": "智企通 GoGlobal Navigator",
+      "copyright": "© 2026 BOCHK 中銀香港 Innovation Challenge",
+      "cta": "立即體驗"
+    }
+  },
+  "step1": {
+    "title": "Step 1：企業畫像",
+    "subtitle": "選擇預設企業快速體驗，或手動填寫企業信息",
+    "templateTitle": "快速體驗 — 點擊選擇企業模板",
+    "form": {
+      "companyName": "企業名稱",
+      "companyNamePh": "例：深圳XX電子科技有限公司",
+      "industry": "行業",
+      "size": "規模",
+      "description": "企業描述",
+      "descriptionPh": "請簡要描述企業主營業務、產品特點...",
+      "exportExperience": "出海經驗",
+      "annualRevenue": "年營收範圍",
+      "targetMarkets": "目標市場（可多選）",
+      "generate": "生成企業畫像",
+      "generating": "正在生成畫像...",
+      "selectPlaceholder": "請選擇"
+    },
+    "industries": {
+      "electronics": "電子製造",
+      "textile": "紡織製造",
+      "home": "家居製造",
+      "trade": "貿易",
+      "other": "其他"
+    },
+    "sizes": {
+      "small": "小型（10-50人）",
+      "mediumSmall": "中小型（50-100人）",
+      "medium": "中型（100-500人）"
+    },
+    "experience": {
+      "none": "無出海經驗",
+      "planned": "計劃中",
+      "short": "1-3年",
+      "long": "3年以上"
+    },
+    "markets": {
+      "southeastAsia": "東南亞",
+      "europe": "歐洲",
+      "northAmerica": "北美",
+      "middleEast": "中東",
+      "japanKorea": "日韓"
+    },
+    "revenue": {
+      "r1": "HK$500萬以下",
+      "r2": "HK$500萬-1000萬",
+      "r3": "HK$1000萬-3000萬",
+      "r4": "HK$3000萬-5000萬",
+      "r5": "HK$5000萬以上"
+    },
+    "result": {
+      "title": "企業畫像",
+      "readiness": "出海準備度",
+      "readinessHigh": "較高",
+      "readinessMedium": "中等",
+      "readinessLow": "較低",
+      "industry": "行業",
+      "size": "規模",
+      "tradeCapability": "貿易能力",
+      "targetMarkets": "目標市場",
+      "undetermined": "待定",
+      "confirm": "確認畫像，進入下一步：服務匹配"
+    },
+    "radar": {
+      "sizeStrength": "規模實力",
+      "exportExperience": "出海經驗",
+      "tradeCapability": "貿易能力",
+      "marketCoverage": "市場覆蓋",
+      "industryDepth": "行業深度"
+    },
+    "loading": {
+      "msg1": "正在分析企業信息...",
+      "msg2": "正在匹配行業標籤...",
+      "msg3": "正在評估出海準備度...",
+      "msg4": "正在生成企業畫像..."
+    }
+  },
+  "step2": {
+    "title": "Step 2：服務匹配",
+    "subtitleBase": "基於「{{industry}}」行業 · {{size}}企業",
+    "subtitleMarkets": " · 目標{{markets}}",
+    "subtitleEnd": "，為您推薦以下 BOCHK 產品",
+    "matchHigh": "高度匹配",
+    "matchMedium": "中度匹配",
+    "matchLow": "一般匹配",
+    "aiReason": "AI 推薦理由",
+    "usageAdvice": "使用建議",
+    "productFeatures": "產品特色",
+    "applicationMaterials": "申請材料",
+    "nextStep": "下一步：ESG 合規分析",
+    "loading": {
+      "msg1": "正在匹配 BOCHK 產品...",
+      "msg2": "正在計算推薦分數...",
+      "msg3": "正在生成產品建議..."
+    }
+  },
+  "step3": {
+    "title": "ESG 合規分析",
+    "resultTitle": "ESG 合規分析結果",
+    "subtitle": "基於「{{industry}}」行業 · 目標市場: {{markets}}",
+    "analysisNote": "本次將按 {{region}} 法規進行分析",
+    "analysisNoteMulti": "（當前僅分析首個適用地區）",
+    "applicableRegions": "適用地區: ",
+    "noMatchRegion": "無匹配地區",
+    "noMatchHint": " — 目標市場暫無對應法規，可切換到 BOCHK 准入評估",
+    "emptyTitle": "當前目標市場暫無對應 ESG 法規問卷",
+    "emptyHint": "請切換到 BOCHK 准入評估，或返回 Step 1 選擇其他目標市場",
+    "category": {
+      "E": "環境",
+      "S": "社會",
+      "G": "治理"
+    },
+    "questionCount": "({{count}}題)",
+    "options": {
+      "met": "滿足",
+      "partial": "部分滿足",
+      "not_met": "不滿足"
+    },
+    "progress": "已完成 {{answered}}/{{total}} 題",
+    "readyToSubmit": "可以提交",
+    "needMore": "還需 {{count}} 題",
+    "submitAnalysis": "提交分析",
+    "analyzing": "正在分析...",
+    "showHint": "查看提示 ▼",
+    "hideHint": "收起提示 ▲",
+    "tabs": {
+      "destination": "目的地法規分析",
+      "bochk": "BOCHK 准入評估",
+      "completed": " (已完成)"
+    },
+    "resultRegion": {
+      "bochk": "BOCHK 准入標準",
+      "destination": "{{region}} · 目的地法規標準"
+    },
+    "resultSubText": {
+      "bochk": "本次分析基於 BOCHK 銀行內部 ESG 准入標準",
+      "destination": "本次分析基於目標地區：{{region}} 法規"
+    },
+    "regions": {
+      "HK": "香港",
+      "SG": "新加坡",
+      "TH": "泰國",
+      "EU": "歐盟",
+      "BOCHK": "BOCHK 標準"
+    },
+    "score": {
+      "title": "綜合合規評分",
+      "unit": "分",
+      "grade": "等級",
+      "good": "合規狀況良好",
+      "partial": "部分合規，需改善",
+      "poor": "合規缺口較大，需重點關注",
+      "subScores": "分項評分"
+    },
+    "gap": {
+      "regulationOriginal": "法規原文",
+      "aiSuggestion": "AI 建議",
+      "source": "來源:",
+      "viewDetail": "查看詳情 ▼",
+      "collapse": "收起 ▲",
+      "confidence": "置信度: ",
+      "suggestionConfidence": "建議置信度: ",
+      "difficulty": "難度: ",
+      "estimatedTime": "預計: "
+    },
+    "confidence": {
+      "high": "高",
+      "medium": "中",
+      "low": "低"
+    },
+    "roadmap": {
+      "title": "改善路線圖",
+      "urgent": "緊急",
+      "suggestion": "建議",
+      "urgency": {
+        "urgent": "立即行動",
+        "short": "短期改善",
+        "medium": "長期規劃"
+      },
+      "allPassed": "所有合規項已滿足，暫無改善建議",
+      "comprehensive": "綜合建議"
+    },
+    "gapStatus": {
+      "green": "滿足",
+      "yellow": "部分滿足",
+      "red": "不滿足"
+    },
+    "otherTabCompleted": "{{tabName}}已完成（評分 {{score}}，等級 {{grade}}）",
+    "otherTabDestination": "目的地法規分析",
+    "otherTabBochk": "BOCHK 准入評估",
+    "viewResult": "查看結果",
+    "modifyResubmit": "修改答案並重新提交",
+    "done": "完成",
+    "loading": {
+      "msg1": "正在分析 ESG 合規...",
+      "msg2": "正在比對目的地法規...",
+      "msg3": "正在識別合規缺口...",
+      "msg4": "正在生成改善路線圖..."
+    }
+  },
+  "dashboard": {
+    "readiness": "出海準備度",
+    "steps": {
+      "s1": "企業畫像",
+      "s2": "服務匹配",
+      "s3": "ESG 合規"
+    },
+    "fillInfo": "填寫企業信息，生成出海畫像",
+    "readinessScore": "出海準備度: ",
+    "matched": "匹配 {{count}} 個 BOCHK 產品",
+    "maxMatch": "最高匹配: ",
+    "matchHint": "智能匹配 BOCHK 金融產品",
+    "esgHint": "評估目標市場 ESG 合規缺口",
+    "completed": "已完成",
+    "pending": "待完成",
+    "gradeLabel": " 等級"
+  },
+  "api": {
+    "errors": {
+      "profile": "畫像生成失敗: {{status}}",
+      "matching": "產品推薦失敗: {{status}}",
+      "esg": "ESG 分析失敗: {{status}}"
+    }
+  },
+  "common": {
+    "aiChineseNotice": "AI analysis results are currently displayed in Chinese. English support coming soon."
+  }
+}

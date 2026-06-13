@@ -1,6 +1,7 @@
 /** Step 1: 企业画像 — 预设模板 + 表单输入 + 画像卡片（含雷达图） */
 
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import {
   RadarChart,
   PolarGrid,
@@ -13,6 +14,7 @@ import type { CompanyInput, CompanyProfile, EnterpriseTemplate } from "@/lib/typ
 import { generateProfile } from "@/lib/api"
 import { cn } from "@/lib/utils"
 import { BrandedLoading } from "@/components/shared/Loading"
+import { toTraditional, isTraditionalChinese } from "@/lib/convertChinese"
 
 // ── 预设企业模板（源自 mock_enterprises.json）─────────
 const TEMPLATES: EnterpriseTemplate[] = [
@@ -84,16 +86,6 @@ const TEMPLATES: EnterpriseTemplate[] = [
   },
 ]
 
-// ── 可选值常量 ──────────────────────────────────
-const MARKET_OPTIONS = ["东南亚", "欧洲", "北美", "中东", "日韩"]
-const REVENUE_OPTIONS = [
-  "HK$500万以下",
-  "HK$500万-1000万",
-  "HK$1000万-3000万",
-  "HK$3000万-5000万",
-  "HK$5000万以上",
-]
-
 /** 默认空表单 */
 const EMPTY_FORM: CompanyInput = {
   company_name: "",
@@ -115,52 +107,41 @@ const MOCK_PROFILE: CompanyProfile = {
   tags: ["制造业", "有出海经验", "电子"],
 }
 
-// ── 雷达图维度计算 ────────────────────────────────
-function computeRadarData(profile: CompanyProfile) {
-  // 规模实力
-  const sizeScore: Record<string, number> = { 小型: 30, 中小型: 55, 中型: 80 }
-  // 出海经验（从 tags 推断）
-  const hasExp = profile.tags.some((t) => t.includes("有出海经验"))
-  const planExp = profile.tags.some((t) => t.includes("计划出海"))
-  // 贸易能力
-  const tradeScore: Record<string, number> = { 低: 20, 中: 60, 高: 90 }
-
-  return [
-    { dimension: "规模实力", value: sizeScore[profile.size_level] ?? 50 },
-    {
-      dimension: "出海经验",
-      value: hasExp ? 85 : planExp ? 55 : 20,
-    },
-    { dimension: "贸易能力", value: tradeScore[profile.trade_capability] ?? 50 },
-    {
-      dimension: "市场覆盖",
-      value: profile.export_markets.length === 0 ? 10 : profile.export_markets.length === 1 ? 50 : 80,
-    },
-    {
-      dimension: "行业深度",
-      value: profile.industry_tags.length <= 1 ? 40 : profile.industry_tags.length === 2 ? 65 : 85,
-    },
-  ]
-}
-
-// ── 准备度等级 ────────────────────────────────────
-function readinessLevel(score: number) {
-  if (score >= 70) return { label: "较高", color: "text-esg-green" }
-  if (score >= 45) return { label: "中等", color: "text-esg-yellow" }
-  return { label: "较低", color: "text-esg-red" }
-}
-
-// ── Props ─────────────────────────────────────────
-interface Step1Props {
-  onComplete: (profile: CompanyProfile) => void
-}
-
-export default function Step1Profile({ onComplete }: Step1Props) {
+// ── 主组件 ──────────────────────────────────────────────
+export default function Step1Profile({ onComplete }: { onComplete: (profile: CompanyProfile) => void }) {
+  const { t } = useTranslation()
   const [form, setForm] = useState<CompanyInput>({ ...EMPTY_FORM })
   const [profile, setProfile] = useState<CompanyProfile | null>(null)
   const [loading, setLoading] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+
+  // 表单选项（i18n 驱动）
+  const marketOptions = [
+    { value: "东南亚", label: t("step1.markets.southeastAsia") },
+    { value: "欧洲", label: t("step1.markets.europe") },
+    { value: "北美", label: t("step1.markets.northAmerica") },
+    { value: "中东", label: t("step1.markets.middleEast") },
+    { value: "日韩", label: t("step1.markets.japanKorea") },
+  ]
+
+  const revenueOptions = [
+    "HK$500万以下",
+    "HK$500万-1000万",
+    "HK$1000万-3000万",
+    "HK$3000万-5000万",
+    "HK$5000万以上",
+  ]
+  const revenueLabels = [
+    t("step1.revenue.r1"),
+    t("step1.revenue.r2"),
+    t("step1.revenue.r3"),
+    t("step1.revenue.r4"),
+    t("step1.revenue.r5"),
+  ]
+
+  // 模板文案（繁中时转换）
+  const convertText = (text: string) => isTraditionalChinese() ? toTraditional(text) : text
 
   // ── 选择模板 ──────────────────────────────────
   const handleTemplateSelect = (tpl: EnterpriseTemplate) => {
@@ -174,7 +155,6 @@ export default function Step1Profile({ onComplete }: Step1Props) {
       target_markets: tpl.target_markets,
       annual_revenue: tpl.annual_revenue,
     })
-    // 选模板时立即展示预设画像
     setProfile(tpl.preset_profile)
     setError(null)
   }
@@ -204,12 +184,34 @@ export default function Step1Profile({ onComplete }: Step1Props) {
       const result = await generateProfile(form)
       setProfile(result.profile)
     } catch {
-      // 后端未启动，使用 mock 数据
       console.warn("后端未连接，使用 mock 数据")
       setProfile(MOCK_PROFILE)
     } finally {
       setLoading(false)
     }
+  }
+
+  // 雷达图维度（i18n 驱动）
+  function computeRadarData(p: CompanyProfile) {
+    const sizeScore: Record<string, number> = { 小型: 30, 中小型: 55, 中型: 80 }
+    const hasExp = p.tags.some((tag) => tag.includes("有出海经验"))
+    const planExp = p.tags.some((tag) => tag.includes("计划出海"))
+    const tradeScore: Record<string, number> = { 低: 20, 中: 60, 高: 90 }
+
+    return [
+      { dimension: t("step1.radar.sizeStrength"), value: sizeScore[p.size_level] ?? 50 },
+      { dimension: t("step1.radar.exportExperience"), value: hasExp ? 85 : planExp ? 55 : 20 },
+      { dimension: t("step1.radar.tradeCapability"), value: tradeScore[p.trade_capability] ?? 50 },
+      { dimension: t("step1.radar.marketCoverage"), value: p.export_markets.length === 0 ? 10 : p.export_markets.length === 1 ? 50 : 80 },
+      { dimension: t("step1.radar.industryDepth"), value: p.industry_tags.length <= 1 ? 40 : p.industry_tags.length === 2 ? 65 : 85 },
+    ]
+  }
+
+  // 准备度等级
+  function readinessLevel(score: number) {
+    if (score >= 70) return { label: t("step1.result.readinessHigh"), color: "text-esg-green" }
+    if (score >= 45) return { label: t("step1.result.readinessMedium"), color: "text-esg-yellow" }
+    return { label: t("step1.result.readinessLow"), color: "text-esg-red" }
   }
 
   const level = profile ? readinessLevel(profile.readiness_score) : null
@@ -220,22 +222,22 @@ export default function Step1Profile({ onComplete }: Step1Props) {
       {loading && (
         <BrandedLoading
           messages={[
-            "正在分析企业信息...",
-            "正在匹配行业标签...",
-            "正在评估出海准备度...",
-            "正在生成企业画像...",
+            t("step1.loading.msg1"),
+            t("step1.loading.msg2"),
+            t("step1.loading.msg3"),
+            t("step1.loading.msg4"),
           ]}
         />
       )}
-      <h2 className="text-xl font-semibold mb-1">Step 1：企业画像</h2>
+      <h2 className="text-xl font-semibold mb-1">{t("step1.title")}</h2>
       <p className="text-sm text-bochk-gray mb-6">
-        选择预设企业快速体验，或手动填写企业信息
+        {t("step1.subtitle")}
       </p>
 
       {/* ═══ 预设模板选择区 ══════════════════════════ */}
       <div className="mb-6">
         <h3 className="text-sm font-medium text-bochk-gray mb-3">
-          快速体验 — 点击选择企业模板
+          {t("step1.templateTitle")}
         </h3>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
           {TEMPLATES.map((tpl) => (
@@ -252,24 +254,27 @@ export default function Step1Profile({ onComplete }: Step1Props) {
             >
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="text-base font-semibold text-bochk-dark">
-                  {tpl.template_name}
+                  {convertText(tpl.template_name)}
                 </span>
                 <span className="text-xs px-1.5 py-0.5 bg-bochk-light rounded text-bochk-gray">
                   {tpl.size}
                 </span>
               </div>
               <div className="text-xs text-bochk-gray line-clamp-2">
-                {tpl.description}
+                {convertText(tpl.description)}
               </div>
               <div className="mt-2 flex gap-1 flex-wrap">
-                {tpl.target_markets.map((m) => (
-                  <span
-                    key={m}
-                    className="text-xs px-1.5 py-0.5 bg-bochk-blue/10 text-bochk-blue rounded"
-                  >
-                    {m}
-                  </span>
-                ))}
+                {tpl.target_markets.map((m) => {
+                  const opt = marketOptions.find((o) => o.value === m)
+                  return (
+                    <span
+                      key={m}
+                      className="text-xs px-1.5 py-0.5 bg-bochk-blue/10 text-bochk-blue rounded"
+                    >
+                      {opt?.label ?? m}
+                    </span>
+                  )
+                })}
               </div>
             </button>
           ))}
@@ -281,13 +286,13 @@ export default function Step1Profile({ onComplete }: Step1Props) {
         {/* 企业名称 */}
         <div>
           <label className="block text-sm font-medium text-bochk-dark mb-1">
-            企业名称
+            {t("step1.form.companyName")}
           </label>
           <input
             type="text"
             value={form.company_name}
             onChange={(e) => handleChange("company_name", e.target.value)}
-            placeholder="例：深圳XX电子科技有限公司"
+            placeholder={t("step1.form.companyNamePh")}
             className="w-full border border-bochk-border rounded px-3 py-2 text-sm
                        focus:outline-none focus:border-bochk-red"
             required
@@ -298,7 +303,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-bochk-dark mb-1">
-              行业
+              {t("step1.form.industry")}
             </label>
             <select
               value={form.industry}
@@ -307,17 +312,17 @@ export default function Step1Profile({ onComplete }: Step1Props) {
                          focus:outline-none focus:border-bochk-red bg-white"
               required
             >
-              <option value="">请选择</option>
-              <option value="电子制造">电子制造</option>
-              <option value="纺织制造">纺织制造</option>
-              <option value="家居制造">家居制造</option>
-              <option value="贸易">贸易</option>
-              <option value="其他">其他</option>
+              <option value="">{t("step1.form.selectPlaceholder")}</option>
+              <option value="电子制造">{t("step1.industries.electronics")}</option>
+              <option value="纺织制造">{t("step1.industries.textile")}</option>
+              <option value="家居制造">{t("step1.industries.home")}</option>
+              <option value="贸易">{t("step1.industries.trade")}</option>
+              <option value="其他">{t("step1.industries.other")}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-bochk-dark mb-1">
-              规模
+              {t("step1.form.size")}
             </label>
             <select
               value={form.size}
@@ -326,10 +331,10 @@ export default function Step1Profile({ onComplete }: Step1Props) {
                          focus:outline-none focus:border-bochk-red bg-white"
               required
             >
-              <option value="">请选择</option>
-              <option value="小型">小型（10-50人）</option>
-              <option value="中小型">中小型（50-100人）</option>
-              <option value="中型">中型（100-500人）</option>
+              <option value="">{t("step1.form.selectPlaceholder")}</option>
+              <option value="小型">{t("step1.sizes.small")}</option>
+              <option value="中小型">{t("step1.sizes.mediumSmall")}</option>
+              <option value="中型">{t("step1.sizes.medium")}</option>
             </select>
           </div>
         </div>
@@ -337,12 +342,12 @@ export default function Step1Profile({ onComplete }: Step1Props) {
         {/* 企业描述 */}
         <div>
           <label className="block text-sm font-medium text-bochk-dark mb-1">
-            企业描述
+            {t("step1.form.description")}
           </label>
           <textarea
             value={form.description}
             onChange={(e) => handleChange("description", e.target.value)}
-            placeholder="请简要描述企业主营业务、产品特点..."
+            placeholder={t("step1.form.descriptionPh")}
             rows={3}
             className="w-full border border-bochk-border rounded px-3 py-2 text-sm
                        focus:outline-none focus:border-bochk-red resize-none"
@@ -354,7 +359,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <div>
             <label className="block text-sm font-medium text-bochk-dark mb-1">
-              出海经验
+              {t("step1.form.exportExperience")}
             </label>
             <select
               value={form.export_experience}
@@ -363,16 +368,16 @@ export default function Step1Profile({ onComplete }: Step1Props) {
                          focus:outline-none focus:border-bochk-red bg-white"
               required
             >
-              <option value="">请选择</option>
-              <option value="无">无出海经验</option>
-              <option value="计划中">计划中</option>
-              <option value="1-3年">1-3年</option>
-              <option value="3年以上">3年以上</option>
+              <option value="">{t("step1.form.selectPlaceholder")}</option>
+              <option value="无">{t("step1.experience.none")}</option>
+              <option value="计划中">{t("step1.experience.planned")}</option>
+              <option value="1-3年">{t("step1.experience.short")}</option>
+              <option value="3年以上">{t("step1.experience.long")}</option>
             </select>
           </div>
           <div>
             <label className="block text-sm font-medium text-bochk-dark mb-1">
-              年营收范围
+              {t("step1.form.annualRevenue")}
             </label>
             <select
               value={form.annual_revenue}
@@ -381,10 +386,10 @@ export default function Step1Profile({ onComplete }: Step1Props) {
                          focus:outline-none focus:border-bochk-red bg-white"
               required
             >
-              <option value="">请选择</option>
-              {REVENUE_OPTIONS.map((r) => (
+              <option value="">{t("step1.form.selectPlaceholder")}</option>
+              {revenueOptions.map((r, i) => (
                 <option key={r} value={r}>
-                  {r}
+                  {revenueLabels[i]}
                 </option>
               ))}
             </select>
@@ -394,14 +399,14 @@ export default function Step1Profile({ onComplete }: Step1Props) {
         {/* 目标市场（多选） */}
         <div>
           <label className="block text-sm font-medium text-bochk-dark mb-2">
-            目标市场（可多选）
+            {t("step1.form.targetMarkets")}
           </label>
           <div className="flex flex-wrap gap-2">
-            {MARKET_OPTIONS.map((market) => {
-              const checked = form.target_markets.includes(market)
+            {marketOptions.map(({ value, label }) => {
+              const checked = form.target_markets.includes(value)
               return (
                 <label
-                  key={market}
+                  key={value}
                   className={cn(
                     "inline-flex items-center gap-1.5 px-3 py-1.5 rounded border text-sm cursor-pointer transition-colors",
                     checked
@@ -412,10 +417,10 @@ export default function Step1Profile({ onComplete }: Step1Props) {
                   <input
                     type="checkbox"
                     checked={checked}
-                    onChange={() => toggleMarket(market)}
+                    onChange={() => toggleMarket(value)}
                     className="sr-only"
                   />
-                  {market}
+                  {label}
                 </label>
               )
             })}
@@ -438,10 +443,10 @@ export default function Step1Profile({ onComplete }: Step1Props) {
           {loading ? (
             <span className="inline-flex items-center gap-2">
               <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-              正在生成画像...
+              {t("step1.form.generating")}
             </span>
           ) : (
-            "生成企业画像"
+            t("step1.form.generate")
           )}
         </button>
       </form>
@@ -452,7 +457,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
           {/* 顶部：标题 + 总分 */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-4">
             <div>
-              <h3 className="text-lg font-semibold text-bochk-dark">企业画像</h3>
+              <h3 className="text-lg font-semibold text-bochk-dark">{t("step1.result.title")}</h3>
               {form.company_name && (
                 <p className="text-sm text-bochk-gray">{form.company_name}</p>
               )}
@@ -464,7 +469,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
               </div>
               {level && (
                 <span className={cn("text-xs font-medium", level.color)}>
-                  出海准备度{level.label}
+                  {t("step1.result.readiness")}{level.label}
                 </span>
               )}
             </div>
@@ -477,7 +482,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
                 key={tag}
                 className="px-2.5 py-1 bg-bochk-red/10 text-bochk-red text-xs rounded-full font-medium"
               >
-                {tag}
+                {convertText(tag)}
               </span>
             ))}
           </div>
@@ -486,18 +491,23 @@ export default function Step1Profile({ onComplete }: Step1Props) {
           <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-6 mb-5">
             {/* 左：指标 */}
             <div className="md:col-span-2 space-y-3">
-              <InfoRow label="行业" value={profile.industry_tags.join("、")} />
-              <InfoRow label="规模" value={profile.size_level} />
-              <InfoRow label="贸易能力" value={profile.trade_capability} />
+              <InfoRow label={t("step1.result.industry")} value={convertText(profile.industry_tags.join("、"))} />
+              <InfoRow label={t("step1.result.size")} value={convertText(profile.size_level)} />
+              <InfoRow label={t("step1.result.tradeCapability")} value={convertText(profile.trade_capability)} />
               <InfoRow
-                label="目标市场"
-                value={profile.export_markets.join("、") || "待定"}
+                label={t("step1.result.targetMarkets")}
+                value={profile.export_markets.length > 0
+                  ? profile.export_markets.map((m) => {
+                      const opt = marketOptions.find((o) => o.value === m)
+                      return convertText(opt?.label ?? m)
+                    }).join("、")
+                  : t("step1.result.undetermined")}
               />
 
               {/* 准备度进度条 */}
               <div className="pt-2 border-t border-bochk-border">
                 <div className="flex justify-between text-sm mb-1">
-                  <span className="text-bochk-gray">出海准备度</span>
+                  <span className="text-bochk-gray">{t("step1.result.readiness")}</span>
                   <span className="font-semibold">{profile.readiness_score}%</span>
                 </div>
                 <div className="w-full bg-gray-200 rounded-full h-2.5">
@@ -543,7 +553,7 @@ export default function Step1Profile({ onComplete }: Step1Props) {
               onClick={() => onComplete(profile)}
               className="btn-primary w-full py-2.5 inline-flex items-center justify-center gap-1"
             >
-              确认画像，进入下一步：服务匹配 <ArrowRight className="w-4 h-4" />
+              {t("step1.result.confirm")} <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>

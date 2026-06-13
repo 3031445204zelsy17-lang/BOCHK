@@ -1,6 +1,7 @@
 /** Step 3: ESG 合规分析 — 双标准独立分析（目的地法规 + BOCHK 准入） */
 
 import { useState, useMemo } from "react"
+import { useTranslation } from "react-i18next"
 import {
   Inbox,
   CheckCircle,
@@ -18,18 +19,32 @@ import {
 import type { CompanyProfile, ESGAnalysis, Question } from "@/lib/types"
 import { analyzeESG } from "@/lib/api"
 import { BrandedLoading } from "@/components/shared/Loading"
-import destinationQuestions from "@/data/questionnaire_destination.json"
-import bochkQuestions from "@/data/questionnaire_bochk.json"
+import { toTraditional, isTraditionalChinese } from "@/lib/convertChinese"
+import AIChineseNotice from "@/components/shared/AIChineseNotice"
+import destZhCN from "@/data/questionnaire_destination.zh-CN.json"
+import bochkZhCN from "@/data/questionnaire_bochk.zh-CN.json"
+
+// ── 问卷动态导入（英文版懒加载）───────────────────────
+let destEn: typeof destZhCN | null = null
+let bochkEn: typeof bochkZhCN | null = null
+
+// 尝试加载英文问卷（文件可能还未创建）
+try {
+  // @ts-ignore — 动态可选导入
+  import("@/data/questionnaire_destination.en.json").then((m) => { destEn = m.default })
+  // @ts-ignore
+  import("@/data/questionnaire_bochk.en.json").then((m) => { bochkEn = m.default })
+} catch { /* 英文问卷不可用时回退中文 */ }
 
 // ── 类型断言 ────────────────────────────────────────────────
-const DEST_QUESTIONS = destinationQuestions as Question[]
-const BOCHK_QUESTIONS = bochkQuestions as Question[]
+const DEST_ZH_CN = destZhCN as Question[]
+const BOCHK_ZH_CN = bochkZhCN as Question[]
 
 // ── Tab 键类型 & 按 Tab 隔离的数据结构 ──────────────────────
 type TabKey = "destination" | "bochk"
 
 interface TabData {
-  answers: Record<string, string>   // question_id → "met"|"partial"|"not_met"
+  answers: Record<string, string>
   result: ESGAnalysis | null
   expandedHints: Set<string>
 }
@@ -43,7 +58,6 @@ const MARKET_TO_REGIONS: Record<string, string[]> = {
   "日韩": [],
 }
 
-/** LLM 可能返回的非标准 export_markets → 标准化映射 */
 const MARKET_ALIASES: Record<string, string> = {
   "新加坡": "东南亚", "泰国": "东南亚", "马来西亚": "东南亚", "越南": "东南亚",
   "印尼": "东南亚", "菲律宾": "东南亚", "缅甸": "东南亚", "柬埔寨": "东南亚",
@@ -53,59 +67,31 @@ const MARKET_ALIASES: Record<string, string> = {
   "日本": "日韩", "韩国": "日韩",
 }
 
-/** 将 LLM 返回的 export_markets 标准化为前端期望的值 */
 function normalizeMarkets(markets: string[]): string[] {
   const result = new Set<string>()
   for (const m of markets) {
-    if (MARKET_TO_REGIONS[m]) {
-      result.add(m)
-    } else if (MARKET_ALIASES[m]) {
-      result.add(MARKET_ALIASES[m])
-    }
+    if (MARKET_TO_REGIONS[m]) result.add(m)
+    else if (MARKET_ALIASES[m]) result.add(MARKET_ALIASES[m])
   }
   return Array.from(result)
 }
 
-/** 从企业画像的 export_markets 提取所有适用地区代码（先标准化） */
 function getApplicableRegions(markets: string[]): string[] {
   const normalized = normalizeMarkets(markets)
   const regions = new Set<string>()
   for (const m of normalized) {
-    for (const r of MARKET_TO_REGIONS[m] ?? []) {
-      regions.add(r)
-    }
+    for (const r of MARKET_TO_REGIONS[m] ?? []) regions.add(r)
   }
   return Array.from(regions)
 }
 
-/** 地区代码 → 中文名 */
-const REGION_NAMES: Record<string, string> = {
-  HK: "香港",
-  SG: "新加坡",
-  TH: "泰国",
-  EU: "欧盟",
-  BOCHK: "BOCHK 标准",
-}
-
-/** 目标市场 → 主要 target_country（取第一个匹配，返回后端期望的格式） */
 const REGION_TO_COUNTRY: Record<string, string> = {
-  SG: "singapore",
-  TH: "thailand",
-  HK: "hong_kong",
-  EU: "eu",
+  SG: "singapore", TH: "thailand", HK: "hong_kong", EU: "eu",
 }
 
-/** target_country → 地区代码（用于显示地区中文名） */
 const COUNTRY_TO_REGION: Record<string, string> = Object.fromEntries(
   Object.entries(REGION_TO_COUNTRY).map(([region, country]) => [country, region])
 )
-
-function getTargetCountryRegionName(markets: string[]): string {
-  const normalized = normalizeMarkets(markets)
-  const country = getTargetCountry(normalized)
-  const region = COUNTRY_TO_REGION[country]
-  return REGION_NAMES[region] ?? country
-}
 
 function getTargetCountry(markets: string[]): string {
   const normalized = normalizeMarkets(markets)
@@ -113,25 +99,44 @@ function getTargetCountry(markets: string[]): string {
     const regions = MARKET_TO_REGIONS[m] ?? []
     if (regions.length > 0) return REGION_TO_COUNTRY[regions[0]] ?? regions[0].toLowerCase()
   }
-  return "singapore" // 默认新加坡（东南亚首选）
+  return "singapore"
 }
 
-/** 结果页地区/标准文案（BOCHK tab 不跟随目标市场） */
-function getResultRegionText(result: ESGAnalysis, activeTab: TabKey): string {
-  if (activeTab === "bochk") {
-    return "BOCHK 准入标准"
-  }
-  const regionName = REGION_NAMES[result.country] ?? result.country
-  return `${regionName} · 目的地法规标准`
+// ── 选项配置 ────────────────────────────────────────────────
+const OPTION_KEYS = ["met", "partial", "not_met"] as const
+
+const CATEGORY_KEYS = ["E", "S", "G"] as const
+
+const STATUS_CONFIG = {
+  green:  { key: "green", dotColor: "bg-esg-green",  borderColor: "border-l-esg-green",  bg: "bg-esg-green/5" },
+  yellow: { key: "yellow", dotColor: "bg-esg-yellow", borderColor: "border-l-esg-yellow", bg: "bg-esg-yellow/5" },
+  red:    { key: "red", dotColor: "bg-esg-red",    borderColor: "border-l-esg-red",    bg: "bg-esg-red/5" },
 }
 
-function getResultSubText(result: ESGAnalysis, activeTab: TabKey): string {
-  if (activeTab === "bochk") {
-    return "本次分析基于 BOCHK 银行内部 ESG 准入标准"
-  }
-  const regionName = REGION_NAMES[result.country] ?? result.country
-  return `本次分析基于目标地区：${regionName} 法规`
+const URGENCY_ICONS = [AlertCircle, Clock, Calendar] as const
+
+// ── 工具函数 ────────────────────────────────────────────────
+function scoreColor(score: number): string {
+  if (score >= 70) return "#22C55E"
+  if (score >= 40) return "#EAB308"
+  return "#EF4444"
 }
+
+const GRADE_STYLE: Record<string, string> = {
+  A: "bg-esg-green text-white",
+  B: "bg-esg-yellow text-white",
+  C: "bg-esg-red text-white",
+}
+
+const WEIGHTS: Record<string, number> = { E: 30, S: 35, G: 35 }
+
+const DIFFICULTY_ORDER: Record<string, number> = {
+  "高": 3, "困难": 3, "较高": 3, "high": 3,
+  "中": 2, "中等": 2, "medium": 2,
+  "低": 1, "容易": 1, "较低": 1, "low": 1,
+}
+
+const STATUS_URGENCY: Record<string, number> = { red: 3, yellow: 2, green: 1 }
 
 // ── Props ───────────────────────────────────────────────────
 interface Step5Props {
@@ -139,50 +144,45 @@ interface Step5Props {
   onComplete: (result: ESGAnalysis | null) => void
 }
 
-// ── 选项配置 ────────────────────────────────────────────────
-const OPTION_CONFIG = {
-  met:     { label: "满足",     activeClass: "bg-esg-green text-white border-esg-green",     inactiveClass: "border-esg-green text-esg-green hover:bg-esg-green/10" },
-  partial: { label: "部分满足", activeClass: "bg-esg-yellow text-white border-esg-yellow",    inactiveClass: "border-esg-yellow text-esg-yellow hover:bg-esg-yellow/10" },
-  not_met: { label: "不满足",   activeClass: "bg-esg-red text-white border-esg-red",          inactiveClass: "border-esg-red text-esg-red hover:bg-esg-red/10" },
-} as const
-
-const CATEGORY_CONFIG: Record<string, { label: string; color: string }> = {
-  E: { label: "环境", color: "bg-esg-green" },
-  S: { label: "社会", color: "bg-bochk-blue" },
-  G: { label: "治理", color: "bg-bochk-gold" },
-}
-
 // ── 主组件 ──────────────────────────────────────────────────
 export default function Step5ESG({ profile, onComplete }: Step5Props) {
-  // Tab: destination（目的地法规） / bochk（BOCHK 准入）
+  const { t, i18n } = useTranslation()
+  const convert = (text: string) => isTraditionalChinese() ? toTraditional(text) : text
+
+  // 选择问卷源
+  const isEn = i18n.language === "en"
+  const DEST_QUESTIONS = (isEn && destEn ? destEn : DEST_ZH_CN) as Question[]
+  const BOCHK_QUESTIONS = (isEn && bochkEn ? bochkEn : BOCHK_ZH_CN) as Question[]
+
+  // Tab 状态
   const [activeTab, setActiveTab] = useState<TabKey>("destination")
-  // 按 tab 隔离的状态：每个 tab 有独立的 answers / result / hints
   const [tabState, setTabState] = useState<Record<TabKey, TabData>>({
     destination: { answers: {}, result: null, expandedHints: new Set() },
     bochk:       { answers: {}, result: null, expandedHints: new Set() },
   })
-  // 瞬态 UI 状态（不属于特定 tab）
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
-  // 当前 tab 的数据引用
   const current = tabState[activeTab]
 
-  // 根据目标市场过滤适用问题
   const applicableRegions = useMemo(
     () => getApplicableRegions(profile.export_markets),
     [profile.export_markets]
   )
 
+  // 地区名称
+  const regionName = (code: string) => t(`step3.regions.${code}`, code)
+  const targetCountry = getTargetCountry(profile.export_markets)
+  const targetRegionName = regionName(COUNTRY_TO_REGION[targetCountry] ?? "")
+
   const filteredQuestions = useMemo(() => {
     const source = activeTab === "destination" ? DEST_QUESTIONS : BOCHK_QUESTIONS
-    if (activeTab === "bochk") return source // BOCHK 问卷全部适用
+    if (activeTab === "bochk") return source
     return source.filter((q) =>
       (q.applicable_regions ?? []).some((r) => applicableRegions.includes(r))
     )
-  }, [activeTab, applicableRegions])
+  }, [activeTab, applicableRegions, DEST_QUESTIONS, BOCHK_QUESTIONS])
 
-  // 按 E/S/G 分组
   const groupedQuestions = useMemo(() => {
     const groups: Record<string, Question[]> = { E: [], S: [], G: [] }
     for (const q of filteredQuestions) {
@@ -191,11 +191,9 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
     return groups
   }, [filteredQuestions])
 
-  // 进度统计（只统计当前 tab 的问题）
   const totalQuestions = filteredQuestions.length
   const answeredCount = filteredQuestions.filter((q) => current.answers[q.id]).length
 
-  // 选择答案 — 只更新当前 tab
   const handleAnswer = (questionId: string, value: string) => {
     setTabState((prev) => ({
       ...prev,
@@ -206,24 +204,17 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
     }))
   }
 
-  // 切换 hint — 只更新当前 tab
   const toggleHint = (questionId: string) => {
     setTabState((prev) => {
       const hints = new Set(prev[activeTab].expandedHints)
-      if (hints.has(questionId)) hints.delete(questionId)
-      else hints.add(questionId)
-      return {
-        ...prev,
-        [activeTab]: { ...prev[activeTab], expandedHints: hints },
-      }
+      if (hints.has(questionId)) { hints.delete(questionId) } else { hints.add(questionId) }
+      return { ...prev, [activeTab]: { ...prev[activeTab], expandedHints: hints } }
     })
   }
 
-  // 提交分析
   const handleSubmit = async () => {
     setLoading(true)
     setError(null)
-
     try {
       const answerList = Object.entries(current.answers)
         .filter(([qid]) => filteredQuestions.some((q) => q.id === qid))
@@ -231,11 +222,10 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
 
       const res = await analyzeESG({
         profile,
-        target_country: getTargetCountry(profile.export_markets),
+        target_country: targetCountry,
         standard: activeTab,
         answers: answerList,
       })
-      // 结果存入当前 tab
       setTabState((prev) => ({
         ...prev,
         [activeTab]: { ...prev[activeTab], result: res },
@@ -248,90 +238,88 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
     }
   }
 
-  // 重新分析 — 只清除结果和提示，保留答案以便用户修改后重新提交
   const handleReset = () => {
     setTabState((prev) => ({
       ...prev,
-      [activeTab]: {
-        ...prev[activeTab],
-        result: null,
-        expandedHints: new Set(),
-      },
+      [activeTab]: { ...prev[activeTab], result: null, expandedHints: new Set() },
     }))
     setError(null)
   }
 
-  // 另一个 tab 的引用（用于交叉提示）
   const otherTab: TabKey = activeTab === "destination" ? "bochk" : "destination"
   const otherResult = tabState[otherTab].result
 
   // ── 渲染：结果展示 ──────────────────────────────────────
   if (current.result) {
+    const resultRegionText = activeTab === "bochk"
+      ? t("step3.resultRegion.bochk")
+      : t("step3.resultRegion.destination", { region: regionName(current.result.country) })
+
+    const resultSubText = activeTab === "bochk"
+      ? t("step3.resultSubText.bochk")
+      : t("step3.resultSubText.destination", { region: regionName(current.result.country) })
+
     return (
       <div className="max-w-3xl mx-auto animate-fade-in">
-        <h2 className="text-xl font-semibold mb-2">ESG 合规分析结果</h2>
-        <p className="text-sm text-bochk-gray mb-2">
-          {getResultRegionText(current.result, activeTab)}
-        </p>
+        <h2 className="text-xl font-semibold mb-2">{t("step3.resultTitle")}</h2>
+        <p className="text-sm text-bochk-gray mb-2">{resultRegionText}</p>
         <p className="text-xs text-bochk-blue mb-6 inline-flex items-center gap-1">
           <AlertCircle className="w-3 h-3" />
-          {getResultSubText(current.result, activeTab)}
+          {resultSubText}
         </p>
 
-        {/* Tab 切换（结果页也可切换） */}
         <TabSwitcher
           activeTab={activeTab}
           tabState={tabState}
           applicableRegions={applicableRegions}
           onSwitch={setActiveTab}
+          DEST_QUESTIONS={DEST_QUESTIONS}
+          BOCHK_QUESTIONS={BOCHK_QUESTIONS}
+          t={t}
         />
 
-        {/* 总分 + 等级 + 分项评分 */}
-        <ScoreBoard result={current.result} />
+        <AIChineseNotice />
 
-        {/* 缺口卡片 */}
+        <ScoreBoard result={current.result} t={t} />
+
         <div className="space-y-3 mb-6">
           {current.result.gaps.map((gap, i) => (
-            <div
-              key={i}
-              className="animate-fade-in"
-              style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}
-            >
-              <GapCard gap={gap} />
+            <div key={i} className="animate-fade-in" style={{ animationDelay: `${i * 60}ms`, animationFillMode: "both" }}>
+              <GapCard gap={gap} t={t} convert={convert} />
             </div>
           ))}
         </div>
 
-        {/* 改善路线图时间线 */}
-        <RoadmapTimeline gaps={current.result.gaps} roadmap={current.result.roadmap} />
+        <RoadmapTimeline gaps={current.result.gaps} roadmap={current.result.roadmap} t={t} convert={convert} />
 
-        {/* 免责声明 */}
         {current.result.disclaimer && (
-          <p className="text-xs text-bochk-gray mb-6 italic">{current.result.disclaimer}</p>
+          <p className="text-xs text-bochk-gray mb-6 italic">{convert(current.result.disclaimer)}</p>
         )}
 
-        {/* 另一个 tab 完成提示 */}
         {otherResult && (
           <div className="p-3 bg-bochk-light rounded border border-bochk-border text-sm text-bochk-gray mb-4">
             <span>
-              {otherTab === "destination" ? "目的地法规分析" : "BOCHK 准入评估"}已完成（评分 {otherResult.overall_score}，等级 {otherResult.grade ?? "—"}）
+              {t("step3.otherTabCompleted", {
+                tabName: otherTab === "destination" ? t("step3.otherTabDestination") : t("step3.otherTabBochk"),
+                score: otherResult.overall_score,
+                grade: otherResult.grade ?? "—",
+              })}
             </span>
             <button
               onClick={() => setActiveTab(otherTab)}
               className="ml-2 text-bochk-blue hover:underline cursor-pointer inline-flex items-center gap-0.5"
             >
-              查看结果 <ArrowRight className="w-3 h-3" />
+              {t("step3.viewResult")} <ArrowRight className="w-3 h-3" />
             </button>
           </div>
         )}
 
-        {/* 操作按钮 */}
         <div className="flex flex-col sm:flex-row gap-3">
           <button onClick={handleReset} className="px-4 py-2 rounded border border-bochk-border text-sm hover:bg-gray-50 cursor-pointer">
-            修改答案并重新提交
+            {t("step3.modifyResubmit")}
           </button>
           <button onClick={() => onComplete(current.result)} className="btn-primary text-sm">
-            完成
+            {t("step3.done")}
           </button>
         </div>
       </div>
@@ -344,67 +332,68 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
       {loading && (
         <BrandedLoading
           messages={[
-            "正在分析 ESG 合规...",
-            "正在比对目的地法规...",
-            "正在识别合规缺口...",
-            "正在生成改善路线图...",
+            t("step3.loading.msg1"),
+            t("step3.loading.msg2"),
+            t("step3.loading.msg3"),
+            t("step3.loading.msg4"),
           ]}
         />
       )}
 
-      <h2 className="text-xl font-semibold mb-2">ESG 合规分析</h2>
+      <h2 className="text-xl font-semibold mb-2">{t("step3.title")}</h2>
       <p className="text-sm text-bochk-gray mb-2">
-        基于「{profile.industry_tags[0]}」行业 · 目标市场: {profile.export_markets.join("、") || "未选择"}
+        {t("step3.subtitle", {
+          industry: convert(profile.industry_tags[0]),
+          markets: convert(profile.export_markets.join("、")) || "—",
+        })}
       </p>
       <p className="text-xs text-bochk-blue mb-4 inline-flex items-center gap-1">
         <AlertCircle className="w-3 h-3" />
-        本次将按 {getTargetCountryRegionName(profile.export_markets)} 法规进行分析
+        {t("step3.analysisNote", { region: targetRegionName })}
         {applicableRegions.length > 1 && (
-          <span className="text-bochk-gray ml-1">（当前仅分析首个适用地区）</span>
+          <span className="text-bochk-gray ml-1">{t("step3.analysisNoteMulti")}</span>
         )}
       </p>
 
-      {/* Tab 切换（含完成状态） */}
       <TabSwitcher
         activeTab={activeTab}
         tabState={tabState}
         applicableRegions={applicableRegions}
         onSwitch={setActiveTab}
+        DEST_QUESTIONS={DEST_QUESTIONS}
+        BOCHK_QUESTIONS={BOCHK_QUESTIONS}
+        t={t}
       />
 
-      {/* 适用地区提示 */}
       <div className="text-xs text-bochk-gray mb-4">
-        适用地区: {applicableRegions.map((r) => REGION_NAMES[r]).join("、") || "无匹配地区"}
+        {t("step3.applicableRegions")}{applicableRegions.map((r) => regionName(r)).join("、") || t("step3.noMatchRegion")}
         {applicableRegions.length === 0 && activeTab === "destination" && (
-          <span className="text-esg-yellow"> — 目标市场暂无对应法规，可切换到 BOCHK 准入评估</span>
+          <span className="text-esg-yellow">{t("step3.noMatchHint")}</span>
         )}
       </div>
 
-      {/* 问题列表 */}
       {filteredQuestions.length === 0 ? (
         <div className="card text-center py-12">
           <Inbox className="w-10 h-10 text-bochk-gray mx-auto mb-3" />
-          <p className="text-sm text-bochk-gray">当前目标市场暂无对应 ESG 法规问卷</p>
-          <p className="text-xs text-bochk-gray mt-1">请切换到 BOCHK 准入评估，或返回 Step 1 选择其他目标市场</p>
+          <p className="text-sm text-bochk-gray">{t("step3.emptyTitle")}</p>
+          <p className="text-xs text-bochk-gray mt-1">{t("step3.emptyHint")}</p>
         </div>
       ) : (
         <>
-          {(["E", "S", "G"] as const).map((cat) => {
+          {CATEGORY_KEYS.map((cat) => {
             const group = groupedQuestions[cat]
             if (!group || group.length === 0) return null
-            const cfg = CATEGORY_CONFIG[cat]
+            const colorClass = cat === "E" ? "bg-esg-green" : cat === "S" ? "bg-bochk-blue" : "bg-bochk-gold"
             return (
               <div key={cat} className="mb-6">
-                {/* 分组标题 */}
                 <div className="flex items-center gap-2 mb-3">
-                  <span className={`w-5 h-5 rounded text-white text-xs flex items-center justify-center ${cfg.color}`}>
+                  <span className={`w-5 h-5 rounded text-white text-xs flex items-center justify-center ${colorClass}`}>
                     {cat}
                   </span>
-                  <span className="text-sm font-medium">{cfg.label}</span>
-                  <span className="text-xs text-bochk-gray">({group.length}题)</span>
+                  <span className="text-sm font-medium">{t(`step3.category.${cat}`)}</span>
+                  <span className="text-xs text-bochk-gray">{t("step3.questionCount", { count: group.length })}</span>
                 </div>
 
-                {/* 问题卡片 */}
                 <div className="space-y-3">
                   {group.map((q) => (
                     <QuestionCard
@@ -414,6 +403,8 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
                       hintExpanded={current.expandedHints.has(q.id)}
                       onAnswer={(v) => handleAnswer(q.id, v)}
                       onToggleHint={() => toggleHint(q.id)}
+                      t={t}
+                      convert={convert}
                     />
                   ))}
                 </div>
@@ -421,19 +412,16 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
             )
           })}
 
-          {/* 进度 + 提交 */}
           <div className="card mt-4">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 mb-3">
               <span className="text-sm text-bochk-gray">
-                已完成 {answeredCount}/{totalQuestions} 题
+                {t("step3.progress", { answered: answeredCount, total: totalQuestions })}
               </span>
               <span className="text-xs text-bochk-gray inline-flex items-center gap-1">
                 {answeredCount === totalQuestions ? (
-                  <>
-                    <CheckCircle className="w-4 h-4 text-esg-green" /> 可以提交
-                  </>
+                  <><CheckCircle className="w-4 h-4 text-esg-green" /> {t("step3.readyToSubmit")}</>
                 ) : (
-                  `还需 ${totalQuestions - answeredCount} 题`
+                  t("step3.needMore", { count: totalQuestions - answeredCount })
                 )}
               </span>
             </div>
@@ -458,10 +446,10 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
               {loading ? (
                 <span className="inline-flex items-center justify-center gap-2">
                   <span className="inline-block w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
-                  正在分析...
+                  {t("step3.analyzing")}
                 </span>
               ) : (
-                "提交分析"
+                t("step3.submitAnalysis")
               )}
             </button>
           </div>
@@ -474,54 +462,54 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
 // ── 子组件：问题卡片 ────────────────────────────────────────
 
 function QuestionCard({
-  question,
-  answer,
-  hintExpanded,
-  onAnswer,
-  onToggleHint,
+  question, answer, hintExpanded, onAnswer, onToggleHint, t, convert,
 }: {
   question: Question
   answer: string | null
   hintExpanded: boolean
   onAnswer: (value: string) => void
   onToggleHint: () => void
+  t: (key: string) => string
+  convert: (text: string) => string
 }) {
+  const colorClass = question.category === "E" ? "bg-esg-green" : question.category === "S" ? "bg-bochk-blue" : "bg-bochk-gold"
+
   return (
     <div className="card">
-      {/* 题号 + 题目 */}
       <div className="flex items-start gap-2 mb-3">
-        <span className={`shrink-0 w-7 h-5 rounded text-white text-xs flex items-center justify-center ${
-          CATEGORY_CONFIG[question.category]?.color ?? "bg-gray-400"
-        }`}>
+        <span className={`shrink-0 w-7 h-5 rounded text-white text-xs flex items-center justify-center ${colorClass}`}>
           {question.id}
         </span>
-        <p className="text-sm leading-relaxed">{question.question}</p>
+        <p className="text-sm leading-relaxed">{convert(question.question)}</p>
       </div>
 
-      {/* Hint 折叠 */}
       {question.hint && (
         <button onClick={onToggleHint} className="text-xs text-bochk-blue mb-2 cursor-pointer hover:underline">
-          {hintExpanded ? "收起提示 ▲" : "查看提示 ▼"}
+          {hintExpanded ? t("step3.hideHint") : t("step3.showHint")}
         </button>
       )}
       {hintExpanded && question.hint && (
-        <p className="text-xs text-bochk-gray bg-bochk-light rounded p-2 mb-3">{question.hint}</p>
+        <p className="text-xs text-bochk-gray bg-bochk-light rounded p-2 mb-3">{convert(question.hint)}</p>
       )}
 
-      {/* 选项按钮 */}
       <div className="flex flex-col sm:flex-row gap-2">
-        {(["met", "partial", "not_met"] as const).map((value) => {
-          const cfg = OPTION_CONFIG[value]
+        {OPTION_KEYS.map((value) => {
           const isActive = answer === value
+          const activeClass = value === "met" ? "bg-esg-green text-white border-esg-green"
+            : value === "partial" ? "bg-esg-yellow text-white border-esg-yellow"
+            : "bg-esg-red text-white border-esg-red"
+          const inactiveClass = value === "met" ? "border-esg-green text-esg-green hover:bg-esg-green/10"
+            : value === "partial" ? "border-esg-yellow text-esg-yellow hover:bg-esg-yellow/10"
+            : "border-esg-red text-esg-red hover:bg-esg-red/10"
           return (
             <button
               key={value}
               onClick={() => onAnswer(value)}
               className={`flex-1 px-3 py-2 rounded border text-xs font-medium transition-colors cursor-pointer ${
-                isActive ? cfg.activeClass : cfg.inactiveClass
+                isActive ? activeClass : inactiveClass
               }`}
             >
-              {cfg.label}
+              {t(`step3.options.${value}`)}
             </button>
           )
         })}
@@ -530,21 +518,23 @@ function QuestionCard({
   )
 }
 
-// ── 子组件：Tab 切换条（问卷页 + 结果页共用） ─────────────────
+// ── 子组件：Tab 切换条 ──────────────────────────────────────
 
-interface TabSwitcherProps {
+function TabSwitcher({
+  activeTab, tabState, applicableRegions, onSwitch, DEST_QUESTIONS, BOCHK_QUESTIONS, t,
+}: {
   activeTab: TabKey
   tabState: Record<TabKey, TabData>
   applicableRegions: string[]
   onSwitch: (tab: TabKey) => void
-}
-
-function TabSwitcher({ activeTab, tabState, applicableRegions, onSwitch }: TabSwitcherProps) {
+  DEST_QUESTIONS: Question[]
+  BOCHK_QUESTIONS: Question[]
+  t: (key: string) => string
+}) {
   return (
     <div className="flex border-b border-bochk-border mb-6 overflow-x-auto">
       {(["destination", "bochk"] as const).map((tab) => {
         const tabData = tabState[tab]
-        // 计算该 tab 的进度
         const source = tab === "destination" ? DEST_QUESTIONS : BOCHK_QUESTIONS
         const questions = tab === "bochk"
           ? source
@@ -552,13 +542,9 @@ function TabSwitcher({ activeTab, tabState, applicableRegions, onSwitch }: TabSw
         const answered = questions.filter((q) => tabData.answers[q.id]).length
         const total = questions.length
 
-        // 状态文字
         let statusText = ""
-        if (tabData.result) {
-          statusText = " (已完成)"
-        } else if (answered > 0) {
-          statusText = ` (${answered}/${total})`
-        }
+        if (tabData.result) statusText = t("step3.tabs.completed")
+        else if (answered > 0) statusText = ` (${answered}/${total})`
 
         return (
           <button
@@ -570,7 +556,7 @@ function TabSwitcher({ activeTab, tabState, applicableRegions, onSwitch }: TabSw
                 : "border-transparent text-bochk-gray hover:text-bochk-dark"
             }`}
           >
-            {tab === "destination" ? "目的地法规分析" : "BOCHK 准入评估"}
+            {tab === "destination" ? t("step3.tabs.destination") : t("step3.tabs.bochk")}
             {statusText && (
               <span className={tabData.result ? "text-esg-green" : "text-bochk-gray"}>
                 {statusText}
@@ -583,69 +569,50 @@ function TabSwitcher({ activeTab, tabState, applicableRegions, onSwitch }: TabSw
   )
 }
 
-// ── 子组件：评分看板（总分 + 等级 + E/S/G 分项） ─────────────
+// ── 子组件：评分看板 ────────────────────────────────────────
 
-/** 分数 → 交通灯颜色 */
-function scoreColor(score: number): string {
-  if (score >= 70) return "#22C55E"
-  if (score >= 40) return "#EAB308"
-  return "#EF4444"
-}
-
-/** 等级 → 样式 */
-const GRADE_STYLE: Record<string, string> = {
-  A: "bg-esg-green text-white",
-  B: "bg-esg-yellow text-white",
-  C: "bg-esg-red text-white",
-}
-
-/** 权重配置 */
-const WEIGHTS: Record<string, number> = { E: 30, S: 35, G: 35 }
-
-function ScoreBoard({ result }: { result: ESGAnalysis }) {
+function ScoreBoard({ result, t }: { result: ESGAnalysis; t: (k: string) => string }) {
   const grade = result.grade ?? (result.overall_score >= 80 ? "A" : result.overall_score >= 60 ? "B" : "C")
   const catScores = result.category_scores ?? {}
-  // 只显示后端实际返回的维度（BOCHK 无 S 题时不显示 S）
-  const categoriesToShow = (["E", "S", "G"] as const).filter((cat) => catScores[cat] !== undefined)
+  const categoriesToShow = CATEGORY_KEYS.filter((cat) => catScores[cat] !== undefined)
+
+  const scoreDesc = result.overall_score >= 70 ? t("step3.score.good")
+    : result.overall_score >= 40 ? t("step3.score.partial")
+    : t("step3.score.poor")
 
   return (
     <>
-      {/* 总分 + 等级 */}
       <div className="card mb-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="flex items-center gap-4 md:gap-6">
           <div className="w-20 h-20 md:w-24 md:h-24 rounded-full border-4 flex flex-col items-center justify-center shrink-0"
             style={{ borderColor: scoreColor(result.overall_score) }}>
             <span className="text-2xl font-bold">{result.overall_score}</span>
-            <span className="text-xs text-bochk-gray">分</span>
+            <span className="text-xs text-bochk-gray">{t("step3.score.unit")}</span>
           </div>
           <div>
-            <div className="text-lg font-semibold">综合合规评分</div>
-            <div className="text-sm text-bochk-gray">
-              {result.overall_score >= 70 ? "合规状况良好" : result.overall_score >= 40 ? "部分合规，需改善" : "合规缺口较大，需重点关注"}
-            </div>
+            <div className="text-lg font-semibold">{t("step3.score.title")}</div>
+            <div className="text-sm text-bochk-gray">{scoreDesc}</div>
           </div>
         </div>
-        {/* 等级徽章 */}
         <div className={`px-4 py-2 rounded text-center shrink-0 ${GRADE_STYLE[grade] ?? GRADE_STYLE.C}`}>
-          <div className="text-xs opacity-80">等级</div>
+          <div className="text-xs opacity-80">{t("step3.score.grade")}</div>
           <div className="text-2xl font-bold">{grade}</div>
         </div>
       </div>
 
-      {/* E/S/G 分项评分 */}
       <div className="card mb-6">
-        <div className="text-sm font-semibold mb-3">分项评分</div>
+        <div className="text-sm font-semibold mb-3">{t("step3.score.subScores")}</div>
         <div className="space-y-3">
           {categoriesToShow.map((cat) => {
-            const cfg = CATEGORY_CONFIG[cat]
+            const colorClass = cat === "E" ? "bg-esg-green" : cat === "S" ? "bg-bochk-blue" : "bg-bochk-gold"
             const s = catScores[cat] ?? 0
             const w = WEIGHTS[cat]
             return (
               <div key={cat} className="flex items-center gap-3">
-                <span className={`w-6 h-6 rounded text-white text-xs flex items-center justify-center font-medium shrink-0 ${cfg.color}`}>
+                <span className={`w-6 h-6 rounded text-white text-xs flex items-center justify-center font-medium shrink-0 ${colorClass}`}>
                   {cat}
                 </span>
-                <span className="text-sm w-10 shrink-0">{cfg.label}</span>
+                <span className="text-sm w-10 shrink-0">{t(`step3.category.${cat}`)}</span>
                 <span className="text-xs text-bochk-gray w-10 shrink-0">({w}%)</span>
                 <div className="flex-1 bg-gray-200 rounded-full h-2 min-w-0">
                   <div className="rounded-full h-2 transition-all duration-500"
@@ -665,102 +632,89 @@ function ScoreBoard({ result }: { result: ESGAnalysis }) {
 
 // ── 子组件：缺口卡片 ────────────────────────────────────────
 
-function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
+function GapCard({ gap, t, convert }: { gap: ESGAnalysis["gaps"][number]; t: (k: string) => string; convert: (s: string) => string }) {
   const [expanded, setExpanded] = useState(false)
+  const sc = STATUS_CONFIG[gap.status as keyof typeof STATUS_CONFIG] ?? STATUS_CONFIG.yellow
 
-  const statusConfig = {
-    green:  { label: "满足",     dotColor: "bg-esg-green",  borderColor: "border-l-esg-green",  bg: "bg-esg-green/5" },
-    yellow: { label: "部分满足", dotColor: "bg-esg-yellow", borderColor: "border-l-esg-yellow", bg: "bg-esg-yellow/5" },
-    red:    { label: "不满足",   dotColor: "bg-esg-red",    borderColor: "border-l-esg-red",    bg: "bg-esg-red/5" },
-  }
-  const sc = statusConfig[gap.status as keyof typeof statusConfig] ?? statusConfig.yellow
-
-  // 置信度标签样式
   const confidenceStyle: Record<string, string> = {
-    high:   "bg-esg-green/10 text-esg-green",
+    high: "bg-esg-green/10 text-esg-green",
     medium: "bg-esg-yellow/10 text-esg-yellow",
-    low:    "bg-esg-red/10 text-esg-red",
+    low: "bg-esg-red/10 text-esg-red",
   }
-  const confidenceLabel: Record<string, string> = { high: "高", medium: "中", low: "低" }
 
   return (
     <div className={`card border-l-4 ${sc.borderColor} ${sc.bg}`}>
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="flex items-center gap-2 min-w-0">
           <div className={`w-3 h-3 rounded-full shrink-0 ${sc.dotColor}`} />
-          <span className="text-sm font-medium truncate">{gap.regulation}</span>
+          <span className="text-sm font-medium truncate">{convert(gap.regulation)}</span>
           <span className="text-xs text-bochk-gray shrink-0">({gap.category})</span>
         </div>
-        <span className="text-xs font-medium shrink-0">{sc.label}</span>
+        <span className="text-xs font-medium shrink-0">{t(`step3.gapStatus.${sc.key}`)}</span>
       </div>
 
-      {/* AI 判断（蓝色层） */}
       <div className="mt-2 p-2 bg-bochk-blue/5 rounded border border-bochk-blue/10">
-        <p className="text-sm text-bochk-dark">{gap.ai_judgment} — {gap.gap_description}</p>
+        <p className="text-sm text-bochk-dark">{convert(gap.ai_judgment)} — {convert(gap.gap_description)}</p>
       </div>
 
-      {/* 收起状态：来源摘要行 */}
       {!expanded && (
         <div className="flex items-center justify-between mt-2 gap-2">
           <div className="text-xs text-bochk-gray truncate inline-flex items-center gap-1">
             <FileText className="w-4 h-4 shrink-0" />
-            <span className="truncate">{gap.source_ref}</span>
+            <span className="truncate">{convert(gap.source_ref)}</span>
           </div>
           <button onClick={() => setExpanded(true)} className="text-xs text-bochk-blue cursor-pointer hover:underline shrink-0">
-            查看详情 ▼
+            {t("step3.gap.viewDetail")}
           </button>
         </div>
       )}
 
-      {/* 展开详情 */}
       {expanded && (
         <>
-          {/* 法规原文（白色层） */}
           <div className="mt-3 p-3 bg-white rounded border border-bochk-border">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-medium text-bochk-dark inline-flex items-center gap-1">
-                <FileText className="w-4 h-4" /> 法规原文
+                <FileText className="w-4 h-4" /> {t("step3.gap.regulationOriginal")}
               </span>
               {gap.confidence && (
                 <span className={`px-1.5 py-0.5 rounded text-xs ${confidenceStyle[gap.confidence] ?? ""}`}>
-                  置信度: {confidenceLabel[gap.confidence] ?? gap.confidence}
+                  {t("step3.gap.confidence")}{t(`step3.confidence.${gap.confidence}`)}
                 </span>
               )}
             </div>
-            <p className="text-sm text-bochk-dark leading-relaxed">{gap.source_text}</p>
+            <p className="text-sm text-bochk-dark leading-relaxed">{convert(gap.source_text)}</p>
             <div className="mt-2 pt-2 border-t border-bochk-border flex items-center gap-1">
               <span className="text-xs text-bochk-gray inline-flex items-center gap-1">
-                <Paperclip className="w-4 h-4" /> 来源:
+                <Paperclip className="w-4 h-4" /> {t("step3.gap.source")}
               </span>
-              <span className="text-xs text-bochk-blue">{gap.source_ref}</span>
+              <span className="text-xs text-bochk-blue">{convert(gap.source_ref)}</span>
             </div>
           </div>
 
-          {/* AI 建议（绿色层） */}
           <div className="mt-2 p-3 bg-esg-green/5 rounded border border-esg-green/20">
             <div className="flex items-center gap-2 mb-2">
               <span className="text-xs font-medium text-esg-green inline-flex items-center gap-1">
-                <Lightbulb className="w-4 h-4" /> AI 建议
+                <Lightbulb className="w-4 h-4" /> {t("step3.gap.aiSuggestion")}
               </span>
               {gap.suggestion_confidence && (
                 <span className={`px-1.5 py-0.5 rounded text-xs ${confidenceStyle[gap.suggestion_confidence] ?? ""}`}>
-                  建议置信度: {confidenceLabel[gap.suggestion_confidence] ?? gap.suggestion_confidence}
+                  {t("step3.gap.suggestionConfidence")}{t(`step3.confidence.${gap.suggestion_confidence}`)}
                 </span>
               )}
             </div>
-            <p className="text-sm text-bochk-dark leading-relaxed">{gap.suggestion}</p>
+            <p className="text-sm text-bochk-dark leading-relaxed">{convert(gap.suggestion)}</p>
             <div className="flex flex-wrap gap-4 mt-2 text-xs text-bochk-gray">
               <span className="inline-flex items-center gap-1">
-                <Zap className="w-4 h-4" /> 难度: {gap.difficulty}
+                <Zap className="w-4 h-4" /> {t("step3.gap.difficulty")}{convert(gap.difficulty)}
               </span>
               <span className="inline-flex items-center gap-1">
-                <Clock className="w-4 h-4" /> 预计: {gap.estimated_time}
+                <Clock className="w-4 h-4" /> {t("step3.gap.estimatedTime")}{convert(gap.estimated_time)}
               </span>
             </div>
           </div>
 
           <button onClick={() => setExpanded(false)} className="text-xs text-bochk-blue mt-2 cursor-pointer hover:underline">
-            收起 ▲
+            {t("step3.gap.collapse")}
           </button>
         </>
       )}
@@ -768,27 +722,22 @@ function GapCard({ gap }: { gap: ESGAnalysis["gaps"][number] }) {
   )
 }
 
-// ── 子组件：改善路线图时间线 ──────────────────────────────────
+// ── 子组件：改善路线图 ──────────────────────────────────────
 
-/** 难度 → 数值（用于排序） */
-const DIFFICULTY_ORDER: Record<string, number> = {
-  "高": 3, "困难": 3, "较高": 3, "high": 3,
-  "中": 2, "中等": 2, "medium": 2,
-  "低": 1, "容易": 1, "较低": 1, "low": 1,
-}
+function RoadmapTimeline({
+  gaps, roadmap, t, convert,
+}: {
+  gaps: ESGAnalysis["gaps"]
+  roadmap?: string
+  t: (k: string) => string
+  convert: (s: string) => string
+}) {
+  const urgencyColors = [
+    { color: "bg-esg-red", dotColor: "bg-esg-red", borderColor: "border-esg-red" },
+    { color: "bg-esg-yellow", dotColor: "bg-esg-yellow", borderColor: "border-esg-yellow" },
+    { color: "bg-esg-green", dotColor: "bg-esg-green", borderColor: "border-esg-green" },
+  ]
 
-/** 状态 → 紧急度 */
-const STATUS_URGENCY: Record<string, number> = { red: 3, yellow: 2, green: 1 }
-
-/** 紧急度 → 配置 */
-const URGENCY_CONFIG = [
-  { key: "urgent", label: "立即行动", icon: AlertCircle, color: "bg-esg-red", dotColor: "bg-esg-red", borderColor: "border-esg-red" },
-  { key: "short",   label: "短期改善", icon: Clock,       color: "bg-esg-yellow", dotColor: "bg-esg-yellow", borderColor: "border-esg-yellow" },
-  { key: "medium",  label: "长期规划", icon: Calendar,    color: "bg-esg-green", dotColor: "bg-esg-green", borderColor: "border-esg-green" },
-] as const
-
-function RoadmapTimeline({ gaps, roadmap }: { gaps: ESGAnalysis["gaps"]; roadmap?: string }) {
-  // 筛选非绿色缺口，按紧急度×难度排序
   const actionGaps = gaps
     .filter((g) => g.status !== "green")
     .map((g) => ({
@@ -797,7 +746,6 @@ function RoadmapTimeline({ gaps, roadmap }: { gaps: ESGAnalysis["gaps"]; roadmap
       difficultyScore: DIFFICULTY_ORDER[g.difficulty] ?? 2,
     }))
     .sort((a, b) => {
-      // 先按紧急度降序，再按难度降序
       if (a.urgency !== b.urgency) return b.urgency - a.urgency
       return b.difficultyScore - a.difficultyScore
     })
@@ -807,45 +755,40 @@ function RoadmapTimeline({ gaps, roadmap }: { gaps: ESGAnalysis["gaps"]; roadmap
   return (
     <div className="card mb-6">
       <h3 className="text-sm font-semibold mb-4 inline-flex items-center gap-1">
-        <ClipboardList className="w-4 h-4" /> 改善路线图
+        <ClipboardList className="w-4 h-4" /> {t("step3.roadmap.title")}
       </h3>
 
       {actionGaps.length > 0 ? (
         <div className="relative pl-4 md:pl-6">
-          {/* 竖向时间轴线 */}
           <div className="absolute left-2 md:left-4 top-1 bottom-1 w-0.5 bg-gray-200" />
-
           <div className="space-y-4">
             {actionGaps.map((gap, i) => {
-              const urgency = gap.status === "red" ? 0 : gap.status === "yellow" ? 1 : 2
-              const cfg = URGENCY_CONFIG[urgency]
-              const Icon = cfg.icon
+              const urgencyIdx = gap.status === "red" ? 0 : gap.status === "yellow" ? 1 : 2
+              const cfg = urgencyColors[urgencyIdx]
+              const Icon = URGENCY_ICONS[urgencyIdx]
               return (
                 <div key={i} className="relative">
-                  {/* 时间轴圆点 */}
                   <div className={`absolute -left-6 md:-left-10 top-1 w-4 h-4 rounded-full ${cfg.dotColor} border-2 border-white shadow-sm`} />
-
-                  {/* 内容卡片 */}
                   <div className={`p-3 rounded border ${cfg.borderColor}/30 bg-white`}>
                     <div className="flex items-center justify-between mb-1 gap-2">
                       <div className="flex items-center gap-2 min-w-0">
                         <span className={`px-1.5 py-0.5 rounded text-xs text-white shrink-0 ${cfg.color}`}>
-                          {gap.status === "red" ? "紧急" : "建议"}
+                          {gap.status === "red" ? t("step3.roadmap.urgent") : t("step3.roadmap.suggestion")}
                         </span>
-                        <span className="text-sm font-medium text-bochk-dark truncate">{gap.regulation}</span>
+                        <span className="text-sm font-medium text-bochk-dark truncate">{convert(gap.regulation)}</span>
                         <span className="text-xs text-bochk-gray shrink-0">({gap.category})</span>
                       </div>
                       <Icon className={`w-4 h-4 shrink-0 ${
-                        cfg.key === "urgent" ? "text-esg-red" : cfg.key === "short" ? "text-esg-yellow" : "text-esg-green"
+                        urgencyIdx === 0 ? "text-esg-red" : urgencyIdx === 1 ? "text-esg-yellow" : "text-esg-green"
                       }`} />
                     </div>
-                    <p className="text-xs text-bochk-dark mt-1">{gap.suggestion}</p>
+                    <p className="text-xs text-bochk-dark mt-1">{convert(gap.suggestion)}</p>
                     <div className="flex flex-wrap gap-3 mt-2 text-xs text-bochk-gray">
                       <span className="inline-flex items-center gap-1">
-                        <Zap className="w-4 h-4" /> {gap.difficulty}
+                        <Zap className="w-4 h-4" /> {convert(gap.difficulty)}
                       </span>
                       <span className="inline-flex items-center gap-1">
-                        <Clock className="w-4 h-4" /> {gap.estimated_time}
+                        <Clock className="w-4 h-4" /> {convert(gap.estimated_time)}
                       </span>
                     </div>
                   </div>
@@ -856,17 +799,16 @@ function RoadmapTimeline({ gaps, roadmap }: { gaps: ESGAnalysis["gaps"]; roadmap
         </div>
       ) : (
         <div className="text-sm text-esg-green text-center py-3 inline-flex items-center justify-center gap-1 w-full">
-          <CheckCircle className="w-5 h-5" /> 所有合规项已满足，暂无改善建议
+          <CheckCircle className="w-5 h-5" /> {t("step3.roadmap.allPassed")}
         </div>
       )}
 
-      {/* LLM 综合说明 */}
       {roadmap && (
         <div className="mt-4 pt-3 border-t border-bochk-border">
           <div className="text-xs font-medium text-bochk-gray mb-2 inline-flex items-center gap-1">
-            <ClipboardList className="w-4 h-4" /> 综合建议
+            <ClipboardList className="w-4 h-4" /> {t("step3.roadmap.comprehensive")}
           </div>
-          <p className="text-sm text-bochk-dark whitespace-pre-line">{roadmap}</p>
+          <p className="text-sm text-bochk-dark whitespace-pre-line">{convert(roadmap)}</p>
         </div>
       )}
     </div>

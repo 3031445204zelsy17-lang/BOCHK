@@ -1,0 +1,291 @@
+{
+  "header": {
+    "title": "GoGlobal Navigator",
+    "subtitle": "AI-Powered SME Global Expansion Platform"
+  },
+  "sidebar": {
+    "title": "GoGlobal Wizard",
+    "progress": "Progress",
+    "steps": {
+      "s1": { "label": "Step 1", "desc": "Company Profile" },
+      "s2": { "label": "Step 2", "desc": "Service Matching" },
+      "s3": { "label": "Step 3", "desc": "ESG Compliance" }
+    }
+  },
+  "home": {
+    "poweredBy": "Powered by",
+    "bochk": "BOCHK",
+    "heroTitle": "GoGlobal Navigator",
+    "heroSubtitle": "智企通",
+    "heroDesc": "AI-Powered SME Global Expansion Platform",
+    "heroDescSub": "Company Profiling · Product Matching · ESG Compliance — 3 Steps to Assess Global Readiness",
+    "cta": "Get Started",
+    "innovationNote": "Innovation Challenge 2026 · No registration required",
+    "featuresTitle": "3 Steps to Global Readiness Assessment",
+    "featuresDesc": "From company profiling to ESG compliance, one-stop AI navigation for global expansion",
+    "flow": {
+      "profile": "Company Profile",
+      "match": "Product Matching",
+      "esg": "ESG Compliance",
+      "ready": "Global Ready"
+    },
+    "features": {
+      "s1": {
+        "step": "Step 1",
+        "title": "AI Company Profile",
+        "desc": "Intelligent analysis of company information, generating a structured global expansion profile with industry tags, trade capabilities, and market assessment.",
+        "highlights": ["Industry Matching", "Readiness Score", "Smart Tags"]
+      },
+      "s2": {
+        "step": "Step 2",
+        "title": "BOCHK Product Matching",
+        "desc": "AI-powered matching of BOCHK financial products based on company profile, with personalized recommendations and application advice.",
+        "highlights": ["Trade Finance", "FX Management", "Green Finance"]
+      },
+      "s3": {
+        "step": "Step 3",
+        "title": "ESG Compliance Analysis",
+        "desc": "Identify ESG compliance gaps in target markets, generate dual-standard assessment reports (destination regulations + BOCHK criteria), and provide improvement roadmaps.",
+        "highlights": ["Gap Identification", "Traffic Light Report", "Improvement Roadmap"]
+      }
+    },
+    "stats": {
+      "regions": { "value": "5", "label": "Regions Covered", "sub": "HK / SG / TH / EU / BOCHK" },
+      "regulations": { "value": "71", "label": "ESG Regulations", "sub": "Structured compliance checks" },
+      "products": { "value": "8", "label": "Financial Products", "sub": "BOCHK exclusive recommendations" },
+      "dimensions": { "value": "3", "label": "Assessment Dimensions", "sub": "Environmental / Social / Governance" }
+    },
+    "footer": {
+      "title": "GoGlobal Navigator 智企通",
+      "copyright": "© 2026 BOCHK Innovation Challenge",
+      "cta": "Try Now"
+    }
+  },
+  "step1": {
+    "title": "Step 1: Company Profile",
+    "subtitle": "Select a preset enterprise for quick demo, or fill in company details manually",
+    "templateTitle": "Quick Demo — Click to select a company template",
+    "form": {
+      "companyName": "Company Name",
+      "companyNamePh": "e.g., Shenzhen XX Electronics Co., Ltd.",
+      "industry": "Industry",
+      "size": "Company Size",
+      "description": "Company Description",
+      "descriptionPh": "Briefly describe the company's main business, products...",
+      "exportExperience": "Export Experience",
+      "annualRevenue": "Annual Revenue",
+      "targetMarkets": "Target Markets (Multiple)",
+      "generate": "Generate Company Profile",
+      "generating": "Generating profile...",
+      "selectPlaceholder": "Please select"
+    },
+    "industries": {
+      "electronics": "Electronics Manufacturing",
+      "textile": "Textile Manufacturing",
+      "home": "Home Furnishing",
+      "trade": "Trade",
+      "other": "Other"
+    },
+    "sizes": {
+      "small": "Small (10-50 employees)",
+      "mediumSmall": "Medium-Small (50-100 employees)",
+      "medium": "Medium (100-500 employees)"
+    },
+    "experience": {
+      "none": "No export experience",
+      "planned": "Planned",
+      "short": "1-3 years",
+      "long": "3+ years"
+    },
+    "markets": {
+      "southeastAsia": "Southeast Asia",
+      "europe": "Europe",
+      "northAmerica": "North America",
+      "middleEast": "Middle East",
+      "japanKorea": "Japan & Korea"
+    },
+    "revenue": {
+      "r1": "Below HK$5M",
+      "r2": "HK$5M - 10M",
+      "r3": "HK$10M - 30M",
+      "r4": "HK$30M - 50M",
+      "r5": "Above HK$50M"
+    },
+    "result": {
+      "title": "Company Profile",
+      "readiness": "Global Readiness",
+      "readinessHigh": "High",
+      "readinessMedium": "Medium",
+      "readinessLow": "Low",
+      "industry": "Industry",
+      "size": "Size",
+      "tradeCapability": "Trade Capability",
+      "targetMarkets": "Target Markets",
+      "undetermined": "TBD",
+      "confirm": "Confirm Profile, Next: Service Matching"
+    },
+    "radar": {
+      "sizeStrength": "Scale",
+      "exportExperience": "Export Exp.",
+      "tradeCapability": "Trade Cap.",
+      "marketCoverage": "Market Reach",
+      "industryDepth": "Industry Depth"
+    },
+    "loading": {
+      "msg1": "Analyzing company information...",
+      "msg2": "Matching industry tags...",
+      "msg3": "Assessing global readiness...",
+      "msg4": "Generating company profile..."
+    }
+  },
+  "step2": {
+    "title": "Step 2: Service Matching",
+    "subtitleBase": "Based on 「{{industry}}」 · {{size}} enterprise",
+    "subtitleMarkets": " · Target: {{markets}}",
+    "subtitleEnd": " — Recommended BOCHK Products",
+    "matchHigh": "High Match",
+    "matchMedium": "Medium Match",
+    "matchLow": "Fair Match",
+    "aiReason": "AI Recommendation",
+    "usageAdvice": "Usage Advice",
+    "productFeatures": "Key Features",
+    "applicationMaterials": "Required Documents",
+    "nextStep": "Next: ESG Compliance Analysis",
+    "loading": {
+      "msg1": "Matching BOCHK products...",
+      "msg2": "Calculating match scores...",
+      "msg3": "Generating recommendations..."
+    }
+  },
+  "step3": {
+    "title": "ESG Compliance Analysis",
+    "resultTitle": "ESG Compliance Results",
+    "subtitle": "Based on「{{industry}}」 · Target markets: {{markets}}",
+    "analysisNote": "Analysis based on {{region}} regulations",
+    "analysisNoteMulti": "(Currently analyzing the first applicable region)",
+    "applicableRegions": "Applicable regions: ",
+    "noMatchRegion": "No matching regions",
+    "noMatchHint": " — No regulations found for target market. Switch to BOCHK criteria.",
+    "emptyTitle": "No ESG regulation questionnaire available for current target market",
+    "emptyHint": "Switch to BOCHK Criteria Assessment, or go back to Step 1 to select other target markets",
+    "category": {
+      "E": "Environmental",
+      "S": "Social",
+      "G": "Governance"
+    },
+    "questionCount": "({{count}} questions)",
+    "options": {
+      "met": "Met",
+      "partial": "Partial",
+      "not_met": "Not Met"
+    },
+    "progress": "Completed {{answered}}/{{total}} questions",
+    "readyToSubmit": "Ready to submit",
+    "needMore": "{{count}} more needed",
+    "submitAnalysis": "Submit Analysis",
+    "analyzing": "Analyzing...",
+    "showHint": "Show hint ▼",
+    "hideHint": "Hide hint ▲",
+    "tabs": {
+      "destination": "Destination Regulations",
+      "bochk": "BOCHK Criteria",
+      "completed": " (Completed)"
+    },
+    "resultRegion": {
+      "bochk": "BOCHK Admission Criteria",
+      "destination": "{{region}} · Destination Regulations"
+    },
+    "resultSubText": {
+      "bochk": "Analysis based on BOCHK internal ESG admission criteria",
+      "destination": "Analysis based on target region: {{region}} regulations"
+    },
+    "regions": {
+      "HK": "Hong Kong",
+      "SG": "Singapore",
+      "TH": "Thailand",
+      "EU": "EU",
+      "BOCHK": "BOCHK Standards"
+    },
+    "score": {
+      "title": "Overall Compliance Score",
+      "unit": "pts",
+      "grade": "Grade",
+      "good": "Good compliance status",
+      "partial": "Partial compliance, improvement needed",
+      "poor": "Significant compliance gaps, requires attention",
+      "subScores": "Category Scores"
+    },
+    "gap": {
+      "regulationOriginal": "Regulation Text",
+      "aiSuggestion": "AI Suggestion",
+      "source": "Source:",
+      "viewDetail": "View details ▼",
+      "collapse": "Collapse ▲",
+      "confidence": "Confidence: ",
+      "suggestionConfidence": "Suggestion confidence: ",
+      "difficulty": "Difficulty: ",
+      "estimatedTime": "Est. time: "
+    },
+    "confidence": {
+      "high": "High",
+      "medium": "Med",
+      "low": "Low"
+    },
+    "roadmap": {
+      "title": "Improvement Roadmap",
+      "urgent": "Urgent",
+      "suggestion": "Suggested",
+      "urgency": {
+        "urgent": "Immediate Action",
+        "short": "Short-term",
+        "medium": "Long-term"
+      },
+      "allPassed": "All compliance items met. No improvement needed.",
+      "comprehensive": "Overall Recommendation"
+    },
+    "gapStatus": {
+      "green": "Met",
+      "yellow": "Partial",
+      "red": "Not Met"
+    },
+    "otherTabCompleted": "{{tabName}} completed (Score {{score}}, Grade {{grade}})",
+    "otherTabDestination": "Destination Regulations",
+    "otherTabBochk": "BOCHK Criteria",
+    "viewResult": "View Results",
+    "modifyResubmit": "Modify & Resubmit",
+    "done": "Done",
+    "loading": {
+      "msg1": "Analyzing ESG compliance...",
+      "msg2": "Comparing destination regulations...",
+      "msg3": "Identifying compliance gaps...",
+      "msg4": "Generating improvement roadmap..."
+    }
+  },
+  "dashboard": {
+    "readiness": "Global Readiness",
+    "steps": {
+      "s1": "Company Profile",
+      "s2": "Service Matching",
+      "s3": "ESG Compliance"
+    },
+    "fillInfo": "Fill in company details to generate profile",
+    "readinessScore": "Readiness: ",
+    "matched": "Matched {{count}} BOCHK products",
+    "maxMatch": "Best match: ",
+    "matchHint": "AI-matched BOCHK financial products",
+    "esgHint": "Assess ESG compliance gaps in target markets",
+    "completed": "Completed",
+    "pending": "Pending",
+    "gradeLabel": " Grade"
+  },
+  "api": {
+    "errors": {
+      "profile": "Profile generation failed: {{status}}",
+      "matching": "Product recommendation failed: {{status}}",
+      "esg": "ESG analysis failed: {{status}}"
+    }
+  },
+  "common": {
+    "aiChineseNotice": "AI analysis results are currently displayed in Chinese. English support coming soon."
+  }
+}

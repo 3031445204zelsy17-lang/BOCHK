@@ -1,0 +1,62 @@
+[
+  {
+    "id": "B1",
+    "category": "E",
+    "question": "Is your company familiar with the Hong Kong Green Finance Taxonomy (HKMA Taxonomy) and its green definitions for different industries?",
+    "hint": "The HKMA Taxonomy provides technical screening criteria for green activities in sectors such as power generation, transport, buildings, and water; Phase 2A added manufacturing and ICT",
+    "options": [
+      {"label": "Yes, understand the HKMA Taxonomy framework and reference it to assess the green eligibility of projects", "value": "met", "score": 2},
+      {"label": "Partially, aware the taxonomy exists but have not studied it in depth", "value": "partial", "score": 1},
+      {"label": "No, not familiar with green finance taxonomies", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_001", "bochk_gf_002", "bochk_gf_003"]
+  },
+  {
+    "id": "B2",
+    "category": "E",
+    "question": "Is your company familiar with BOCHK's green loan and sustainability-linked loan products and their application requirements?",
+    "hint": "BOCHK offers green loans (for designated green projects) and sustainability-linked loans (linked to ESG performance targets)",
+    "options": [
+      {"label": "Yes, understand the product types, application requirements, and required documentation", "value": "met", "score": 2},
+      {"label": "Partially, aware the products exist but have not reviewed the details", "value": "partial", "score": 1},
+      {"label": "No, not familiar with BOCHK's green finance products", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_007", "bochk_gf_008", "bochk_gf_009"]
+  },
+  {
+    "id": "B3",
+    "category": "E",
+    "question": "Has your company assessed whether its business activities meet the technical screening criteria for green or transition finance?",
+    "hint": "This includes the DNSH (Do No Significant Harm) principle and minimum safeguards",
+    "options": [
+      {"label": "Yes, assessed the green eligibility of business activities against Taxonomy criteria", "value": "met", "score": 2},
+      {"label": "Partially, understand the need for assessment but have not yet conducted one", "value": "partial", "score": 1},
+      {"label": "No, not familiar with technical screening criteria", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_003", "bochk_gf_005", "bochk_gf_006"]
+  },
+  {
+    "id": "B4",
+    "category": "G",
+    "question": "Does your company understand the interconnected framework of Hong Kong's green finance ecosystem (HKMA Taxonomy, HKEX disclosure requirements, bank products)?",
+    "hint": "The green finance ecosystem operates across three layers: the taxonomy defines what qualifies as green, exchange disclosure requirements drive transparency, and bank products provide the capital",
+    "options": [
+      {"label": "Yes, fully understand the interconnection across all three layers", "value": "met", "score": 2},
+      {"label": "Partially, understand some components of the ecosystem", "value": "partial", "score": 1},
+      {"label": "No, not familiar with the green finance ecosystem", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_010"]
+  },
+  {
+    "id": "B5",
+    "category": "G",
+    "question": "Has your company published or is it preparing to publish an ESG report in accordance with the HKEX ESG Reporting Code (including climate-related disclosures)?",
+    "hint": "HKEX Appendix C2 requires listed issuers to publish an ESG report alongside their annual report; Part D mandates climate-related disclosures",
+    "options": [
+      {"label": "Yes, published a complete ESG report meeting HKEX requirements (including Part D climate disclosures)", "value": "met", "score": 2},
+      {"label": "Partially, published an ESG report but not fully compliant with HKEX requirements", "value": "partial", "score": 1},
+      {"label": "No, have not published an ESG report", "value": "not_met", "score": 0}
+    ],
+    "regulation_mapping": ["bochk_gf_004", "bochk_gf_005"]
+  }
+]

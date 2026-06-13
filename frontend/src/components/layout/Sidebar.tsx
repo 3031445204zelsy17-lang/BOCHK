@@ -1,5 +1,6 @@
 /** 侧边栏 — 三步向导导航（桌面端垂直 sidebar + 移动端横向步骤条） */
 
+import { useTranslation } from "react-i18next"
 import type { WizardStep } from "@/lib/types"
 
 interface SidebarProps {
@@ -10,12 +11,6 @@ interface SidebarProps {
   esgCompleted: boolean
 }
 
-const STEPS: { step: WizardStep; label: string; desc: string }[] = [
-  { step: 1, label: "Step 1", desc: "企业画像" },
-  { step: 2, label: "Step 2", desc: "服务匹配" },
-  { step: 3, label: "Step 3", desc: "ESG 合规" },
-]
-
 export default function Sidebar({
   currentStep,
   onStepChange,
@@ -23,6 +18,14 @@ export default function Sidebar({
   matchingCompleted,
   esgCompleted,
 }: SidebarProps) {
+  const { t } = useTranslation()
+
+  const STEPS: { step: WizardStep; label: string; desc: string }[] = [
+    { step: 1, label: t("sidebar.steps.s1.label"), desc: t("sidebar.steps.s1.desc") },
+    { step: 2, label: t("sidebar.steps.s2.label"), desc: t("sidebar.steps.s2.desc") },
+    { step: 3, label: t("sidebar.steps.s3.label"), desc: t("sidebar.steps.s3.desc") },
+  ]
+
   // 判断步骤是否可点击（前置步骤已完成）
   const canClick = (step: WizardStep): boolean => {
     if (step === 1) return true
@@ -46,7 +49,7 @@ export default function Sidebar({
       <aside className="hidden md:flex w-56 bg-white border-r border-bochk-border flex-col py-6">
         <div className="px-4 mb-6">
           <h2 className="text-sm font-semibold text-bochk-gray uppercase tracking-wider">
-            出海向导
+            {t("sidebar.title")}
           </h2>
         </div>
 
@@ -76,7 +79,7 @@ export default function Sidebar({
 
         {/* 进度指示 */}
         <div className="px-4 pt-4 border-t border-bochk-border">
-          <div className="text-xs text-bochk-gray mb-2">整体进度</div>
+          <div className="text-xs text-bochk-gray mb-2">{t("sidebar.progress")}</div>
           <div className="w-full bg-gray-200 rounded-full h-1.5">
             <div
               className="bg-bochk-red rounded-full h-1.5 transition-all duration-300"

@@ -1,5 +1,6 @@
 /** API 请求封装 — 连接后端 FastAPI */
 
+import i18n from "@/i18n"
 import type {
   CompanyInput,
   CompanyProfile,
@@ -11,7 +12,7 @@ import type {
 // 部署时设 VITE_API_BASE="" (同源) 或具体 URL；本地默认 localhost
 const _BASE = import.meta.env.VITE_API_BASE !== undefined
   ? import.meta.env.VITE_API_BASE
-  : "http://localhost:8001"
+  : "http://localhost:8000"
 
 const API_BASE = _BASE + "/api"
 
@@ -25,7 +26,7 @@ export async function generateProfile(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(input),
   })
-  if (!res.ok) throw new Error(`画像生成失败: ${res.status}`)
+  if (!res.ok) throw new Error(i18n.t("api.errors.profile", { status: res.status }))
   return res.json()
 }
 
@@ -39,7 +40,7 @@ export async function getRecommendations(
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ profile }),
   })
-  if (!res.ok) throw new Error(`产品推荐失败: ${res.status}`)
+  if (!res.ok) throw new Error(i18n.t("api.errors.matching", { status: res.status }))
   return res.json()
 }
 
@@ -56,7 +57,7 @@ export async function analyzeESG(data: {
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify(data),
   })
-  if (!res.ok) throw new Error(`ESG 分析失败: ${res.status}`)
+  if (!res.ok) throw new Error(i18n.t("api.errors.esg", { status: res.status }))
   return res.json()
 }
 
