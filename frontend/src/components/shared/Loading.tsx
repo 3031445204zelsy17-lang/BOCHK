@@ -1,5 +1,6 @@
-/** 统一 Loading 组件 — Spinner / Skeleton 两种模式 */
+/** 统一 Loading 组件 — Spinner / Skeleton / BrandedLoading */
 
+import { useState, useEffect } from "react"
 import { cn } from "@/lib/utils"
 
 // ── Props ───────────────────────────────────────────────────
@@ -92,6 +93,52 @@ export function OverlayLoading({ text }: { text?: string }) {
   return (
     <div className="absolute inset-0 bg-white/80 backdrop-blur-sm flex flex-col items-center justify-center z-50 rounded">
       <Loading text={text} />
+    </div>
+  )
+}
+
+// ── 品牌化 Loading — 大号双层旋转环 + 循环渐变进度文案 ────────
+interface BrandedLoadingProps {
+  /** 循环显示的进度文案列表 */
+  messages: string[]
+  /** 文案切换间隔 ms（默认 2500） */
+  interval?: number
+}
+
+export function BrandedLoading({ messages, interval = 2500 }: BrandedLoadingProps) {
+  const [msgIndex, setMsgIndex] = useState(0)
+
+  useEffect(() => {
+    if (messages.length <= 1) return
+    const timer = setInterval(() => {
+      setMsgIndex((prev) => (prev + 1) % messages.length)
+    }, interval)
+    return () => clearInterval(timer)
+  }, [messages.length, interval])
+
+  return (
+    <div className="absolute inset-0 bg-white/92 backdrop-blur-sm flex flex-col items-center justify-center z-50 rounded">
+      {/* 双层旋转环 */}
+      <div className="relative w-16 h-16 mb-6">
+        {/* 外圈 — 正转 */}
+        <div className="absolute inset-0 rounded-full border-4 border-bochk-red/15" />
+        <div className="absolute inset-0 rounded-full border-4 border-transparent border-t-bochk-red animate-spin" />
+        {/* 内圈 — 反转，慢速 */}
+        <div
+          className="absolute inset-2 rounded-full border-[3px] border-transparent border-b-bochk-red/30 animate-spin"
+          style={{ animationDirection: "reverse", animationDuration: "1.5s" }}
+        />
+        {/* 中心脉冲点 */}
+        <div className="absolute inset-[22px] rounded-full bg-bochk-red/20 animate-pulse" />
+      </div>
+
+      {/* 渐变进度文案 */}
+      <p
+        key={msgIndex}
+        className="text-sm text-bochk-dark font-medium animate-fade-in-only"
+      >
+        {messages[msgIndex]}
+      </p>
     </div>
   )
 }

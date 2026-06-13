@@ -39,7 +39,7 @@ export interface EnterpriseTemplate {
   preset_profile: CompanyProfile
 }
 
-// ── Step 4: 服务匹配 ────────────────────────────────
+// ── Step 2: 服务匹配 ────────────────────────────────
 
 /** 产品推荐 */
 export interface ProductRecommendation {
@@ -55,7 +55,7 @@ export interface ProductRecommendation {
   required_docs: string[]
 }
 
-// ── Step 5: ESG 分析 ────────────────────────────────
+// ── Step 3: ESG 分析 ────────────────────────────────
 
 /** ESG 合规缺口 */
 export interface ESGGap {
@@ -85,7 +85,7 @@ export interface ESGAnalysis {
   disclaimer: string
 }
 
-// ── Step 5: ESG 问卷 ───────────────────────────────
+// ── Step 3: ESG 问卷 ───────────────────────────────
 
 /** 问卷选项 */
 export interface QuestionOption {
@@ -108,7 +108,7 @@ export interface Question {
 // ── 通用 ────────────────────────────────────────────
 
 /** 向导步骤 */
-export type WizardStep = 1 | 4 | 5
+export type WizardStep = 1 | 2 | 3
 
 /** 问卷回答 */
 export interface QuestionAnswer {

@@ -20,21 +20,21 @@ export default function Wizard() {
   const [recommendations, setRecommendations] = useState<ProductRecommendation[] | null>(null)
   const [esgResult, setEsgResult] = useState<ESGAnalysis | null>(null)
 
-  // Step 1 完成 → 保存画像，跳到 Step 4
+  // Step 1 完成 → 保存画像，跳到 Step 2
   const handleProfileComplete = (p: CompanyProfile) => {
     setProfile(p)
     setProfileCompleted(true)
-    setCurrentStep(4)
+    setCurrentStep(2)
   }
 
-  // Step 4 完成 → 保存推荐结果，跳到 Step 5
+  // Step 2 完成 → 保存推荐结果，跳到 Step 3
   const handleMatchingComplete = (recs: ProductRecommendation[]) => {
     setRecommendations(recs)
     setMatchingCompleted(true)
-    setCurrentStep(5)
+    setCurrentStep(3)
   }
 
-  // Step 5 完成 → 保存 ESG 结果
+  // Step 3 完成 → 保存 ESG 结果
   const handleESGComplete = (result: ESGAnalysis | null) => {
     setEsgResult(result)
     setEsgCompleted(true)
@@ -68,13 +68,13 @@ export default function Wizard() {
             {currentStep === 1 && (
               <Step1Profile onComplete={handleProfileComplete} />
             )}
-            {currentStep === 4 && profile && (
+            {currentStep === 2 && profile && (
               <Step4Matching
                 profile={profile}
                 onComplete={handleMatchingComplete}
               />
             )}
-            {currentStep === 5 && profile && (
+            {currentStep === 3 && profile && (
               <Step5ESG profile={profile} onComplete={handleESGComplete} />
             )}
           </div>

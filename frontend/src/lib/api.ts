@@ -29,7 +29,7 @@ export async function generateProfile(
   return res.json()
 }
 
-// ── Step 4: 服务匹配 ────────────────────────────────
+// ── Step 2: 服务匹配 ────────────────────────────────
 
 export async function getRecommendations(
   profile: CompanyProfile
@@ -43,7 +43,7 @@ export async function getRecommendations(
   return res.json()
 }
 
-// ── Step 5: ESG 分析 ────────────────────────────────
+// ── Step 3: ESG 分析 ────────────────────────────────
 
 export async function analyzeESG(data: {
   profile: CompanyProfile

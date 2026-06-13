@@ -12,6 +12,7 @@ import { ArrowRight } from "lucide-react"
 import type { CompanyInput, CompanyProfile, EnterpriseTemplate } from "@/lib/types"
 import { generateProfile } from "@/lib/api"
 import { cn } from "@/lib/utils"
+import { BrandedLoading } from "@/components/shared/Loading"
 
 // ── 预设企业模板（源自 mock_enterprises.json）─────────
 const TEMPLATES: EnterpriseTemplate[] = [
@@ -214,7 +215,18 @@ export default function Step1Profile({ onComplete }: Step1Props) {
   const level = profile ? readinessLevel(profile.readiness_score) : null
 
   return (
-    <div className="max-w-3xl mx-auto">
+    <div className="max-w-3xl mx-auto relative">
+      {/* AI 生成中覆盖层 */}
+      {loading && (
+        <BrandedLoading
+          messages={[
+            "正在分析企业信息...",
+            "正在匹配行业标签...",
+            "正在评估出海准备度...",
+            "正在生成企业画像...",
+          ]}
+        />
+      )}
       <h2 className="text-xl font-semibold mb-1">Step 1：企业画像</h2>
       <p className="text-sm text-bochk-gray mb-6">
         选择预设企业快速体验，或手动填写企业信息

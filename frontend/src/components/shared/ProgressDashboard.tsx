@@ -77,7 +77,7 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
         {/* 服务匹配 */}
         <StepCard
           icon={Landmark}
-          step="Step 4"
+          step="Step 2"
           label="服务匹配"
           completed={props.matchingCompleted}
         >
@@ -110,7 +110,7 @@ export default function ProgressDashboard(props: ProgressDashboardProps) {
         {/* ESG 合规 */}
         <StepCard
           icon={Leaf}
-          step="Step 5"
+          step="Step 3"
           label="ESG 合规"
           completed={props.esgCompleted}
         >

@@ -1,4 +1,4 @@
-/** Step 5: ESG 合规分析 — 双标准独立分析（目的地法规 + BOCHK 准入） */
+/** Step 3: ESG 合规分析 — 双标准独立分析（目的地法规 + BOCHK 准入） */
 
 import { useState, useMemo } from "react"
 import {
@@ -17,7 +17,7 @@ import {
 } from "lucide-react"
 import type { CompanyProfile, ESGAnalysis, Question } from "@/lib/types"
 import { analyzeESG } from "@/lib/api"
-import { OverlayLoading } from "@/components/shared/Loading"
+import { BrandedLoading } from "@/components/shared/Loading"
 import destinationQuestions from "@/data/questionnaire_destination.json"
 import bochkQuestions from "@/data/questionnaire_bochk.json"
 
@@ -341,7 +341,16 @@ export default function Step5ESG({ profile, onComplete }: Step5Props) {
   // ── 渲染：问卷填写 ──────────────────────────────────────
   return (
     <div className="max-w-3xl mx-auto relative">
-      {loading && <OverlayLoading text="正在分析 ESG 合规缺口，请稍候..." />}
+      {loading && (
+        <BrandedLoading
+          messages={[
+            "正在分析 ESG 合规...",
+            "正在比对目的地法规...",
+            "正在识别合规缺口...",
+            "正在生成改善路线图...",
+          ]}
+        />
+      )}
 
       <h2 className="text-xl font-semibold mb-2">ESG 合规分析</h2>
       <p className="text-sm text-bochk-gray mb-2">

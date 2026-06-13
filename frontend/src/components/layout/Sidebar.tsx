@@ -12,8 +12,8 @@ interface SidebarProps {
 
 const STEPS: { step: WizardStep; label: string; desc: string }[] = [
   { step: 1, label: "Step 1", desc: "企业画像" },
-  { step: 4, label: "Step 4", desc: "服务匹配" },
-  { step: 5, label: "Step 5", desc: "ESG 合规" },
+  { step: 2, label: "Step 2", desc: "服务匹配" },
+  { step: 3, label: "Step 3", desc: "ESG 合规" },
 ]
 
 export default function Sidebar({
@@ -26,8 +26,8 @@ export default function Sidebar({
   // 判断步骤是否可点击（前置步骤已完成）
   const canClick = (step: WizardStep): boolean => {
     if (step === 1) return true
-    if (step === 4) return profileCompleted
-    if (step === 5) return matchingCompleted
+    if (step === 2) return profileCompleted
+    if (step === 3) return matchingCompleted
     return false
   }
 

@@ -1,11 +1,11 @@
-/** Step 4: 服务匹配 — BOCHK 产品推荐卡片列表 */
+/** Step 2: 服务匹配 — BOCHK 产品推荐卡片列表 */
 
 import { useState, useEffect, useCallback } from "react"
 import { Lightbulb, ClipboardList, ArrowRight } from "lucide-react"
 import type { CompanyProfile, ProductRecommendation } from "@/lib/types"
 import { getRecommendations } from "@/lib/api"
 import { cn } from "@/lib/utils"
-import { CardSkeleton } from "@/components/shared/Loading"
+import { BrandedLoading } from "@/components/shared/Loading"
 
 interface Step4Props {
   profile: CompanyProfile
@@ -49,25 +49,21 @@ export default function Step4Matching({ profile, onComplete }: Step4Props) {
 
   if (loading) {
     return (
-      <div className="max-w-2xl mx-auto">
-        <h2 className="text-xl font-semibold mb-1">Step 4：服务匹配</h2>
-        <p className="text-sm text-bochk-gray mb-6">
-          基于「{profile.industry_tags[0]}」行业 · {profile.size_level}企业
-          {profile.export_markets.length > 0 && ` · 目标${profile.export_markets.join("、")}`}
-          ，为您推荐以下 BOCHK 产品
-        </p>
-        <div className="space-y-3 animate-fade-in">
-          <CardSkeleton rows={4} />
-          <CardSkeleton rows={3} />
-          <CardSkeleton rows={3} />
-        </div>
+      <div className="max-w-2xl mx-auto relative min-h-[400px]">
+        <BrandedLoading
+          messages={[
+            "正在匹配 BOCHK 产品...",
+            "正在计算推荐分数...",
+            "正在生成产品建议...",
+          ]}
+        />
       </div>
     )
   }
 
   return (
     <div className="max-w-2xl mx-auto">
-      <h2 className="text-xl font-semibold mb-1">Step 4：服务匹配</h2>
+      <h2 className="text-xl font-semibold mb-1">Step 2：服务匹配</h2>
       <p className="text-sm text-bochk-gray mb-6">
         基于「{profile.industry_tags[0]}」行业 · {profile.size_level}企业
         {profile.export_markets.length > 0 && ` · 目标${profile.export_markets.join("、")}`}

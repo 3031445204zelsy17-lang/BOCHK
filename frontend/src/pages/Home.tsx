@@ -14,14 +14,14 @@ const FEATURES = [
   },
   {
     icon: Landmark,
-    step: "Step 4",
+    step: "Step 2",
     title: "BOCHK 产品匹配",
     desc: "基于企业画像智能匹配中银香港金融产品，提供个性化推荐和申请建议。",
     highlights: ["贸易融资", "外汇管理", "绿色金融"],
   },
   {
     icon: Leaf,
-    step: "Step 5",
+    step: "Step 3",
     title: "ESG 合规分析",
     desc: "识别目标市场 ESG 合规缺口，生成双标准评估报告（目的地法规 + BOCHK 准入），提供改善路线图。",
     highlights: ["合规缺口识别", "红黄绿报告", "改善路线图"],
